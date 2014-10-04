@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Parsiya's Den]]></title>
+  <link href="http://parsiya.net/atom.xml" rel="self"/>
+  <link href="http://parsiya.net/"/>
+  <updated>2014-10-04T12:48:02-04:00</updated>
+  <id>http://parsiya.net/</id>
+  <author>
+    <name><![CDATA[Parsiya]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Malware Adventure]]></title>
+    <link href="http://parsiya.net/blog/2014-09-21-malware-adventure/"/>
+    <updated>2014-09-21T19:11:43-04:00</updated>
+    <id>http://parsiya.net/blog/malware-adventure</id>
+    <content type="html"><![CDATA[<p>I finally caved in and started to push some of my code to <del>github</del> bitbucket. It is located at <a href="https://bitbucket.org/parsiya">https://bitbucket.org/parsiya</a> and is almost empty ;).</p>
+
+<p>This is Malware Adventure. It’s a small adventure game I wrote using PAWS. PAWS is Pyhton Adventure Writing System by Roger Plowman. Get it from <a href="http://home.fuse.net/wolfonenet/PAWS.htm">http://home.fuse.net/wolfonenet/PAWS.htm</a>. It’s great.</p>
+
+<p>The game itself is a Python program. You define objects which can be be rooms, items etc. You can read more about it in the readme file at <a href="https://bitbucket.org/parsiya/MalwareAdventure">https://bitbucket.org/parsiya/MalwareAdventure</a>.</p>
+
+<p>PS: Yes, I should be working on the Flare-On challenge writeup. It needs more time because I am not only documenting my solution but what other stuff I did. I think failed attempts are as important as the solution in challenge writeups.</p>
+
+<p>PPS: Changed links to <code>bitbucket</code> as I stopped using github.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Fireeye's FLARE Challenge]]></title>
+    <link href="http://parsiya.net/blog/2014-09-02-fireeyes-flare-challenge/"/>
+    <updated>2014-09-02T00:34:00-04:00</updated>
+    <id>http://parsiya.net/blog/fireeyes-flare-challenge</id>
+    <content type="html"><![CDATA[<p>It’s been a while. I know I should have updated more frequently but lazyness prevails.<br />
+Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was depressing to see people finish in 10 hours :). You can find the challenges at <a href="http://flare-on.com">http://flare-on.com</a>. I learned a lot doing them. They will release solutions in 2 weeks. I am also working on a writeup which I will release then. I think it will be interesting as it will be a n00b’s perspective.</p>
+
+<p>And finally. “Good news everyone!” I am transitioning a more reverse engineering oriented role at my day job. YAY :)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Apple's Common Crypto Library Defaults to a Zero IV if One Is Not Provided]]></title>
+    <link href="http://parsiya.net/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/"/>
+    <updated>2014-07-03T01:30:18-04:00</updated>
+    <id>http://parsiya.net/blog/apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided</id>
+    <content type="html"><![CDATA[<p>Today I was writing some guidelines about generating keys for mobile applications at work. While providing code examples in Java and Obj-C for AES encryption I happened to look at Apple’s <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/">Common Crypto</a> library . While going through the source code for <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c">CommonCryptor.c</a>, I noticed that IV is commented as <code>/* optional initialization vector */</code>. This makes sense because not all ciphers use IV and not all AES modes of operation (e.g. ECB mode). However; if an IV is not provided, the library will default to a zero IV.</p>
+
+<p>You can see the code here inside the function <code>ccInitCryptor</code> (search for defaultIV) <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c">source</a>. <code>CC_XZEROMEM</code> resets all bytes of IV to zero (that is 0x00):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="k">static</span> <span class="kr">inline</span> <span class="n">CCCryptorStatus</span> <span class="nf">ccInitCryptor</span>
+</span><span class="line"><span class="p">(</span><span class="n">CCCryptor</span> <span class="o">*</span><span class="n">ref</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">key_len</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">tweak_key</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">iv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kt">size_t</span> <span class="n">blocksize</span> <span class="o">=</span> <span class="n">ccGetCipherBlockSize</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
+</span><span class="line">    <span class="kt">uint8_t</span> <span class="n">defaultIV</span><span class="p">[</span><span class="n">blocksize</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span><span class="p">(</span><span class="n">iv</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="n">CC_XZEROMEM</span><span class="p">(</span><span class="n">defaultIV</span><span class="p">,</span> <span class="n">blocksize</span><span class="p">);</span>
+</span><span class="line">        <span class="n">iv</span> <span class="o">=</span> <span class="n">defaultIV</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="p">...</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="n">kCCSuccess</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>While I am told this is probably common behavior in crypto libraries, I think it’s dangerous. I ended up putting a comment in code examples warning developers about this behavior. So, heads up ;)</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Piping SSL/TLS Traffic From SoapUI to Burp]]></title>
+    <link href="http://parsiya.net/blog/2014-06-25-piping-ssl-slash-tls-traffic-from-soapui-through-burp/"/>
+    <updated>2014-06-25T22:04:53-04:00</updated>
+    <id>http://parsiya.net/blog/piping-ssl-slash-tls-traffic-from-soapui-through-burp</id>
+    <content type="html"><![CDATA[<p>Recently I was trying to test a web service. The traffic was over SSL/TLS and everything was fine. As I am better with Burp than SoapUI, I wanted to use Burp as a proxy for SoapUI. This should be an easy matter. Burp will create a custom certificate (signed by its root CA) for each site and effectively Man-in-the-Middle the connection. But this time it was different, I was getting the dreaded <code>Peer not Authenticated</code> error. This meant that SoapUI did not recognize Burp’s custom certificate.</p>
+
+<p>I Googled and found some solutions such as adding Burp’s CA to my certificate store (already done), adding it to SoapUI’s keystore (didn’t work) or using custom versions of SoapUI created for exactly this reason (again didn’t work).</p>
+
+<p>After a suitably long period of weeping and gnashing of teeth I achieved salvation.</p>
+
+<p>Here’s how to do it:</p>
+
+<ol>
+  <li>
+    <p>Set Burp as proxy for SoapUI.<br />
+In SoapUI go to <code>File &gt; Preferences &gt; Proxy Settings</code>.</p>
+  </li>
+  <li>Modify target address to http from https<br />
+    <ul>
+      <li>2.a. In SoapUI, modify the <code>Service Endpoint.</code> Change <code>https://example.com</code> to <code>http://example.com</code>.<br />
+Or  </li>
+      <li>2.b. Modify the WSDL and change <code>wsdl:address location</code> similarly and import it into SoapUI.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Edit Burp’s listener and check <code>Force use of SSL</code> under <code>Request Handling.</code><br />
+Notice that the <code>Redirect to port</code> input field will be automatically populated with 443. If your service endpoint is using a different port, modify that accordingly.</p>
+  </li>
+  <li>
+    <p>Now you can send requests from SoapUI and intercept them in Burp. Responses will appear in both SoapUI and Burp like any proxied application.</p>
+  </li>
+  <li>Be sure to remove the <code>Force use of SSL</code> after you are done. Otherwise you will be wondering why gmail is available under http in your browser (like <s>me</s> someone I know).</li>
+</ol>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Pasting Shellcode in GDB Using Python]]></title>
+    <link href="http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/"/>
+    <updated>2014-05-25T18:39:58-04:00</updated>
+    <id>http://parsiya.net/blog/pasting-shellcode-into-gdb-using-python</id>
+    <content type="html"><![CDATA[<p>A few days ago I was trying to write an exploit for a buffer overflow with GDB. This was a console application and pasting shellcode would mess with it.</p>
+
+<p>There are a few options:</p>
+
+<ul>
+  <li>Writing shellcode to a file and then using it as input for GDB.</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># you can also include GDB commands like setting up breakpoints (e.g. b * 0xDEADBEEF)</span>
+</span><span class="line"><span class="c"># remember to include a new line after each command</span>
+</span><span class="line"><span class="err">$</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s">&#39;print &quot;b * 0xDEADBEEF&quot; + &quot;</span><span class="se">\n</span><span class="s">&quot; + &quot;</span><span class="se">\x41</span><span class="s">&quot;*1000 + &quot;</span><span class="se">\n</span><span class="s">&quot;&#39;</span> <span class="o">&gt;</span> <span class="nb">input</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># $ perl -e for perl</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># start debugging with GDB</span>
+</span><span class="line"><span class="c"># -q (quiet mode): no text at startup</span>
+</span><span class="line"><span class="err">$</span> <span class="n">gdb</span> <span class="n">executable1</span> <span class="o">-</span><span class="n">q</span>
+</span><span class="line"><span class="p">(</span><span class="n">gdb</span><span class="p">)</span> <span class="n">run</span> <span class="o">&lt;</span> <span class="nb">input</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>After this you can manually debug in GDB.</p>
+
+<ul>
+  <li>Writing a Python script for interactive debugging
+When I wrote this, I thought it was a clever idea but then someone told me I could have written a GDB script. However, I have already written this snippet so here it goes.</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c">#!/usr/bin/python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span> <span class="p">,</span> <span class="n">PIPE</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># shellcode</span>
+</span><span class="line"><span class="n">shellcode</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\x41</span><span class="s">&quot;</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># opens gdb with parameter executable</span>
+</span><span class="line"><span class="c"># you can also manage stdout and stderr here</span>
+</span><span class="line"><span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span> <span class="p">[</span><span class="s">&#39;gdb&#39;</span> <span class="p">,</span> <span class="s">&#39;executable&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">bufsize</span><span class="o">=</span><span class="mi">1</span> <span class="p">,</span><span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span> <span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># sample breakpoint</span>
+</span><span class="line"><span class="c"># notice the new line after each command</span>
+</span><span class="line"><span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;b *DEADBEEF</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># half a second of sleep after each command</span>
+</span><span class="line"><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># r or run to start debugging the program with GDB</span>
+</span><span class="line"><span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;r</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># any other commands go here</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># this is a loop, will get every command and pass it to GDB</span>
+</span><span class="line"><span class="c"># &quot;leave&quot; == quit GDB and terminate process</span>
+</span><span class="line"><span class="c"># &quot;dump&quot;  == paste shellcode</span>
+</span><span class="line"><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">    <span class="n">mycommand</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">()</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">mycommand</span> <span class="o">==</span> <span class="s">&quot;leave&quot;</span><span class="p">):</span>
+</span><span class="line">        <span class="c"># quit gdb</span>
+</span><span class="line">        <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;quit</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">break</span>
+</span><span class="line">	
+</span><span class="line">    <span class="c"># paste shellcode</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">mycommand</span> <span class="o">==</span> <span class="s">&quot;dump&quot;</span><span class="p">):</span>
+</span><span class="line">        <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">shellcode</span><span class="p">)</span>
+</span><span class="line">    <span class="c"># more custom commands go here</span>
+</span><span class="line">
+</span><span class="line">    <span class="c"># not a custom command? send it as-is</span>
+</span><span class="line">    <span class="k">else</span><span class="p">:</span>
+</span><span class="line">        <span class="n">mycommand</span> <span class="o">=</span> <span class="n">mycommand</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+</span><span class="line">        <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mycommand</span><span class="p">)</span>
+</span><span class="line">        <span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># close our pipe	</span>
+</span><span class="line"><span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>I think that this code can be modified and become a very simple fuzzer. We have control over stdin and can read stdout and stderr. Change input, record output, rinse and repeat. </p>
+
+<p><code>subprocess</code> is a very powerful module. For example to normally run an application with an argument we can write <code>subprocess.call(['gdb','executable']) .</code></p>
+
+<p>but let’s say we want to run executable with input (containing shellcode):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">import</span> <span class="nn">subprocess</span>
+</span><span class="line">
+</span><span class="line"><span class="n">shellcode</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\x41</span><span class="s">&quot;</span> <span class="o">*</span> <span class="mi">100</span>
+</span><span class="line">
+</span><span class="line"><span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span> <span class="p">[</span><span class="s">&#39;gdb&#39;</span> <span class="p">,</span> <span class="s">&#39;executable&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">shellcode</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Amazon S3 and CSS]]></title>
+    <link href="http://parsiya.net/blog/2014-04-22-amazon-s3-and-css/"/>
+    <updated>2014-04-22T14:03:32-04:00</updated>
+    <id>http://parsiya.net/blog/amazon-s3-and-css</id>
+    <content type="html"><![CDATA[<p>After I deployed my blog to Amazon S3, I realized that there was no CSS applied to the pages. In Octopress, the look and feel of website is managed by <code>stylesheets/screen.css</code>. It was fine in <code>rake preview</code> but not on the S3 bucket. I looked around for a few hours to no avail. There was one other person who had the same issue on <a href="http://stackoverflow.com/questions/17138615/discrepency-in-rake-preview-vs-rake-deploy">stackoverflow</a> but no answers. Relevant <a href="https://xkcd.com/979/">xkcd</a>:</p>
+
+<p><img class="center" src="http://imgs.xkcd.com/comics/wisdom_of_the_ancients.png" title="Wisdom of the Ancients" /></p>
+
+<p>I finally found my answer. There are other static websites out there so I removed Octopress from my search terms (facepalm! I got my first MSc. in query expansion). This <a href="http://stackoverflow.com/a/14807743">stackoverflow answer</a> sent me to <a href="http://www.adamwilcox.org/2012/05/04/css-on-amazon-s3/">Adam Wilcox’s website</a> and saved the day. Thanks Adam.</p>
+
+<p>Simple fix, go to Amazon S3 bucket web interface. Find <code>stylesheets/screen.css</code>. Go to metadata tab and change <code>content-type</code> to <code>text/css</code>. This has to be repeated every time <code>screen.css</code> is updated (unless I can find how to do this with <code>S3cmd</code>). Usually this is not the case, when I generate my blog again I can see the following indicating that <code>screen.css</code> is not changed (unless you change the theme?):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">root@kali:~/Desktop/octopress# rake generate
+</span><span class="line"><span class="c">## Generating Site with Jekyll</span>
+</span><span class="line">identical <span class="nb">source</span>/stylesheets/screen.css
+</span><span class="line">Configuration from /root/Desktop/octopress/_config.yml
+</span><span class="line">Building site: <span class="nb">source</span> -&gt; public
+</span><span class="line">Successfully generated site: <span class="nb">source</span> -&gt; public
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Now Hosted on Amazon S3]]></title>
+    <link href="http://parsiya.net/blog/2014-04-20-now-hosted-on-amazon-s3/"/>
+    <updated>2014-04-20T13:20:24-04:00</updated>
+    <id>http://parsiya.net/blog/now-hosted-on-amazon-s3</id>
+    <content type="html"><![CDATA[<p>I moved my blog from Bluehost to Amazon S3. I have not used Cloudfront yet, I doubt my blog has any visitors to justify that.</p>
+
+<p>It was really easy to redirect everything to <a href="http://www.cryptogangsta.com">cryptogangsta.com</a>. <a href="http://parsiya.net">parsiya.net</a>, <a href="http://www.parsiya.net">www.parsiya.net</a> and <a href="http://www.cryptogangsta.com">www.cryptogangsta.com</a> should all point to cryptogangsta.com.</p>
+
+<p>I have decided (for n-th time) to start updating this blog. Hopefully I will do it this time, I have some ideas to keep this blog running ;).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How Do I TLS Ciphersuite?]]></title>
+    <link href="http://parsiya.net/blog/2013-11-17-how-do-i-tls-ciphersuite/"/>
+    <updated>2013-11-17T21:20:00-05:00</updated>
+    <id>http://parsiya.net/blog/how-do-i-tls-ciphersuite</id>
+    <content type="html"><![CDATA[<p>“Should we use RC4 or AES-CBC ?”
+This is a legitimate question. Many have heard of the highly publicized attacks against AES-CBC (CRIME, BEAST etc) and lean towards RC4. 
+If asked (granted no one asks me), my answer would be: If you can control web servers (not feasible in all situations) and users’ browsers 
+(almost impossible), upgrade to TLS 1.2 and go with AES-GCM. However, not many browsers supported these and to be honest, more users trumps loss 
+of security in many cases.</p>
+
+<!-- more -->
+
+<p>RC4 was a masterpiece for its time (it still is) but it has extreme biases in its PRNG and attacks are prevalent <a href="http://www.isg.rhul.ac.uk/tls/">[1]</a> and because it only takes a 
+seed (with no nonce), if a key is re-used, one can find the XOR of plaintexts by XOR-ing two ciphertexts. 
+A recent demonstration of this weakness was in the popular “Whatsapp” application where the same key was used in both directions <a href="https://blog.thijsalkema.de/blog/2013/10/08/piercing-through-whatsapp-s-encryption/" title="Octopress FTW">[2]</a>. Granted 
+This was an application design flaw but Whatsapp has quite the security history (google Whatsapp and IMEI).</p>
+
+<p>A few days ago Microsoft released security advisory 2868725 “Recommendation to disable RC4.” 
+They found out that less than 4% of their 5 million sample websites only worked with RC4 (although from my personal experience RC4 share is 
+probably higher) <a href="http://blogs.technet.com/b/srd/archive/2013/11/12/security-advisory-2868725-recommendation-to-disable-rc4.aspx">[3]</a>.</p>
+
+<p>Major browsers are also starting to support TL2 1.2 and AES-GCM.
+Chrome has had TLS 1.2 support for a while (Since Chrome 29) <a href="https://src.chromium.org/viewvc/chrome?revision=203090&amp;view=revision">[4]</a> and Chrome 31 (released a few days ago) has support for AES-GCM <a href="https://src.chromium.org/viewvc/chrome?revision=217716&amp;view=revision">[5]</a>.</p>
+
+<p>Firefox has implemented TLS 1.2. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=861266">[6]</a> and AES-GCM <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=880543">[7]</a>.</p>
+
+<p>IE 11 turns TLS 1.2 on by default <a href="http://blogs.msdn.com/b/ie/archive/2013/11/12/ie11-automatically-makes-over-40-of-the-web-more-secure-while-making-sure-sites-continue-to-work.aspx (has some good information in between IE propaganda)">[8]</a>.</p>
+
+<p>A day after I wrote the draft of this blog post, Adam Langley (author of patches in links <a href="https://src.chromium.org/viewvc/chrome?revision=203090&amp;view=revision">4</a> and <a href="https://src.chromium.org/viewvc/chrome?revision=217716&amp;view=revision">5</a>) wrote a blogpost named 
+“A roster of TLS cipher suites weaknesses” <a href="http://googleonlinesecurity.blogspot.com/2013/11/a-roster-of-tls-cipher-suites-weaknesses.html">[9]</a>. He discusses the strengths and weaknesses of the aforementioned three different ciphersuites 
+(RC4, AES-CBC and AES-GCM) on top of Chacha20,Poly1305 (if you do not know why the numbers are not powers of 2, google it :D).</p>
+
+<p>tl;dr: seems like AES-GCM is the flavor of the month. More and more browsers are supporting it, it may be a good time to start moving towards it.</p>
+
+<p>PS: I know, I will get the contact page fixed soon (tm).</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Microsoft Bluehat Challenges]]></title>
+    <link href="http://parsiya.net/blog/2013-09-29-microsoft-bluehat-challenges/"/>
+    <updated>2013-09-29T21:41:00-04:00</updated>
+    <id>http://parsiya.net/blog/microsoft-bluehat-challenges</id>
+    <content type="html"><![CDATA[<p>Microsoft has released their Bluehat challenges. You answer the challenge,
+ send it out and if correct they will send the next level (at least that is 
+what they say).</p>
+
+<p>There are three categories: Reverse Engineering, Web and Vulnerabilities.</p>
+
+<p>The first Reverse Engineering challenge was quite easy. But it was level 1 
+and I do not expect anti-debugging techniques. Let’s see about the next level.</p>
+
+<p>Anyway, Enjoy. <a href="https://www.microsoft.com/security/msrc/collaboration/bluehatchallenge.aspx">Linkie</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Snow Crash and Malware]]></title>
+    <link href="http://parsiya.net/blog/2013-09-23-snow-crash-and-malware/"/>
+    <updated>2013-09-23T01:06:00-04:00</updated>
+    <id>http://parsiya.net/blog/snow-crash-and-malware</id>
+    <content type="html"><![CDATA[<p>So I finished “Snow Crash” and it was quite nice. The concept of linguistic malware was interesting and ahead of its time.
+I noticed that the term “Virus” was used correctly in the book as the malware
+ was not propagating between people (then it would become a worm).
+Although I suspect it was due to the fact that most people (read almost everyone)
+ calls any malware a “virus”. Nevertheless, it was a very enjoyable read.</p>
+
+<blockquote>
+  <p>Any information system of sufficient complexity will inevitably become
+infected with viruses - viruses generated from within itself.</p>
+
+  <p><cite>Neal Stephensen - Snow Crash</cite></p>
+</blockquote>
+
+<p><img src="http://www.michaeljohngrist.com/wp-content/uploads/2012/12/nam.jpg" alt="Nam Shub" /></p>
+
+<p>Image taken from <a href="http://www.michaeljohngrist.com/2012/12/why-neal-stephensons-snow-crash-was-half-baked-ahtfi/">here</a>.</p>
+
+<p>In other news, I am up to 4.2 billion cookies per second in <a href="http://orteil.dashnet.org/cookieclicker/">Cookie Clicker</a>.</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Update Inc]]></title>
+    <link href="http://parsiya.net/blog/2013-09-20-update-inc/"/>
+    <updated>2013-09-20T00:19:00-04:00</updated>
+    <id>http://parsiya.net/blog/update-inc</id>
+    <content type="html"><![CDATA[<p>So, I transferred my domain from my last provider, it has not taken effect yet.
+Also, I need to start populating the website with relevant stuff. Hang on, I will be back <strong>soon ™</strong>!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MarkDown and Cookie Clicker]]></title>
+    <link href="http://parsiya.net/blog/2013-09-15-markdown-and-cookie-clicker/"/>
+    <updated>2013-09-15T18:23:00-04:00</updated>
+    <id>http://parsiya.net/blog/markdown-and-cookie-clicker</id>
+    <content type="html"><![CDATA[<p>Markdown looks like an easy-ish language to start (probably not so easy to master of course).
+Although compared to writing LaTeX source, it is a breeze. During my last year at JHU I started writing the reports and what not directly into LaTeX,
+I think using MarkDown for blogging and MS Office at work is going to take away my old skills.</p>
+
+<p>On a side note, I am now up to around 500 million cookies per second (CpS) in
+<strong><a href="http://orteil.dashnet.org/cookieclicker/">Cookie Clicker</a></strong>. I was stuck at 200 million CpS for a week or so until I could start making Antimatter Condensers. I may have missed them before
+as they were not visible in the side-bar and I had to scroll down to see them.</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello Octopress]]></title>
+    <link href="http://parsiya.net/blog/2013-09-14-hello-octopress/"/>
+    <updated>2013-09-14T21:16:00-04:00</updated>
+    <id>http://parsiya.net/blog/hello-octopress</id>
+    <content type="html"><![CDATA[<p>** Octopress is here **</p>
+
+<p>To be honest setting it up took a while (I had this feeling that I should set it up on my host but well let’s say I am a n00b and am allowed to make mistakes) :D</p>
+
+<p>Now I have to learn markdown which is probably a good thing, unless I can write blog posts in different formats. Note to self: search to see if we can write blogs in LaTeX. That would be too geeky.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,18 @@
+// This File is imported last, and will override other styles in the cascade
+// Add styles here to make changes without digging in too much
+
+table, th, td
+{
+border: 1px solid black;
+padding: 3px;
+
+}
+
+
+th {
+  font-weight: bold;
+  text-align: center;
+  
+}
+
+

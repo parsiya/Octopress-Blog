@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Cookie Clicker | Parsiya's Den]]></title>
+  <link href="http://parsiya.net/blog/categories/cookie-clicker/atom.xml" rel="self"/>
+  <link href="http://parsiya.net/"/>
+  <updated>2014-10-04T12:48:02-04:00</updated>
+  <id>http://parsiya.net/</id>
+  <author>
+    <name><![CDATA[Parsiya]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MarkDown and Cookie Clicker]]></title>
+    <link href="http://parsiya.net/blog/2013-09-15-markdown-and-cookie-clicker/"/>
+    <updated>2013-09-15T18:23:00-04:00</updated>
+    <id>http://parsiya.net/blog/markdown-and-cookie-clicker</id>
+    <content type="html"><![CDATA[<p>Markdown looks like an easy-ish language to start (probably not so easy to master of course).
+Although compared to writing LaTeX source, it is a breeze. During my last year at JHU I started writing the reports and what not directly into LaTeX,
+I think using MarkDown for blogging and MS Office at work is going to take away my old skills.</p>
+
+<p>On a side note, I am now up to around 500 million cookies per second (CpS) in
+<strong><a href="http://orteil.dashnet.org/cookieclicker/">Cookie Clicker</a></strong>. I was stuck at 200 million CpS for a week or so until I could start making Antimatter Condensers. I may have missed them before
+as they were not visible in the side-bar and I had to scroll down to see them.</p>
+
+]]></content>
+  </entry>
+  
+</feed>

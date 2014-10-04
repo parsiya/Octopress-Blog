@@ -1,0 +1,19 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_PEB</span> <span class="p">{</span>
+  <span class="n">BYTE</span>                          <span class="n">Reserved1</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+  <span class="n">BYTE</span>                          <span class="n">BeingDebugged</span><span class="p">;</span>
+  <span class="n">BYTE</span>                          <span class="n">Reserved2</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">PVOID</span>                         <span class="n">Reserved3</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+  <span class="n">PPEB_LDR_DATA</span>                 <span class="n">Ldr</span><span class="p">;</span>
+  <span class="n">PRTL_USER_PROCESS_PARAMETERS</span>  <span class="n">ProcessParameters</span><span class="p">;</span>
+  <span class="n">BYTE</span>                          <span class="n">Reserved4</span><span class="p">[</span><span class="mi">104</span><span class="p">];</span>
+  <span class="n">PVOID</span>                         <span class="n">Reserved5</span><span class="p">[</span><span class="mi">52</span><span class="p">];</span>
+  <span class="n">PPS_POST_PROCESS_INIT_ROUTINE</span> <span class="n">PostProcessInitRoutine</span><span class="p">;</span>
+  <span class="n">BYTE</span>                          <span class="n">Reserved6</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+  <span class="n">PVOID</span>                         <span class="n">Reserved7</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">ULONG</span>                         <span class="n">SessionId</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PEB</span><span class="p">,</span> <span class="o">*</span><span class="n">PPEB</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

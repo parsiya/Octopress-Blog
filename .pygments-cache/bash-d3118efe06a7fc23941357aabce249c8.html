@@ -1,0 +1,42 @@
+<div class="highlight"><pre><span class="c"># the same as the website</span>
+<span class="nv">$ </span>file e7bc5d2c0cf4480348f5504196561297 
+e7bc5d2c0cf4480348f5504196561297: ELF 64-bit LSB executable, x86-64, version 1 <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, <span class="k">for </span>GNU/Linux 2.6.24, BuildID<span class="o">[</span>sha1<span class="o">]=</span>0xa26451c6440ccb470f9cb8cabf8069c01120086c, stripped
+
+<span class="nv">$ </span>strings e7bc5d2c0cf4480348f5504196561297
+<span class="c"># results in a bunch of random strings</span>
+<span class="c"># looks like a mix of error messages, source code and random words</span>
+/index.html
+Nosebleed   <span class="c"># Heartbleed eh? :)</span>
+../nptl/sysdeps/unix/sysv/linux/x86_64/../fork.c
+info<span class="o">[</span>20<span class="o">]</span>-&gt;d_un.d_val <span class="o">==</span> 7
+...
+
+<span class="c"># let&#39;s see shared library calls - nope</span>
+<span class="nv">$ </span>ltrace ./e7bc5d2c0cf4480348f5504196561297 
+ltrace: Couldn<span class="s1">&#39;t find .dynsym or .dynstr in &quot;./e7bc5d2c0cf4480348f5504196561297&quot;</span>
+
+<span class="s1"># Let&#39;</span>s run the binary manually
+<span class="c"># running it normally</span>
+<span class="nv">$ </span>./e7bc5d2c0cf4480348f5504196561297 
+no
+
+<span class="c"># one argument - different message</span>
+<span class="nv">$ </span>./e7bc5d2c0cf4480348f5504196561297 arg1
+na
+
+<span class="c"># longer argument - message did not change</span>
+<span class="nv">$ </span>./e7bc5d2c0cf4480348f5504196561297 arg11111
+na
+
+<span class="c"># two arguments - message changed</span>
+<span class="nv">$ </span>./e7bc5d2c0cf4480348f5504196561297 arg11111 arg2
+bad
+
+<span class="c"># three arguments - message changed - shoule we stop?</span>
+<span class="nv">$ </span>./e7bc5d2c0cf4480348f5504196561297 arg11111 arg2 arg3
+stahp
+
+<span class="c"># four arguments - message is the same - we should stop </span>
+<span class="nv">$ </span>./e7bc5d2c0cf4480348f5504196561297 arg11111 arg2 arg3 arg4
+stahp
+</pre></div>

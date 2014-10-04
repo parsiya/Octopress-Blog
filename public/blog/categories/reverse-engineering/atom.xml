@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Reverse Engineering | Parsiya's Den]]></title>
+  <link href="http://parsiya.net/blog/categories/reverse-engineering/atom.xml" rel="self"/>
+  <link href="http://parsiya.net/"/>
+  <updated>2014-10-04T12:48:02-04:00</updated>
+  <id>http://parsiya.net/</id>
+  <author>
+    <name><![CDATA[Parsiya]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Fireeye's FLARE Challenge]]></title>
+    <link href="http://parsiya.net/blog/2014-09-02-fireeyes-flare-challenge/"/>
+    <updated>2014-09-02T00:34:00-04:00</updated>
+    <id>http://parsiya.net/blog/fireeyes-flare-challenge</id>
+    <content type="html"><![CDATA[<p>It’s been a while. I know I should have updated more frequently but lazyness prevails.<br />
+Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was depressing to see people finish in 10 hours :). You can find the challenges at <a href="http://flare-on.com">http://flare-on.com</a>. I learned a lot doing them. They will release solutions in 2 weeks. I am also working on a writeup which I will release then. I think it will be interesting as it will be a n00b’s perspective.</p>
+
+<p>And finally. “Good news everyone!” I am transitioning a more reverse engineering oriented role at my day job. YAY :)</p>
+]]></content>
+  </entry>
+  
+</feed>

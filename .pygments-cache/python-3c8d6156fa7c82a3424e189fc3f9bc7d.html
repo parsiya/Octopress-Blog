@@ -1,0 +1,14 @@
+<div class="highlight"><pre><span class="c"># add xor function from last example</span>
+<span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span><span class="p">,</span> <span class="n">unhexlify</span>
+
+<span class="c"># last 13 bytes</span>
+<span class="n">ciphertext</span> <span class="o">=</span> <span class="n">unhexlify</span><span class="p">(</span><span class="s">&quot;352474252a6b21752f6b36362e7574323105232a2337206b2d2b6b252d28&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">13</span><span class="p">:]</span> 
+<span class="n">plaintext</span> <span class="o">=</span> <span class="s">&quot;@flare-on.com&quot;</span>
+
+<span class="k">print</span> <span class="n">xor</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span><span class="n">plaintext</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">hexlify</span><span class="p">(</span> <span class="n">xor</span> <span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span><span class="n">plaintext</span><span class="p">)</span> <span class="p">)</span>
+
+<span class="c"># result :)</span>
+<span class="c"># EEFBEEFBEEFBE</span>
+<span class="c"># 45454642454546424545464245</span>
+</pre></div>

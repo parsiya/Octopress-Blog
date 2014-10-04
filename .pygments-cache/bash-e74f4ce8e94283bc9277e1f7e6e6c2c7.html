@@ -1,0 +1,16 @@
+<div class="highlight"><pre><span class="nv">$ </span>strace -i ./e7bc5d2c0cf4480348f5504196561297 arg1 arg2
+<span class="o">[</span>    7f87e90646e7<span class="o">]</span> execve<span class="o">(</span>“./e7bc5d2c0cf4480348f5504196561297”, <span class="o">[</span>”./e7bc5d2c0cf4480348f55041965612”…, “arg1”, “arg2”<span class="o">]</span>, <span class="o">[</span>/* 31 vars */<span class="o">])</span> <span class="o">=</span> 0
+<span class="o">[</span>          4a9297<span class="o">]</span> uname<span class="o">({</span><span class="nv">sys</span><span class="o">=</span>”Linux”, <span class="nv">node</span><span class="o">=</span>”kali”, …<span class="o">})</span> <span class="o">=</span> 0
+<span class="o">[</span>          4aa78a<span class="o">]</span> brk<span class="o">(</span>0<span class="o">)</span>               <span class="o">=</span> 0x1212000
+<span class="o">[</span>          4aa78a<span class="o">]</span> brk<span class="o">(</span>0x12131c0<span class="o">)</span>       <span class="o">=</span> 0x12131c0
+<span class="o">[</span>          45e3f5<span class="o">]</span> arch_prctl<span class="o">(</span>ARCH_SET_FS, 0x1212880<span class="o">)</span> <span class="o">=</span> 0
+<span class="o">[</span>          4aa78a<span class="o">]</span> brk<span class="o">(</span>0x12341c0<span class="o">)</span>       <span class="o">=</span> 0x12341c0
+<span class="o">[</span>          4aa78a<span class="o">]</span> brk<span class="o">(</span>0x1235000<span class="o">)</span>       <span class="o">=</span> 0x1235000
+<span class="o">[</span>          47431b<span class="o">]</span> ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span> <span class="o">=</span> -1 EPERM <span class="o">(</span>Operation not permitted<span class="o">)</span>
+<span class="o">[</span>          473e44<span class="o">]</span> fstat<span class="o">(</span>1, <span class="o">{</span><span class="nv">st_mode</span><span class="o">=</span>S_IFCHR|0620, <span class="nv">st_rdev</span><span class="o">=</span>makedev<span class="o">(</span>136, 0<span class="o">)</span>, …<span class="o">})</span> <span class="o">=</span> 0
+<span class="o">[</span>          47509a<span class="o">]</span> mmap<span class="o">(</span>NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0<span class="o">)</span> <span class="o">=</span> 0x7f617785f000
+<span class="o">[</span>          473f50<span class="o">]</span> write<span class="o">(</span>1, “Program received signal SIGSEGV,”…, 52Program received signal SIGSEGV, Segmentation fault<span class="o">)</span> <span class="o">=</span> 52
+<span class="o">[</span>          473dd8<span class="o">]</span> exit_group<span class="o">(</span>9001<span class="o">)</span>     <span class="o">=</span> ?&lt;/p&gt;
+
+&lt;p&gt;
+</pre></div>

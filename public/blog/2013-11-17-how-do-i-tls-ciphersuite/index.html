@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How Do I TLS Ciphersuite? - Parsiya's Den</title>
+  <meta name="author" content="Parsiya">
+
+  
+  <meta name="description" content="“Should we use RC4 or AES-CBC ?”
+This is a legitimate question. Many have heard of the highly publicized attacks against AES-CBC (CRIME, BEAST etc) &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://parsiya.net/blog/2013-11-17-how-do-i-tls-ciphersuite">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Parsiya's Den" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Parsiya's Den</a></h1>
+  
+    <h2>A n00b reverser's adventures down the rabbit hole.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:parsiya.net" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <!-- <li><a href="/about.html">About Me</a></li> -->
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How Do I TLS Ciphersuite?</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-17T21:20:00-05:00" pubdate data-updated="true">Nov 17<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>“Should we use RC4 or AES-CBC ?”
+This is a legitimate question. Many have heard of the highly publicized attacks against AES-CBC (CRIME, BEAST etc) and lean towards RC4. 
+If asked (granted no one asks me), my answer would be: If you can control web servers (not feasible in all situations) and users’ browsers 
+(almost impossible), upgrade to TLS 1.2 and go with AES-GCM. However, not many browsers supported these and to be honest, more users trumps loss 
+of security in many cases.</p>
+
+<!-- more -->
+
+<p>RC4 was a masterpiece for its time (it still is) but it has extreme biases in its PRNG and attacks are prevalent <a href="http://www.isg.rhul.ac.uk/tls/">[1]</a> and because it only takes a 
+seed (with no nonce), if a key is re-used, one can find the XOR of plaintexts by XOR-ing two ciphertexts. 
+A recent demonstration of this weakness was in the popular “Whatsapp” application where the same key was used in both directions <a href="https://blog.thijsalkema.de/blog/2013/10/08/piercing-through-whatsapp-s-encryption/" title="Octopress FTW">[2]</a>. Granted 
+This was an application design flaw but Whatsapp has quite the security history (google Whatsapp and IMEI).</p>
+
+<p>A few days ago Microsoft released security advisory 2868725 “Recommendation to disable RC4.” 
+They found out that less than 4% of their 5 million sample websites only worked with RC4 (although from my personal experience RC4 share is 
+probably higher) <a href="http://blogs.technet.com/b/srd/archive/2013/11/12/security-advisory-2868725-recommendation-to-disable-rc4.aspx">[3]</a>.</p>
+
+<p>Major browsers are also starting to support TL2 1.2 and AES-GCM.
+Chrome has had TLS 1.2 support for a while (Since Chrome 29) <a href="https://src.chromium.org/viewvc/chrome?revision=203090&amp;view=revision">[4]</a> and Chrome 31 (released a few days ago) has support for AES-GCM <a href="https://src.chromium.org/viewvc/chrome?revision=217716&amp;view=revision">[5]</a>.</p>
+
+<p>Firefox has implemented TLS 1.2. <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=861266">[6]</a> and AES-GCM <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=880543">[7]</a>.</p>
+
+<p>IE 11 turns TLS 1.2 on by default <a href="http://blogs.msdn.com/b/ie/archive/2013/11/12/ie11-automatically-makes-over-40-of-the-web-more-secure-while-making-sure-sites-continue-to-work.aspx (has some good information in between IE propaganda)">[8]</a>.</p>
+
+<p>A day after I wrote the draft of this blog post, Adam Langley (author of patches in links <a href="https://src.chromium.org/viewvc/chrome?revision=203090&amp;view=revision">4</a> and <a href="https://src.chromium.org/viewvc/chrome?revision=217716&amp;view=revision">5</a>) wrote a blogpost named 
+“A roster of TLS cipher suites weaknesses” <a href="http://googleonlinesecurity.blogspot.com/2013/11/a-roster-of-tls-cipher-suites-weaknesses.html">[9]</a>. He discusses the strengths and weaknesses of the aforementioned three different ciphersuites 
+(RC4, AES-CBC and AES-GCM) on top of Chacha20,Poly1305 (if you do not know why the numbers are not powers of 2, google it :D).</p>
+
+<p>tl;dr: seems like AES-GCM is the flavor of the month. More and more browsers are supporting it, it may be a good time to start moving towards it.</p>
+
+<p>PS: I know, I will get the contact page fixed soon (tm).</p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Parsiya</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-17T21:20:00-05:00" pubdate data-updated="true">Nov 17<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/aes/'>AES,</a>, <a class='category' href='/blog/categories/ciphersuites/'>Ciphersuites,</a>, <a class='category' href='/blog/categories/rc4/'>RC4</a>, <a class='category' href='/blog/categories/tls/'>TLS,</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013-09-29-microsoft-bluehat-challenges/" title="Previous Post: Microsoft Bluehat Challenges">&laquo; Microsoft Bluehat Challenges</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014-04-20-now-hosted-on-amazon-s3/" title="Next Post: Now hosted on Amazon S3">Now hosted on Amazon S3 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Who am I?</h1>
+  <p>I am Parsia Hakimian, ex-dev and current (mostly) software security consultant at <a href="http://www.cigital.com/" target="_blank">Cigital</a> .</p>
+  <p>I am interested in Reverse Engineering, Crypto, Assembly, C, Python, EvE Online and other things (not necessarily in that order).</p>
+  <p>bitbucket: <a href="https://bitbucket.org/parsiya/" target="_blank">https://bitbucket.org/parsiya/</a></p>
+  <p>email: parsiya [at] google's email [dot]com</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014-09-21-malware-adventure/">Malware Adventure</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-09-02-fireeyes-flare-challenge/">Fireeye's FLARE Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/">Apple's Common Crypto Library Defaults to a Zero IV if One Is Not Provided</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-06-25-piping-ssl-slash-tls-traffic-from-soapui-through-burp/">Piping SSL/TLS Traffic From SoapUI to Burp</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/">Pasting Shellcode in GDB Using Python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-04-22-amazon-s3-and-css/">Amazon S3 and CSS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-04-20-now-hosted-on-amazon-s3/">Now Hosted on Amazon S3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013-11-17-how-do-i-tls-ciphersuite/">How Do I TLS Ciphersuite?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013-09-29-microsoft-bluehat-challenges/">Microsoft Bluehat Challenges</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013-09-23-snow-crash-and-malware/">Snow Crash and Malware</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline"  href="https://twitter.com/CryptoGangsta"  data-widget-id="458841047112482817">Tweets by @CryptoGangsta</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Parsiya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

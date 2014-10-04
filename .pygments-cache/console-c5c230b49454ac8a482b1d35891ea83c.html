@@ -1,0 +1,14 @@
+<div class="highlight"><pre><span class="gp">$</span> strace -i ./e7bc5d2c0cf4480348f5504196561297 arg1 arg2
+<span class="go">[    7f87e90646e7] execve(&quot;./e7bc5d2c0cf4480348f5504196561297&quot;, [&quot;./e7bc5d2c0cf4480348f55041965612&quot;..., &quot;arg1&quot;, &quot;arg2&quot;], [/* 31 vars */]) = 0</span>
+<span class="go">[          4a9297] uname({sys=&quot;Linux&quot;, node=&quot;kali&quot;, ...}) = 0</span>
+<span class="go">[          4aa78a] brk(0)               = 0x1212000</span>
+<span class="go">[          4aa78a] brk(0x12131c0)       = 0x12131c0</span>
+<span class="go">[          45e3f5] arch_prctl(ARCH_SET_FS, 0x1212880) = 0</span>
+<span class="go">[          4aa78a] brk(0x12341c0)       = 0x12341c0</span>
+<span class="go">[          4aa78a] brk(0x1235000)       = 0x1235000</span>
+<span class="go">[          47431b] ptrace(PTRACE_TRACEME, 0, 0x1, 0) = -1 EPERM (Operation not permitted)</span>
+<span class="go">[          473e44] fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0</span>
+<span class="go">[          47509a] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f617785f000</span>
+<span class="go">[          473f50] write(1, &quot;Program received signal SIGSEGV,&quot;..., 52Program received signal SIGSEGV, Segmentation fault) = 52</span>
+<span class="go">[          473dd8] exit_group(9001)     = ?</span>
+</pre></div>

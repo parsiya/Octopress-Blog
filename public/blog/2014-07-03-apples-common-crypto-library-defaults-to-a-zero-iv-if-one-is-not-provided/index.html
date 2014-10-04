@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Apple's Common Crypto Library Defaults to a Zero IV if One Is Not Provided - Parsiya's Den</title>
+  <meta name="author" content="Parsiya">
+
+  
+  <meta name="description" content="Today I was writing some guidelines about generating keys for mobile applications at work. While providing code examples in Java and Obj-C for AES &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://parsiya.net/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Parsiya's Den" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Parsiya's Den</a></h1>
+  
+    <h2>A n00b reverser's adventures down the rabbit hole.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:parsiya.net" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <!-- <li><a href="/about.html">About Me</a></li> -->
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Apple's Common Crypto Library Defaults to a Zero IV if One Is Not Provided</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-07-03T01:30:18-04:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Today I was writing some guidelines about generating keys for mobile applications at work. While providing code examples in Java and Obj-C for AES encryption I happened to look at Apple’s <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/">Common Crypto</a> library . While going through the source code for <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c">CommonCryptor.c</a>, I noticed that IV is commented as <code>/* optional initialization vector */</code>. This makes sense because not all ciphers use IV and not all AES modes of operation (e.g. ECB mode). However; if an IV is not provided, the library will default to a zero IV.</p>
+
+<p>You can see the code here inside the function <code>ccInitCryptor</code> (search for defaultIV) <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c">source</a>. <code>CC_XZEROMEM</code> resets all bytes of IV to zero (that is 0x00):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="k">static</span> <span class="kr">inline</span> <span class="n">CCCryptorStatus</span> <span class="nf">ccInitCryptor</span>
+</span><span class="line"><span class="p">(</span><span class="n">CCCryptor</span> <span class="o">*</span><span class="n">ref</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">key_len</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">tweak_key</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">iv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kt">size_t</span> <span class="n">blocksize</span> <span class="o">=</span> <span class="n">ccGetCipherBlockSize</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
+</span><span class="line">    <span class="kt">uint8_t</span> <span class="n">defaultIV</span><span class="p">[</span><span class="n">blocksize</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span><span class="p">(</span><span class="n">iv</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="n">CC_XZEROMEM</span><span class="p">(</span><span class="n">defaultIV</span><span class="p">,</span> <span class="n">blocksize</span><span class="p">);</span>
+</span><span class="line">        <span class="n">iv</span> <span class="o">=</span> <span class="n">defaultIV</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="p">...</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="n">kCCSuccess</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>While I am told this is probably common behavior in crypto libraries, I think it’s dangerous. I ended up putting a comment in code examples warning developers about this behavior. So, heads up ;)</p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Parsiya</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-07-03T01:30:18-04:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/common-crypto/'>Common Crypto</a>, <a class='category' href='/blog/categories/encryption/'>Encryption</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014-06-25-piping-ssl-slash-tls-traffic-from-soapui-through-burp/" title="Previous Post: Piping SSL/TLS Traffic from SoapUI to Burp">&laquo; Piping SSL/TLS Traffic from SoapUI to Burp</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014-09-02-fireeyes-flare-challenge/" title="Next Post: Fireeye's FLARE Challenge">Fireeye's FLARE Challenge &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Who am I?</h1>
+  <p>I am Parsia Hakimian, ex-dev and current (mostly) software security consultant at <a href="http://www.cigital.com/" target="_blank">Cigital</a> .</p>
+  <p>I am interested in Reverse Engineering, Crypto, Assembly, C, Python, EvE Online and other things (not necessarily in that order).</p>
+  <p>bitbucket: <a href="https://bitbucket.org/parsiya/" target="_blank">https://bitbucket.org/parsiya/</a></p>
+  <p>email: parsiya [at] google's email [dot]com</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014-09-21-malware-adventure/">Malware Adventure</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-09-02-fireeyes-flare-challenge/">Fireeye's FLARE Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/">Apple's Common Crypto Library Defaults to a Zero IV if One Is Not Provided</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-06-25-piping-ssl-slash-tls-traffic-from-soapui-through-burp/">Piping SSL/TLS Traffic From SoapUI to Burp</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/">Pasting Shellcode in GDB Using Python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-04-22-amazon-s3-and-css/">Amazon S3 and CSS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-04-20-now-hosted-on-amazon-s3/">Now Hosted on Amazon S3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013-11-17-how-do-i-tls-ciphersuite/">How Do I TLS Ciphersuite?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013-09-29-microsoft-bluehat-challenges/">Microsoft Bluehat Challenges</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013-09-23-snow-crash-and-malware/">Snow Crash and Malware</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline"  href="https://twitter.com/CryptoGangsta"  data-widget-id="458841047112482817">Tweets by @CryptoGangsta</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Parsiya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

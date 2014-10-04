@@ -1,0 +1,33 @@
+<div class="highlight"><pre><span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB0</span> <span class="nv">sub_10009EB0</span> <span class="nv">proc</span> <span class="nv">near</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB0</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB0</span> <span class="nv">var_8</span><span class="err">=</span> <span class="kt">dword</span> <span class="nv">ptr</span> <span class="o">-</span><span class="mi">8</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB0</span> <span class="nv">var_4</span><span class="err">=</span> <span class="kt">word</span> <span class="nv">ptr</span> <span class="o">-</span><span class="mi">4</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB0</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB0</span> <span class="nv">push</span>    <span class="nb">ebp</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB1</span> <span class="nv">mov</span>     <span class="nb">ebp</span><span class="p">,</span> <span class="nb">esp</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB3</span> <span class="nv">sub</span>     <span class="nb">esp</span><span class="p">,</span> <span class="mi">8</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EB6</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="mi">8</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EBB</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_4</span><span class="p">],</span> <span class="nb">ax</span>   <span class="c1">; var_4 = 0</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EBF</span> <span class="nv">jmp</span>     <span class="nv">short</span> <span class="nv">loc_10009ECD</span>
+
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">ECD</span> <span class="nv">loc_10009ECD</span><span class="p">:</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">ECD</span> <span class="nv">movsx</span>   <span class="nb">edx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_4</span><span class="p">]</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">ED1</span> <span class="nv">cmp</span>     <span class="nb">edx</span><span class="p">,</span> <span class="mh">0DEh</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">ED7</span> <span class="nv">jg</span>      <span class="nv">loc_1000A3A4</span> <span class="c1">; if var_4 &gt; 222 (0xDE) jump to loc_1000A3A4</span>
+
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EDD</span> <span class="nv">movsx</span>   <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_4</span><span class="p">]</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EE1</span> <span class="nv">push</span>    <span class="nb">eax</span>             <span class="c1">; vKey</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EE2</span> <span class="nv">call</span>    <span class="nb">ds</span><span class="p">:</span><span class="nv">GetAsyncKeyState</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EE8</span> <span class="nv">movsx</span>   <span class="nb">ecx</span><span class="p">,</span> <span class="nb">ax</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EEB</span> <span class="nv">cmp</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="mh">0FFFF8001h</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EF1</span> <span class="nv">jnz</span>     <span class="nv">loc_1000A39F</span>    <span class="c1">; jumptable 1000A2D4 default case</span>
+
+<span class="nl">.text:</span><span class="err">1000</span><span class="nf">A39F</span> <span class="nv">loc_1000A39F</span><span class="p">:</span>           <span class="c1">; jumptable 1000A2D4 default case</span>
+<span class="nl">.text:</span><span class="err">1000</span><span class="nf">A39F</span> <span class="nv">jmp</span>     <span class="nv">loc_10009EC1</span>
+
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EC1</span> <span class="nv">loc_10009EC1</span><span class="p">:</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EC1</span> <span class="nv">mov</span>     <span class="nb">cx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_4</span><span class="p">]</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EC5</span> <span class="nv">add</span>     <span class="nb">cx</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nl">.text:</span><span class="err">10009</span><span class="nf">EC9</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_4</span><span class="p">],</span> <span class="nb">cx</span> <span class="c1">; (var_4)++</span>
+<span class="c1">; go back to line 14</span>
+</pre></div>

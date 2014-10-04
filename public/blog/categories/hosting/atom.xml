@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Hosting | Parsiya's Den]]></title>
+  <link href="http://parsiya.net/blog/categories/hosting/atom.xml" rel="self"/>
+  <link href="http://parsiya.net/"/>
+  <updated>2014-10-04T12:48:02-04:00</updated>
+  <id>http://parsiya.net/</id>
+  <author>
+    <name><![CDATA[Parsiya]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Now Hosted on Amazon S3]]></title>
+    <link href="http://parsiya.net/blog/2014-04-20-now-hosted-on-amazon-s3/"/>
+    <updated>2014-04-20T13:20:24-04:00</updated>
+    <id>http://parsiya.net/blog/now-hosted-on-amazon-s3</id>
+    <content type="html"><![CDATA[<p>I moved my blog from Bluehost to Amazon S3. I have not used Cloudfront yet, I doubt my blog has any visitors to justify that.</p>
+
+<p>It was really easy to redirect everything to <a href="http://www.cryptogangsta.com">cryptogangsta.com</a>. <a href="http://parsiya.net">parsiya.net</a>, <a href="http://www.parsiya.net">www.parsiya.net</a> and <a href="http://www.cryptogangsta.com">www.cryptogangsta.com</a> should all point to cryptogangsta.com.</p>
+
+<p>I have decided (for n-th time) to start updating this blog. Hopefully I will do it this time, I have some ideas to keep this blog running ;).</p>
+]]></content>
+  </entry>
+  
+</feed>

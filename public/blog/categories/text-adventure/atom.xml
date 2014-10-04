@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Text Adventure | Parsiya's Den]]></title>
+  <link href="http://parsiya.net/blog/categories/text-adventure/atom.xml" rel="self"/>
+  <link href="http://parsiya.net/"/>
+  <updated>2014-10-04T12:48:02-04:00</updated>
+  <id>http://parsiya.net/</id>
+  <author>
+    <name><![CDATA[Parsiya]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Malware Adventure]]></title>
+    <link href="http://parsiya.net/blog/2014-09-21-malware-adventure/"/>
+    <updated>2014-09-21T19:11:43-04:00</updated>
+    <id>http://parsiya.net/blog/malware-adventure</id>
+    <content type="html"><![CDATA[<p>I finally caved in and started to push some of my code to <del>github</del> bitbucket. It is located at <a href="https://bitbucket.org/parsiya">https://bitbucket.org/parsiya</a> and is almost empty ;).</p>
+
+<p>This is Malware Adventure. It’s a small adventure game I wrote using PAWS. PAWS is Pyhton Adventure Writing System by Roger Plowman. Get it from <a href="http://home.fuse.net/wolfonenet/PAWS.htm">http://home.fuse.net/wolfonenet/PAWS.htm</a>. It’s great.</p>
+
+<p>The game itself is a Python program. You define objects which can be be rooms, items etc. You can read more about it in the readme file at <a href="https://bitbucket.org/parsiya/MalwareAdventure">https://bitbucket.org/parsiya/MalwareAdventure</a>.</p>
+
+<p>PS: Yes, I should be working on the Flare-On challenge writeup. It needs more time because I am not only documenting my solution but what other stuff I did. I think failed attempts are as important as the solution in challenge writeups.</p>
+
+<p>PPS: Changed links to <code>bitbucket</code> as I stopped using github.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,6 @@
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">shellcode</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\x41</span><span class="s">&quot;</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span> <span class="p">[</span><span class="s">&#39;gdb&#39;</span> <span class="p">,</span> <span class="s">&#39;executable&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">shellcode</span><span class="p">)</span>
+</pre></div>
