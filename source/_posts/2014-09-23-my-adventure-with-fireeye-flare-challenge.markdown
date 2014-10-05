@@ -17,7 +17,9 @@ If you have any feedback, please let me know. I spent a lot of time on this writ
 At the time of writing, there were two solutions posted. Check them out. Unlike me, they knew what they were doing :)
 
 * [Detailed Solutions to FireEye FLARE Challenge](https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge)
-* [A Walkthrough for FLARE RE Challenges](http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html)
+* [A Walk through for FLARE RE Challenges](http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html)
+
+<!-- more -->
 
 ### Links to Individual Challenges
 This post is quite long (I didn't want to strip them into different posts), use the following links to jump to any specific challenge:
@@ -29,8 +31,6 @@ This post is quite long (I didn't want to strip them into different posts), use 
 * [Challenge 5](#ch5)
 * [Challenge 6](#ch6)
 * [Challenge 7](#ch7)
-
-<!-- more -->
 
 ### My Setup
 I used a Windows XP SP3 VM for most challenges using VirtualBox. For challenge 6 I used a Kali 64-bit VM. I used IDA/Immunity on my host OS with some other utilities.
@@ -60,7 +60,7 @@ The challenge starts with going to their website at [http://flare-on.com](http:/
 I opened it with ``7-zip`` to get ``Challenge1.exe``. By dropping it into ``PE-Studio`` I gained more information:
 
 {% codeblock mark:5 %}
-The Image is a fake Microsoft executable    # CompanyName is Microsoft but it is not signed?
+The Image is a fake Microsoft executable    # Company name is Microsoft but it is not signed?
 The Manifest Identity name (MyApplication.app) is different than the Image name
 The Version Information 'OriginalFilename' (rev_challenge_1.exe) is different than the Image name
 The Debug Symbol File Name () is different than the Image name (challenge1)
@@ -69,7 +69,7 @@ The image is Managed (.NET)
 
 So it appears to be a .Net binary. Let's run it.
 
-![Challenge 1 executed](/images/2014/flare/1-2.jpg "Challenge 1 exectuted")
+![Challenge 1 executed](/images/2014/flare/1-2.jpg "Challenge 1 executed")
 
 Hey I love this guy. Let's press ``DECODE.``
 
@@ -1542,16 +1542,16 @@ else:
 
 ![OutputDebugString](/images/2014/flare/7-10.jpg "OutputDebugString")
 
-This is almost the exact listing 16-1 in page 353 of Practical Malware Analysis book ([Link to p.353 on Google Books](http://books.google.com/books?id=FQC8EPYy834C&pg=PA353&dq=outputdebugstring&hl=en&sa=X&ei=lcksVI7JM9bGsQSdpoGACA&ved=0CDsQ6AEwBQ#v=onepage&q=outputdebugstring&f=false)). First the current error code is set to ``0x1234``. Then ``OutputDebugString`` is called with. An error occurs if a debugger is not attached to the application and current error code changes, otherwise there is no error and error code remains ``0x1234``. Later, last error code is retrieved by calling ``GetLastError``, if this value is not changed then we a debugger is attached to the application and string ``Sandboxes are fun to play in`` is xor-ed with blob. If there is not debugger string ``I can haz decode?`` is used.
+This is almost the exact listing 16-1 in page 353 of Practical Malware Analysis book ([Link to p.353 on Google Books](http://books.google.com/books?id=FQC8EPYy834C&pg=PA353&dq=outputdebugstring&hl=en&sa=X&ei=lcksVI7JM9bGsQSdpoGACA&ved=0CDsQ6AEwBQ#v=onepage&q=outputdebugstring&f=false)). First the current error code is set to ``0x1234``. Then ``OutputDebugString`` is called with. An error occurs if a debugger is not attached to the application and current error code changes, otherwise there is no error and error code remains ``0x1234``. Later, last error code is retrieved by calling ``GetLastError``, if this value is not changed then we a debugger is attached to the application and string ``Sandboxes are fun to play in`` is xor-ed with blob. If there is not debugger string ``I'm gonna sandbox your face`` is used.
 
 {% codeblock lang:nasm OutputDebugString %}
 if(debugger_is_attached):
     blob = xor(blob,"Sandboxes are fun to play in")
 else:
-    blob = xor(blob, "I can haz decode?")
+    blob = xor(blob, "I'm gonna sandbox your face")
 {% endcodeblock %}
 
-### Function 5 - 
+### Function 5 - I Can Haz Breakpoint?
 
 {% codeblock lang:nasm %}
 .text:00401B18 call    BeingDebugged
@@ -1567,9 +1567,398 @@ else:
 .text:00401B47 call    sub_4016F0
 {% endcodeblock %}
 
+![0xCC Check](/images/2014/flare/7-11.jpg/ "0xCC Check")
+
+Offsets from two functions are loaded and then compared. The first one calls ``isDebuggerPresent`` and the second one just prints something and exits.
+
+{% codeblock lang:nasm calls_isDebuggerPresent %}
+01030 calls_isDebuggerPresent proc near
+.text:00401030 push    esi
+.text:00401031 call    ds:IsDebuggerPresent
+.text:00401037 mov     esi, blob_length
+.text:0040103D xor     ecx, ecx
+.text:0040103F test    eax, eax
+.text:00401041 jz      short loc_401079
+{% endcodeblock %}
+
+{% codeblock lang:nasm sub401780 %}
+.text:00401780 sub_401780 proc near
+.text:00401780
+.text:00401780 arg_0= dword ptr  8
+.text:00401780
+.text:00401780 push    ebp
+.text:00401781 mov     ebp, esp
+.text:00401783 mov     eax, [ebp+arg_0]
+.text:00401786 push    eax
+.text:00401787 push    offset aBmoChopD ; "BMO Chop! [%d]\n"
+.text:0040178C call    _printf
+.text:00401791 add     esp, 8
+.text:00401794 push    0FFFFDCD7h      ; uExitCode
+.text:00401799 call    ds:ExitProcess
+.text:00401799 sub_401780 endp
+{% endcodeblock %}
+
+None of these functions are called. But their offsets are compared. If offset of ``calls_isDebuggerPresent`` bigger ``sub_401780`` then we jump down and string ``I can haz decode?`` is xor-ed with the blob. Otherwise we go right. **I am not quite sure what this check is for**. I think it is trying to find if calls to ``isDebuggerPresent`` are redirected or not (by the debugger?) as the address of the first function is ``0x401030`` and is smaller than ``0x401780``. If you know what this means please let me know and I will update this section. In all of my runs the jump does not happen and execution continues to the right.
+
+To the right we can see a pretty standard ``0xCC`` check. ``0xCC`` is the code for ``INT 3`` which is used by debuggers to set breakpoints. It is simply checking if ``0xCC`` bytes are present in the function code in a loop. If ``0xCC`` is present ``ecx`` is increased by 2, otherwise by one. In the end this number is compared with ``0x55`` and if not it will jump to left (same as above) and ``I can haz decode?`` is xor-ed with the blob. If the number is ``0x55`` the string ``Such fire. Much burn. Wow.`` is xor-ed with the blob.
+
+{% codeblock lang:python ICanHaz? %}
+if (calls_isDebuggerPresent.address > sub_401780.address) or (calls_isDebuggerPresent.has0xCC == True ):
+    blob = xor(blob,"I can haz decode?")
+else:
+    blob = xor(blob,"Such fire. Much burn. Wow.")
+{% endcodeblock %}
 
 
+### Function 6 - NtGlobalFlag
+
+{% codeblock lang:nasm %}
+.text:00401B18 call    BeingDebugged
+.text:00401B1D call    VMware_detection
+.text:00401B22 call    Electric_Boogaloo
+.text:00401B27 call    OutputDebugString
+.text:00401B2C call    ICanHaz?
+.text:00401B31 call    sub_4013F0       ; you are here
+.text:00401B36 call    sub_401460
+.text:00401B3B mov     eax, [esi]
+.text:00401B3D call    sub_4014F0
+.text:00401B42 call    sub_401590
+.text:00401B47 call    sub_4016F0
+{% endcodeblock %}
+
+This one is pretty straightforward. A field inside the ``PEB`` (we have already seen it) is called ``NtGlobalFlag``. This flag is at offset ``0x68`` in 32-bit versions of Windows (and ``0xBC`` for 64-bit). Usually it is set to zero but it can be changed. A process that is started by a debugger will have this field set to ``0x70``. To read more about it, please look at the [Anti-Debugging](http://pferrie.host22.com/papers/antidebug.pdf) reference.
+
+!["NtGlobalFlag Checked"](/images/2014/flare/7-12.jpg "NtGlobalFlag Checked")
+
+If ``NtGlobalFlag`` is ``0x70`` then ``0x09000001`` will be xor-ed with the blob, otherwise ``Feel the sting of the monarch!".
+
+{% codeblock lang:python NtGlobalFlag %}
+if (NtGlobalFlag == 0x70):
+    blob = xor(blob,"\x09\x00\x00\x01")
+else:
+    blob = xor(blob,"Feel the sting of the monarch!")
+{% endcodeblock %}
+
+### Function 7 - Sands of Time
+
+{% codeblock lang:nasm %}
+.text:00401B18 call    BeingDebugged
+.text:00401B1D call    VMware_detection
+.text:00401B22 call    Electric_Boogaloo
+.text:00401B27 call    OutputDebugString
+.text:00401B2C call    ICanHaz?
+.text:00401B31 call    NtGlobalFlag
+.text:00401B36 call    sub_401460     ; you are here
+.text:00401B3B mov     eax, [esi]
+.text:00401B3D call    sub_4014F0
+.text:00401B42 call    sub_401590
+.text:00401B47 call    sub_4016F0
+{% endcodeblock %}
+
+![Checking day of the week](/images/2014/flare/7-13.jpg "Checking day of the week")
+
+This is not a countermeasure but a simple check. First ``time64`` is called and returns the number of seconds since January 1st 1970. Then ``localtime64`` converts it to [readabled format](http://msdn.microsoft.com/en-us/library/bf12f0hc.aspx) stored in a structure of type ``tm`` according to MSDN:
+
+{% codeblock lang:cpp tm %}
+// each field is an int (4 bytes)
+
+tm_sec:     Seconds after minute (0 – 59).
+tm_min:     Minutes after hour (0 – 59).
+tm_hour:    Hours after midnight (0 – 23).
+tm_mday:    Day of month (1 – 31).
+tm_mon:     Month (0 – 11; January = 0).
+tm_year:    Year (current year minus 1900).
+tm_wday:    Day of week (0 – 6; Sunday = 0).
+tm_yday:    Day of year (0 – 365; January 1 = 0).
+tm_isdst:   Positive value if daylight saving time is in effect; 0 if daylight saving time is not in effect; negative value if status of daylight saving time is unknown.
+
+{% endcodeblock %}
+
+Next instruction ``cmp dword ptr [eax+18h], 5`` compares 24th (0x16) byte of the above structure with 5. Because each field is of type ``int``, 24th byte will be the day of the week. Sunday is 0, so Friday is 5. So the application simply checks if it is Friday. If so, it will xor ``! 50 1337`` with the blob and if it is not Friday blob will be xor-ed with ``1337``.
+
+{% codeblock lang:python Day of the week check %}
+if (Friday):
+    blob = xor(blob,"! 50 1337")
+else:
+    blob = xor(blob,"1337")
+{% endcodeblock %}
+
+### Function 8 - Backdoge.exe
+
+{% codeblock lang:nasm %}
+.text:00401B18 call    BeingDebugged
+.text:00401B1D call    VMware_detection
+.text:00401B22 call    Electric_Boogaloo
+.text:00401B27 call    OutputDebugString
+.text:00401B2C call    ICanHaz?
+.text:00401B31 call    NtGlobalFlag
+.text:00401B36 call    SandsOfTime
+.text:00401B3B mov     eax, [esi]   ; eax = executable's complete path
+.text:00401B3D call    sub_4014F0   ; you are here
+.text:00401B42 call    sub_401590
+.text:00401B47 call    sub_4016F0
+{% endcodeblock %}
+
+Before next function, executable's complete path is saved into ``eax``. Then ``sub_4014F0`` is called.
+
+![Comparing complete path with backdoge.exe](/images/2014/flare/7-14.jpg "Comparing complete path with backdoge.exe")
+
+Again, this is just a check. Executable's complete path is compared with ``backdoge.exe``. First character is compared, if they are the same (they will not be because complete path starts with the drive e.g. "C:\"), compared character from ``backdoge.exe`` is checked for being the null terminator. After which second characters are compared and so on.
+
+![Filename check](/images/2014/flare/7-15.jpg "Filename check")
+
+The rest is pretty easy. If filename check passes, string ``MATH IS HARD`` will be xor-ed with the blob and if not ``LETS GO SHOPPING``.
+
+{% codeblock lang:python Filename check %}
+if (filename == "BackDoge.exe"):
+    blob = xor(blob,"MATH IS HARD")
+else:
+    blob = xor(blob,"LETS GO SHOPPING")
+{% endcodeblock %}
+
+### Function 9 - Dogecoin.com IP Check
+
+{% codeblock lang:nasm %}
+.text:00401B18 call    BeingDebugged
+.text:00401B1D call    VMware_detection
+.text:00401B22 call    Electric_Boogaloo
+.text:00401B27 call    OutputDebugString
+.text:00401B2C call    ICanHaz?
+.text:00401B31 call    NtGlobalFlag
+.text:00401B36 call    SandsOfTime
+.text:00401B3B mov     eax, [esi]
+.text:00401B3D call    BackDoge
+.text:00401B42 call    sub_401590   ; you are here
+.text:00401B47 call    sub_4016F0
+{% endcodeblock %}
+
+Another check. This time the application retrieves the IP for ``www.dogecoin.com`` using [gethostbyname](http://msdn.microsoft.com/en-us/library/windows/desktop/ms738524%28v=vs.85%29.aspx). The result is of the form [hostent](http://msdn.microsoft.com/en-us/library/windows/desktop/ms738552%28v=vs.85%29.aspx):
+
+{% codeblock lang:cpp hostent structure (for Win32) %}
+typedef struct hostent {
+  char FAR      *h_name;        // index: 0
+  char FAR  FAR **h_aliases;    // index: 4 
+  short         h_addrtype;     // index: 8
+  short         h_length;       // index: 9
+  char FAR  FAR **h_addr_list;
+} HOSTENT, *PHOSTENT, FAR *LPHOSTENT;
+{% endcodeblock %}
+
+![Dogecoin.com IP](/images/2014/flare/7-16.jpg "Dogecoin.com IP")
+
+Then 8th byte will be compared with ``2`` which is ``h_addrtype``. According to this [stackoverflow answer](http://stackoverflow.com/q/2549461), it is ``AF_INET`` or ``PF_INET`` defined in [bits/socket.h](http://repo-genesis3.cbi.utsa.edu/crossref/ns-sli/usr/include/bits/socket.h.html).
+
+Next is converting the retrieved IP to ASCII IPv4 format (e.g. 192.168.0.1) and comparing it to ``127.0.0.1`` similar to filename check.
+
+![xor paths for ip check](/images/2014/flare/7-17.jpg "xor paths for ip check")
+
+The xor-string is ``SHOPPING IS HARD`` if the resolved IP address is not ``127.0.0.1``. If the IP address is ``127.0.0.1`` or ``h_addrtype`` is not ``2`` then ``LETS GO MATH`` will be xor-ed with the blob.
+
+{% codeblock lang:python Dogecoin.com IP check %}
+if (h_addrtype != 2 or (Dogecoin_ip == "127.0.0.1")):
+    blob = xor(blob,"LETS GO MATH")
+if (Dogecoin_ip != "127.0.0.1"):
+    blob = xor(blob,"SHOPPING IS HARD")
+{% endcodeblock %}
+
+### Function 10 - Hour of the Wolf
+
+{% codeblock lang:nasm %}
+.text:00401B18 call    BeingDebugged
+.text:00401B1D call    VMware_detection
+.text:00401B22 call    Electric_Boogaloo
+.text:00401B27 call    OutputDebugString
+.text:00401B2C call    ICanHaz?
+.text:00401B31 call    NtGlobalFlag
+.text:00401B36 call    SandsOfTime
+.text:00401B3B mov     eax, [esi]
+.text:00401B3D call    BackDoge
+.text:00401B42 call    IPCheck
+.text:00401B47 call    sub_4016F0   ; you are here
+{% endcodeblock %}
+
+![Hour check](/images/2014/flare/7-18.jpg "Hour check")
+
+Again, we see the familiar ``time64`` and ``localtime64`` calls. This time offset 8 of the ``tm`` structure (copied below) is compared with ``0x11`` or ``17``. This offset contains the number of hours after midnight, so the application is checking if it is between 5 and 6 PM.
+
+{% codeblock lang:cpp tm %}
+// each field is an int (4 bytes)
+
+tm_sec:     Seconds after minute (0 – 59).  ; index: 0
+tm_min:     Minutes after hour (0 – 59).    ; index: 4
+tm_hour:    Hours after midnight (0 – 23).  ; index: 8
+tm_mday:    Day of month (1 – 31).
+tm_mon:     Month (0 – 11; January = 0).
+tm_year:    Year (current year minus 1900).
+tm_wday:    Day of week (0 – 6; Sunday = 0).
+tm_yday:    Day of year (0 – 365; January 1 = 0).
+tm_isdst:   Positive value if daylight saving time is in effect; 0 if daylight saving time is not in effect; negative value if status of daylight saving time is unknown.
+
+{% endcodeblock %}
+
+If time check passes, blob is xor-ed with ``\x01\x02\x03\x05\x00\x78\x30\x38\x0d`` otherwise it will be xor-ed with ``\x07\x77``.
+
+{% codeblock lang:python Hour check %}
+if (Hour == 17)):   # Between 5 and 6 PM
+    blob = xor(blob,"\x01\x02\x03\x05\x00\x78\x30\x38\x0d")
+else:
+    blob = xor(blob,"\x07\x77")
+{% endcodeblock %}
+
+### Interlude - Fullpath xor
+
+{% codeblock lang:nasm %}
+.text:00401B3D call    BackDoge
+.text:00401B42 call    IPCheck
+.text:00401B47 call    HourCheck
+.text:00401B4C mov     ebx, blob_length ; you are here
+.text:00401B52 mov     edi, [esi]
+.text:00401B54 xor     ecx, ecx
+.text:00401B56 test    ebx, ebx
+.text:00401B58 jz      short loc_401B83
+.text:00401B5A lea     ebx, [ebx+0]
+.text:00401B60
+.text:00401B60 loc_401B60:                             ; CODE XREF: .text:00401B81j
+.text:00401B60 mov     eax, 0AAAAAAABh
+.text:00401B65 mul     ecx
+.text:00401B67 shr     edx, 3
+.text:00401B6A lea     eax, [edx+edx*2]
+.text:00401B6D add     eax, eax
+.text:00401B6F add     eax, eax
+.text:00401B71 mov     edx, ecx
+.text:00401B73 sub     edx, eax
+.text:00401B75 mov     al, [edx+edi]    ; Moving full path to al by character
+.text:00401B78 xor     blob[ecx], al    ; xor-ing full path with blob
+.text:00401B7E inc     ecx
+.text:00401B7F cmp     ecx, ebx
+.text:00401B81 jb      short loc_401B60 ; jump back up to xor the next char
+.text:00401B83
+.text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
+.text:00401B83 call    sub_4017A0
+.text:00401B88 call    sub_4018A0
+{% endcodeblock %}
+
+We finished the first 10 functions, YAY. Now we see that the full path of binary is xor-ed with the blob. However, **keep in mind that one of the checks compared full path with ``backdoge.exe``**.
+
+{% codeblock lang:python Fullpath xor %}
+blob = xor(blob, fullpath)
+{% endcodeblock %}
 
 
-(IsDebuggerPresent, , , 0xCC breakpoint check, , PEB.NTGlobalflag, , Day of the week, Current hour, Filename check, Internet connection check, IP address decryption, Twitter keyword decryption)
+### Function 11 - Internet Rootz
+
+{% codeblock lang:nasm %}
+.text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
+.text:00401B83 call    sub_4017A0       ; you are here
+.text:00401B88 call    sub_4018A0
+.text:00401B8D mov     ecx, [esi+4]
+.text:00401B90 movzx   edx, byte ptr [ecx]
+.text:00401B93 mov     blob, dl
+{% endcodeblock %}
+
+Two more functions. We're getting there.
+
+![Fetching IP for e.root-servers.net](/images/2014/flare/7-19.jpg "Fetching IP for e.root-servers.net")
+
+We have seen this type of code. This function pushes ``e.root-servers.net`` to stack and then calls ``gethostbyname`` to retrieve its IP ``192.203.230.10``. If the result is not zero, ``h_addrtype`` is checked for 2 (``AF_INET``) and then converted into ASCII format.
+
+![xor-ing IP with blob](/images/2014/flare/7-20.jpg "xor-ing IP with blob")
+
+The rest is pretty simple. ``192.203.230.10`` is xor-ed with the blob.
+
+{% codeblock lang:python Fullpath xor %}
+blob = xor(blob,"192.203.230.10")
+{% endcodeblock %}
+
+### Function 12 - jackRAT
+
+{% codeblock lang:nasm %}
+.text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
+.text:00401B83 call    InternetRootz
+.text:00401B88 call    sub_4018A0       ; you are here
+.text:00401B8D mov     ecx, [esi+4]
+.text:00401B90 movzx   edx, byte ptr [ecx]
+.text:00401B93 mov     blob, dl
+{% endcodeblock %}
+
+{% codeblock lang:nasm sub_4018A0 %}
+
+.text:004018A0 sub_4018A0 proc near
+.text:004018A0
+.text:004018A0 push    ebp
+.text:004018A1 mov     ebp, esp
+.text:004018A3 mov     eax, 1088h
+.text:004018A8 call    __alloca_probe
+.text:004018AD mov     eax, ___security_cookie
+.text:004018B2 xor     eax, ebp
+.text:004018B4 mov     [ebp+var_4], eax
+.text:004018B7 push    ebx
+.text:004018B8 xor     ebx, ebx
+.text:004018BA push    ebx             ; dwFlags - 0x00
+.text:004018BB push    ebx             ; lpszProxyBypass - 0x00
+.text:004018BC push    ebx             ; lpszProxy - 0x00
+.text:004018BD push    1               ; dwAccessType - INTERNET_OPEN_TYPE_DIRECT
+.text:004018BD                         ; Meaning direct access
+.text:004018BF push    offset szAgent  ; "ZBot"
+.text:004018C4 call    ds:InternetOpenW
+.text:004018CA mov     [ebp+var_1088], eax
+.text:004018D0 cmp     eax, ebx          ; If a NULL handle is returned (no internet connectivity) exit
+.text:004018D2 jnz     short loc_4018E5  ; otherwise jump to loc_4018E5
+.text:004018D4 xor     eax, eax
+.text:004018D6 pop     ebx
+.text:004018D7 mov     ecx, [ebp+var_4]
+.text:004018DA xor     ecx, ebp
+.text:004018DC call    @__security_check_cookie@4 ; __security_check_cookie(x)
+.text:004018E1 mov     esp, ebp
+.text:004018E3 pop     ebp             ; exit if NULL handle was retured
+.text:004018E4 ret
+{% endcodeblock %}
+
+We see [InternetOpen](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385096%28v=vs.85%29.aspx) called. This function initialises the WinINet functions. Agent name is ``ZBot`` which is an alternate name for the ``Zeus`` trojan horse. Access type is ``INTERNET_OPEN_TYPE_DIRECT`` which means direct access without the use of any proxies. If a NULL handle is returned then function will exit (line 28). If not it will jump to ``loc_4018E5`` (line 21).
+
+{% codeblock lang:nasm loc 4018E5 %}
+.text:004018E5 loc_4018E5:             ; dwContext
+.text:004018E5 push    ebx
+.text:004018E6 push    400100h         ; dwFlags
+.text:004018EB push    ebx             ; dwHeadersLength
+.text:004018EC push    ebx             ; lpszHeaders
+.text:004018ED lea     ecx, [ebp+szUrl]
+.text:004018F0 push    ecx             ; lpszUrl
+.text:004018F1 push    eax             ; hInternet
+.text:004018F2 mov     dword ptr [ebp+szUrl], 740068h
+.text:004018F9 mov     [ebp+var_78], 700074h
+.text:00401900 mov     [ebp+var_74], 3A0073h
+.text:00401907 mov     [ebp+var_70], 2F002Fh
+.text:0040190E mov     [ebp+var_6C], 770074h
+.text:00401915 mov     [ebp+var_68], 740069h
+.text:0040191C mov     [ebp+var_64], 650074h
+.text:00401923 mov     [ebp+var_60], 2E0072h
+.text:0040192A mov     [ebp+var_5C], 6F0063h
+.text:00401931 mov     [ebp+var_58], 2F006Dh
+.text:00401938 mov     [ebp+var_54], 690046h
+.text:0040193F mov     [ebp+var_50], 650072h
+.text:00401946 mov     [ebp+var_4C], 790045h
+.text:0040194D mov     [ebp+var_48], 2F0065h
+.text:00401954 mov     [ebp+var_44], 740073h
+.text:0040195B mov     [ebp+var_40], 740061h
+.text:00401962 mov     [ebp+var_3C], 730075h
+.text:00401969 mov     [ebp+var_38], 34002Fh
+.text:00401970 mov     [ebp+var_34], 340038h
+.text:00401977 mov     [ebp+var_30], 330030h
+.text:0040197E mov     [ebp+var_2C], 350033h
+.text:00401985 mov     [ebp+var_28], 350031h
+.text:0040198C mov     [ebp+var_24], 330035h
+.text:00401993 mov     [ebp+var_20], 310038h
+.text:0040199A mov     [ebp+var_1C], 360031h
+.text:004019A1 mov     [ebp+var_18], 300036h
+.text:004019A8 mov     [ebp+var_14], 38h
+.text:004019AF call    ds:InternetOpenUrlW
+.text:004019B5 mov     [ebp+hInternet], eax
+.text:004019BB cmp     eax, ebx
+.text:004019BD jz      loc_4018D4
+{% endcodeblock %}
+
+[InternetOpenUrl](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385098%28v=vs.85%29.aspx) opens a handle to a resource. ``dwFlags`` is set to ``0x00400100``. I could not find the exact meaning of this flag value. However, ``INTERNET_FLAG_KEEP_CONNECTION`` is ``0x00400000`` according to [this page](http://cpansearch.perl.org/src/JDB/Win32-Internet-0.087/WININET.H).
+
+(IsDebuggerPresent, Current hour,  Internet connection check, IP address decryption, Twitter keyword decryption)
 

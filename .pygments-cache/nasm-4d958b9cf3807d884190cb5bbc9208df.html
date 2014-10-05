@@ -1,0 +1,15 @@
+<div class="highlight"><pre><span class="nl">.text:</span><span class="err">00401780</span> <span class="nf">sub_401780</span> <span class="nv">proc</span> <span class="nv">near</span>
+<span class="nl">.text:</span><span class="err">00401780</span>
+<span class="nl">.text:</span><span class="err">00401780</span> <span class="nf">arg_0</span><span class="err">=</span> <span class="kt">dword</span> <span class="nv">ptr</span>  <span class="mi">8</span>
+<span class="nl">.text:</span><span class="err">00401780</span>
+<span class="nl">.text:</span><span class="err">00401780</span> <span class="nf">push</span>    <span class="nb">ebp</span>
+<span class="nl">.text:</span><span class="err">00401781</span> <span class="nf">mov</span>     <span class="nb">ebp</span><span class="p">,</span> <span class="nb">esp</span>
+<span class="nl">.text:</span><span class="err">00401783</span> <span class="nf">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">arg_0</span><span class="p">]</span>
+<span class="nl">.text:</span><span class="err">00401786</span> <span class="nf">push</span>    <span class="nb">eax</span>
+<span class="nl">.text:</span><span class="err">00401787</span> <span class="nf">push</span>    <span class="nv">offset</span> <span class="nv">aBmoChopD</span> <span class="c1">; &quot;BMO Chop! [%d]\n&quot;</span>
+<span class="nl">.text:</span><span class="err">0040178</span><span class="nf">C</span> <span class="nv">call</span>    <span class="nv">_printf</span>
+<span class="nl">.text:</span><span class="err">00401791</span> <span class="nf">add</span>     <span class="nb">esp</span><span class="p">,</span> <span class="mi">8</span>
+<span class="nl">.text:</span><span class="err">00401794</span> <span class="nf">push</span>    <span class="mh">0FFFFDCD7h</span>      <span class="c1">; uExitCode</span>
+<span class="nl">.text:</span><span class="err">00401799</span> <span class="nf">call</span>    <span class="nb">ds</span><span class="p">:</span><span class="nv">ExitProcess</span>
+<span class="nl">.text:</span><span class="err">00401799</span> <span class="nf">sub_401780</span> <span class="nv">endp</span>
+</pre></div>

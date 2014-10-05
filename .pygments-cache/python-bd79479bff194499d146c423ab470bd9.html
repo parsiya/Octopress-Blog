@@ -1,0 +1,5 @@
+<div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">Hour</span> <span class="o">==</span> <span class="mi">17</span><span class="p">)):</span>   <span class="c"># Between 5 and 6 PM</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span>\<span class="n">x01</span>\<span class="n">x02</span>\<span class="n">x03</span>\<span class="n">x05</span>\<span class="n">x00</span>\<span class="n">x78</span>\<span class="n">x30</span>\<span class="n">x38</span>\<span class="n">x0d</span><span class="err">”</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span>\<span class="n">x07</span>\<span class="n">x77</span><span class="err">”</span><span class="p">)</span>
+</pre></div>
