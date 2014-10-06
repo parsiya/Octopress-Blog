@@ -1,0 +1,20 @@
+<div class="highlight"><pre><span class="c1">// decoder1 and decoder3 omitted</span>
+
+<span class="k">public</span> <span class="kt">string</span> <span class="nf">decoder2</span><span class="p">(</span><span class="kt">string</span> <span class="n">encoded</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">string</span> <span class="n">str1</span> <span class="p">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="kt">string</span> <span class="n">str2</span> <span class="p">=</span> <span class="s">&quot;this&quot;</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">index</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">index</span> <span class="p">&lt;</span> <span class="n">encoded</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="p">++</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">str1</span> <span class="p">=</span> <span class="n">str1</span> <span class="p">+</span> <span class="p">(</span><span class="kt">object</span><span class="p">)</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="p">((</span><span class="kt">uint</span><span class="p">)</span> <span class="n">encoded</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">^</span> <span class="p">(</span><span class="kt">uint</span><span class="p">)</span> <span class="n">str2</span><span class="p">[</span><span class="n">index</span> <span class="p">%</span> <span class="n">str2</span><span class="p">.</span><span class="n">Length</span><span class="p">]);</span>
+  <span class="k">return</span> <span class="n">str1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="kt">string</span> <span class="nf">decoder4</span><span class="p">(</span><span class="kt">string</span> <span class="n">encoded</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">string</span> <span class="n">str1</span> <span class="p">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+  <span class="kt">string</span> <span class="n">str2</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">decoder2</span><span class="p">(</span><span class="s">&quot;\x001B\x0005\x000ES\x001D\x001BI\a\x001C\x0001\x001AS\0\0\fS\x0006\r\b\x001FT\a\a\x0016K&quot;</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">index</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">index</span> <span class="p">&lt;</span> <span class="n">encoded</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="p">++</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">str1</span> <span class="p">=</span> <span class="n">str1</span> <span class="p">+</span> <span class="p">(</span><span class="kt">object</span><span class="p">)</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="p">((</span><span class="kt">uint</span><span class="p">)</span> <span class="n">encoded</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">^</span> <span class="p">(</span><span class="kt">uint</span><span class="p">)</span> <span class="n">str2</span><span class="p">[</span><span class="n">index</span> <span class="p">%</span> <span class="n">str2</span><span class="p">.</span><span class="n">Length</span><span class="p">]);</span>
+  <span class="k">return</span> <span class="n">str1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>

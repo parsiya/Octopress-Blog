@@ -10,7 +10,7 @@ categories: [Reverse Engineering, FlareOn, Writeup]
 
 ---
 
-These are my solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this to document everything I tried. As a result, this post is somewhat long.
+These are my solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.
 
 If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.
 
@@ -133,11 +133,9 @@ for item in datsecret:
 print str1
 {% endcodeblock %}
 
-Flag:
-
-```
+{% codeblock Flag 1 %}
 3rmahg3rd.b0b.d0ge@flare-on.com
-```
+{% endcodeblock %}
 
 ---
 
@@ -149,11 +147,9 @@ Hopefully you'll knock this one out too, Good luck!
 
 -FLARE
 ```
-Inside the archive we have the following files:
+Inside the archive seems to be a copy of the original [http://flare-on.com](http://flare-on.com) with a launch date countdown timer. I will be calling the html page from the website ``original_html`` and the other one ``challenge_html``.
 
-This seems to be a copy of the original [https://flare-on.com](https://flare-on.com) with a launch date countdown timer. I will be calling the html page from the website ``original_html`` and the other one ``challenge_html``.
-
-{% codeblock %}
+{% codeblock lang:powershell %}
 -rwx------+ 1 TyRaX None 8378 home.html
 
 directory called "img" with one single png
@@ -163,7 +159,7 @@ directory called "img" with one single png
 ![challenge_html](/images/2014/flare/2-1.jpg "challenge_html")
 
 The original web page looks a bit different.
-{% codeblock %}
+{% codeblock lang:powershell %}
 -rwx------+ 1 TyRaX None 6254 The FLARE On Challenge.htm
 
 and
@@ -173,7 +169,7 @@ and
 
 ![original_html](/images/2014/flare/2-2.jpg "original_html")
 
-The timer through me off track. Is it really a countdown timer? When does it reach zero?  
+The timer threw me off track. Is it really a countdown timer? When does it reach zero?  
 I changed the time in my VM to mess with it but it synced up with host.  
 
 {% codeblock %}
@@ -192,7 +188,7 @@ Most differences are aesthetic. There are two interesting differences. In line 5
 -rwx------+ 1 TyRaX None 6596 Dec 18  2013 flare-on-V2.png
 ```
 
-The challenge png is bigger. I used ``HxD`` to compare these two files (as they are not text) and sure at the end of ``flare-on.png`` I saw some PHP code. To be honest I was thinking of steganography or some [Ange Albertini like magic](https://twitter.com/angealbertini). But I think that would have been too hard for level 2. Here is the PHP code (beautified):
+The challenge png is bigger. I used ``HxD`` to compare these two files (as they are not text) and sure at the end of ``flare-on.png`` I saw some PHP code. To be honest I was thinking of steganography or some [Ange Albertini magic](https://twitter.com/angealbertini). But I think that would have been too hard for level 2. Here is the PHP code (beautified):
 
 {% codeblock lang:php %}
 <?php 
@@ -269,11 +265,11 @@ print ''.join( chr(item) for item in mylist)
 
 Fortunately, we are done.
 
-```
+{% codeblock Flag 2 %}
 a11DOTthatDOTjava5crapATflareDASHonDOTcom
 or
 a11.that.java5crap@flare-on.com
-```
+{% endcodeblock %}
 
 ---
 
@@ -295,9 +291,9 @@ I cheated in this challenge. I just dropped the executable in ``Immunity Debugge
 
 ![Flag in memory](/images/2014/flare/3-2.jpg "Flag in memory")
 
-```
+{% codeblock Flag 3 %}
 such.5h311010101@flare-on.com
-```
+{% endcodeblock %}
 
 ---
 
@@ -398,8 +394,6 @@ Applying Filter FlateDecode ...
 Applying Filter ASCIIHexDecode ...
 Encoded Stream 1
 --------------------------------------------------------------------------------
-
-
     var HdPN = "";
     var zNfykyBKUZpJbYxaihofpbKLkIDcRxYZWhcohxhunRGf = "";
     
@@ -549,9 +543,9 @@ print hexlify( xor (ciphertext,plaintext) )
 
 Bingo. The key is ``BEEF``. It is also in the initial shellcode as a string. Let's xor it with the complete string and get the flag.
 
-```
+{% codeblock Flag 4 %}
 wa1ch.d3m.spl01ts@flare-on.com
-```
+{% endcodeblock %}
 
 ---
 
@@ -894,9 +888,9 @@ Notice the "o"? Now see that variable ``dword_100194F8`` needs to be 1 to reach 
 
 So we have ``m`` and then ``o``. If we follow the chain and then reverse it, we have the flag. The binary is a keylogger, it saves all keystrokes in ``svchost.log``.
 
-```
+{% codeblock Flag 5 %}
 l0gging.Ur.5tr0ke5@flare-on.com
-```
+{% endcodeblock %}
 
 ---
 
@@ -1059,9 +1053,6 @@ So this function calls ``ptrace``. To find out where this function is being call
 .text:000000000041F228 BF 29 23 00    mov     edi, 2329h
 .text:000000000041F22D E8 5E F5 03    call    sub_45E790
 
-
-
-
 {% endcodeblock %}
 
 Return value from ``ptrace`` is manipulated and then checked to see if it is zero. If it non-zero, the program continues to line 11 and prints the segfault message. As you have noticed I have enabled opcodes in the last code snippet. In IDA go to ``Option`` menu and then ``General``. Change the ``number of opcode bytes`` to the right. Line 12 calls syswrite and prints the segfault message (I have renamed it).
@@ -1210,7 +1201,6 @@ I patched it and continued. Application crashed a few times in between and I had
 [stack]:00007FFF3A5AC3B3  cmp     byte ptr [rax], 30h
 [stack]:00007FFF3A5AC3B6  jz      short loc_7FFF3A5AC3BA
 [stack]:00007FFF3A5AC3B8  jmp     rbx
-
 ...
 
 {% endcodeblock %}
@@ -1295,7 +1285,7 @@ l1nhax.hurt.u5.a1l@flaZZZZZZZZZZ
 
 Thanks [@Wartortell](https://twitter.com/Wartortell).
 
-{% codeblock Flag %}
+{% codeblock Flag 6 %}
 l1nhax.hurt.u5.a1l@flare-on.com
 {% endcodeblock %}
 
@@ -1350,15 +1340,9 @@ I was curious about these connections so I captured the traffic using ``Wireshar
 
 {% endcodeblock %}
 
-Query for ``www.dogecoin.com``, ``e.root-servers.net`` and ``www.twitter.com``. Then TLS handshake in lines 7-11 and finally a request to twitter (line 12) and reply (lines 13-14). Let's search for "twitter" in API Monitor and we see this ``InternetOpenUrlW ( 0x00cc0004, "https://twitter.com/FireEye/status/484033515538116608", NULL, 0, INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_PRAGMA_NOCACHE, 0 )``. It's a normal tweet about an
+Query for ``www.dogecoin.com``, ``e.root-servers.net`` and ``www.twitter.com``. Then TLS handshake in lines 7-11 and finally a request to twitter (line 12) and reply (lines 13-14). Let's search for "twitter" in API Monitor and we see this ``InternetOpenUrlW ( 0x00cc0004, "https://twitter.com/FireEye/status/484033515538116608", NULL, 0, INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_PRAGMA_NOCACHE, 0 )``. It's a normal tweet:
 
 ![When embed tweet plugins for Octopress don't work](/images/2014/flare/7-2.jpg "When embed tweet plugins for Octopress don't work")
-
-Looks like a normal tweet.
-
-I started with IDA. Eventually I reached this place where I saw tons of function calls.
-
-![Bad attempt at maymays](/images/2014/flare/7-3.jpg "Bad attempt at maymays")
 
 Because this challenge employ a good number of Anti-Debug/Anti-VM protections (I think that's what it is trying to teach). I will try to explain what I learned at each stage. Even after finishing the challenge I went back and looked at some steps again to learn more.
 
@@ -1370,8 +1354,57 @@ Here are some resources:
 
 * [Five Anti-Analysis Tricks That Sometimes Fool Analysts](https://blog.malwarebytes.org/intelligence/2014/09/five-anti-debugging-tricks-that-sometimes-fool-analysts/) was published when I was writing this post
 
+Find ``main`` and put a breakpoint on it. As we go through main we reach a bunch of function calls. Let's start with the first one.
 
-#### Function 1 - BeingDebugged?
+#### Function 1 - isDebuggerPresent?
+
+{% codeblock lang:nasm %}
+.text:00401B13 call    sub_401030   ; you are here
+.text:00401B18 call    sub_4010C0
+.text:00401B1D call    sub_401130
+.text:00401B22 call    sub_4011D0
+.text:00401B27 call    sub_4012A0
+.text:00401B2C call    sub_401350
+.text:00401B31 call    sub_4013F0
+.text:00401B36 call    sub_401460
+.text:00401B3B mov     eax, [esi]
+.text:00401B3D call    sub_4014F0
+.text:00401B42 call    sub_401590
+.text:00401B47 call    sub_4016F0
+
+{% endcodeblock %}
+
+![isDebuggerPresent](/images/2014/flare/7-3.jpg "isDebuggerPresent")
+
+The result of a function call ``isDebuggerPresent`` is compared with 0 by ``test eax, eax``. This function will return 1 if the application is being debugged. In our case it will return 1 and the jump fails. Before the compare we see a value `0x106240`` or ``1073728`` is loaded into ``esi``. On both sides we see a string being loaded and then we enter a loop. If we step through the loop and look at the xor line, we can see that it is xor-ing ``oh happy dayz`` with the data at ``byte_4131F8``. If we reach the end of the string it will restart from the first character. This loop will go on for ``1073728`` bytes which seems to be length of data starting at ``byte_4131F8``. I am going to rename it to ``blob`` and the number ``0x106240`` to ``blob_length``.
+
+If debugger is present, we go left and the string ``oh happy dayz`` is xor-ed with the blob. If no debugger is present, we jump to the right branch and string ``the final countdown`` is xor-ed with the ``blob``.
+
+{% codeblock lang:python isDebuggerPresent %}
+if (isDebuggerPresent):
+    blob = xor(blob,"oh happy dayz")
+else:
+    blob = xor(blob,"the final countdown")
+{% endcodeblock %}
+
+
+#### Function 2 - BeingDebugged?
+
+{% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
+.text:00401B18 call    sub_4010C0    ; you are here
+.text:00401B1D call    sub_401130
+.text:00401B22 call    sub_4011D0
+.text:00401B27 call    sub_4012A0
+.text:00401B2C call    sub_401350
+.text:00401B31 call    sub_4013F0
+.text:00401B36 call    sub_401460
+.text:00401B3B mov     eax, [esi]
+.text:00401B3D call    sub_4014F0
+.text:00401B42 call    sub_401590
+.text:00401B47 call    sub_4016F0
+
+{% endcodeblock %}
 
 Let's forget about the first compare and look at the outcome. Something is being compared with 1. If the compare succeeds then the first jump happens and we skip reseting ``var_4`` to zero. The next jump will only happen if ``var_4`` is zero which means that the last jump should not have happened. If the first compare succeeds (meaning ``[eax+2]`` is 1) then we go left and otherwise right.
 
@@ -1381,7 +1414,7 @@ In both cases a string ``UNACCEPTABLE!`` or ``omglob`` are loaded along with add
 
 ![blob](/images/2014/flare/7-5.jpg "blob")
 
-Looking inside ``sub_401000``. At the start ``0x106240`` or ``1073728`` decimal is loaded into ``ecx``. Then we enter a loop. If we step through the loop and look at the xor line, we can see that it is xor-ing ``UNACCEPTABLE!`` with the data at ``byte_4131F8``. If we reach the end of the string it will restart from the first character. This loop will go on for ``1073728`` bytes which seems to be length of data starting at ``byte_4131F8``. I am going to rename it to ``blob``. So ``sub_401000`` is ``string xor blob``.
+Looking inside ``sub_401000``. At the start ``blob_length`` is loaded into ``ecx``. Then we enter a loop. If we step through the loop and look at the xor line, we can see that it is xor-ing ``UNACCEPTABLE!`` with the data at ``byte_4131F8``. If we reach the end of the string it will restart from the first character. This loop will go on for ``1073728`` bytes which seems to be length of data starting at ``byte_4131F8``. So ``sub_401000`` is ``string xor blob``.
 
 ![xor function](/images/2014/flare/7-6.jpg "xor function")
 
@@ -1423,10 +1456,11 @@ else:
     blob = xor(blob,"omglob")
 {% endcodeblock %}
 
-#### Function 2 - VMware Detection via Red Pill
+#### Function 3 - VMware Detection via Red Pill
 
 {% codeblock lang:nasm %}
-
+.text:00401B13 call    isDebuggerPresent
+.text:00401B13 call    calls_isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    sub_401130       ; you are here
 .text:00401B22 call    sub_4011D0
@@ -1477,10 +1511,10 @@ else:
     blob = xor(blob,"you're so bad")
 {% endcodeblock %}
 
-#### Function 3 - WMware Detection 2: Electric Boogaloo
+#### Function 4 - WMware Detection 2: Electric Boogaloo
 
 {% codeblock lang:nasm %}
-
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    sub_4011D0       ; you are here
@@ -1524,9 +1558,10 @@ else:
     blob = xor(blob,0x66)
 {% endcodeblock %}
 
-### Function 4 - OutputDebugString
+### Function 5 - OutputDebugString
 
 {% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    Electric_Boogaloo
@@ -1551,9 +1586,10 @@ else:
     blob = xor(blob, "I'm gonna sandbox your face")
 {% endcodeblock %}
 
-### Function 5 - I Can Haz Breakpoint?
+### Function 6 - I Can Haz Breakpoint?
 
 {% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    Electric_Boogaloo
@@ -1610,9 +1646,10 @@ else:
 {% endcodeblock %}
 
 
-### Function 6 - NtGlobalFlag
+### Function 7 - NtGlobalFlag
 
 {% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    Electric_Boogaloo
@@ -1639,9 +1676,10 @@ else:
     blob = xor(blob,"Feel the sting of the monarch!")
 {% endcodeblock %}
 
-### Function 7 - Sands of Time
+### Function 8 - Sands of Time
 
 {% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    Electric_Boogaloo
@@ -1683,9 +1721,10 @@ else:
     blob = xor(blob,"1337")
 {% endcodeblock %}
 
-### Function 8 - Backdoge.exe
+### Function 9 - Backdoge.exe
 
 {% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    Electric_Boogaloo
@@ -1716,9 +1755,10 @@ else:
     blob = xor(blob,"LETS GO SHOPPING")
 {% endcodeblock %}
 
-### Function 9 - Dogecoin.com IP Check
+### Function 10 - Dogecoin.com IP Check
 
 {% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    Electric_Boogaloo
@@ -1761,9 +1801,10 @@ if (Dogecoin_ip != "127.0.0.1"):
     blob = xor(blob,"SHOPPING IS HARD")
 {% endcodeblock %}
 
-### Function 10 - Hour of the Wolf
+### Function 11 - Hour of the Wolf
 
 {% codeblock lang:nasm %}
+.text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
 .text:00401B22 call    Electric_Boogaloo
@@ -1805,7 +1846,7 @@ else:
     blob = xor(blob,"\x07\x77")
 {% endcodeblock %}
 
-### Interlude - Fullpath xor
+### Interlude - 12 - Fullpath xor
 
 {% codeblock lang:nasm %}
 .text:00401B3D call    BackDoge
@@ -1845,7 +1886,7 @@ blob = xor(blob, fullpath)
 {% endcodeblock %}
 
 
-### Function 11 - Internet Rootz
+### Function 13 - Internet Rootz
 
 {% codeblock lang:nasm %}
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
@@ -1870,7 +1911,7 @@ The rest is pretty simple. ``192.203.230.10`` is xor-ed with the blob.
 blob = xor(blob,"192.203.230.10")
 {% endcodeblock %}
 
-### Function 12 - jackRAT
+### Function 14 - jackRAT
 
 {% codeblock lang:nasm %}
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
@@ -1916,15 +1957,15 @@ blob = xor(blob,"192.203.230.10")
 
 We see [InternetOpen](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385096%28v=vs.85%29.aspx) called. This function initialises the WinINet functions. Agent name is ``ZBot`` which is an alternate name for the ``Zeus`` trojan horse. Access type is ``INTERNET_OPEN_TYPE_DIRECT`` which means direct access without the use of any proxies. If a NULL handle is returned then function will exit (line 28). If not it will jump to ``loc_4018E5`` (line 21).
 
-{% codeblock lang:nasm loc 4018E5 %}
+{% codeblock lang:nasm loc 4018E5 - InternetOpenUrl %}
 .text:004018E5 loc_4018E5:             ; dwContext
 .text:004018E5 push    ebx
 .text:004018E6 push    400100h         ; dwFlags
-.text:004018EB push    ebx             ; dwHeadersLength
-.text:004018EC push    ebx             ; lpszHeaders
+.text:004018EB push    ebx             ; dwHeadersLength - 0x00
+.text:004018EC push    ebx             ; lpszHeaders - 0x00
 .text:004018ED lea     ecx, [ebp+szUrl]
 .text:004018F0 push    ecx             ; lpszUrl
-.text:004018F1 push    eax             ; hInternet
+.text:004018F1 push    eax             ; hInternet - Handle from previous InternetOpen
 .text:004018F2 mov     dword ptr [ebp+szUrl], 740068h
 .text:004018F9 mov     [ebp+var_78], 700074h
 .text:00401900 mov     [ebp+var_74], 3A0073h
@@ -1951,14 +1992,353 @@ We see [InternetOpen](http://msdn.microsoft.com/en-us/library/windows/desktop/aa
 .text:00401993 mov     [ebp+var_20], 310038h
 .text:0040199A mov     [ebp+var_1C], 360031h
 .text:004019A1 mov     [ebp+var_18], 300036h
-.text:004019A8 mov     [ebp+var_14], 38h
-.text:004019AF call    ds:InternetOpenUrlW
+.text:004019A8 mov     [ebp+var_14], 38h   ; https://twitter.com/FireEye/status/484033515538116608
+.text:004019AF call    ds:InternetOpenUrlW ; open URL
 .text:004019B5 mov     [ebp+hInternet], eax
-.text:004019BB cmp     eax, ebx
-.text:004019BD jz      loc_4018D4
+.text:004019BB cmp     eax, ebx        ; ebx == 0x00 - check if eax is zero
+.text:004019BD jz      loc_4018D4      ; if (eax == 0 ) jump to loc_4018D4 (return immedi
 {% endcodeblock %}
 
-[InternetOpenUrl](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385098%28v=vs.85%29.aspx) opens a handle to a resource. ``dwFlags`` is set to ``0x00400100``. I could not find the exact meaning of this flag value. However, ``INTERNET_FLAG_KEEP_CONNECTION`` is ``0x00400000`` according to [this page](http://cpansearch.perl.org/src/JDB/Win32-Internet-0.087/WININET.H).
+[InternetOpenUrl](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385098%28v=vs.85%29.aspx) opens a handle to a resource. ``dwFlags`` is set to ``0x00400100``. I could not find the exact meaning of this flag value. However, according to [this page](http://msdn.microsoft.com/en-us/library/windows/desktop/aa383661%28v=vs.85%29.aspx) it could be the ``AND`` of two flags (does it work that way?):
 
-(IsDebuggerPresent, Current hour,  Internet connection check, IP address decryption, Twitter keyword decryption)
+{% codeblock 0x00400100 flag %}
 
+INTERNET_FLAG_KEEP_CONNECTION: 0x00400000
+Uses keep-alive semantics, if available, for the connection. 
+
+INTERNET_FLAG_PRAGMA_NOCACHE: 0x00000100
+Forces the request to be resolved by the origin server, 
+
+{% endcodeblock %}
+
+Lines 9 to 35 are saving the URL, we know what it is without even looking at it, we have seen it it Wireshark before. The URL is ``https://twitter.com/FireEye/status/484033515538116608``.
+
+![Fireeye tweet](/images/2014/flare/7-2.jpg "Fireeye tweet")
+
+Line 37 sees return value which is a "valid handle to the URL if the connection is successfully established, or NULL if the connection fails" and saves it. Then it is checked for being NULL, if so we will jump to ``loc_4018D4`` and function returns immediately. If we have a handle to the tweet, execution continues.
+
+{% codeblock lang:nasm loc 4019D6 - InternetReadFile %}
+.text:004019D6 loc_4019D6:
+.text:004019D6 lea     edx, [ebp+dwNumberOfBytesRead]
+.text:004019DC push    edx             ; lpdwNumberOfBytesRead - Pointer to variable that will hold number of bytes read
+.text:004019DD push    1000h           ; dwNumberOfBytesToRead - Number of bytes to read 0x1000 == 4096
+.text:004019E2 lea     ecx, [ebp+Buffer]
+.text:004019E8 push    ecx             ; lpBuffer - Buffer to hold the retrieved data
+.text:004019E9 push    eax             ; hFile - Handle from previous InternetOpenUrl call
+.text:004019EA call    ds:InternetReadFile ; Reading the first 4KBs of the tweet
+.text:004019F0 mov     edx, [ebp+dwNumberOfBytesRead]
+.text:004019F6 lea     eax, [edi+edx]
+.text:004019F9 push    eax             ; size_t
+.text:004019FA call    ??2@YAPAXI@Z    ; operator new(uint)
+.text:004019FF push    edi             ; size_t
+.text:00401A00 mov     esi, eax
+.text:00401A02 push    ebx             ; void *
+.text:00401A03 push    esi             ; void *
+.text:00401A04 call    _memcpy
+.text:00401A09 mov     ecx, [ebp+dwNumberOfBytesRead]
+.text:00401A0F push    ecx             ; size_t
+.text:00401A10 lea     edx, [ebp+Buffer]
+.text:00401A16 push    edx             ; void *
+.text:00401A17 lea     eax, [esi+edi]
+.text:00401A1A push    eax             ; void *
+.text:00401A1B call    _memcpy         ; Copy retrieved data to [eax]
+.text:00401A20 push    ebx             ; void *
+.text:00401A21 call    ??3@YAXPAX@Z    ; operator delete(void *)
+.text:00401A26 mov     eax, [ebp+dwNumberOfBytesRead]
+.text:00401A2C add     esp, 20h
+.text:00401A2F add     edi, eax
+.text:00401A31 mov     ebx, esi
+.text:00401A33 test    eax, eax         ; Keep reading until NumberofBytesRead is zero
+.text:00401A35 jnz     short loc_4019D0 ; if (NumberofBytesRead !=0 ) jump to loc_4019D0 to continue reading
+
+.text:004019D0 loc_4019D0:
+.text:004019D0 mov     eax, [ebp+hInternet] ; Back to the top to continue reading
+{% endcodeblock %}
+
+[InternetReadFile](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385103%28v=vs.85%29.aspx) retrieves the tweet. A buffer is created to hold the retrieved data. Documentation says "[a] normal read retrieves the specified dwNumberOfBytesToRead for each call to InternetReadFile until the end of the file is reached. To ensure all data is retrieved, an application must continue to call the InternetReadFile function until the function returns TRUE and the lpdwNumberOfBytesRead parameter equals zero." This is happening in lines 31-35. We keep reading until ``NumberofBytesRead`` is zero.
+
+After we are done, jump at line 32 is not taken and we land here:
+
+![Sifting through the tweet](/images/2014/flare/7-21.jpg "Sifting through the tweet")
+
+We retrieved the tweet. Now [strstr](http://msdn.microsoft.com/en-us/library/windows/desktop/bb773436%28v=vs.85%29.aspx) is called to find the first instance of ``Secluded Hi`` in the tweet. The return value is a point to the start of ``Secluded HijackRAT http://t.co/ckx18JHdkb ...``. The application adds ``0x0B`` or 11 to the start of the string to skip ``Secluded Hi`` and point to ``jackRAT http://t.co/ckx18JHdkb ...``. A new 8 character buffer is created and passed to [strncpy](http://msdn.microsoft.com/en-us/library/xdsywd25.aspx). ``strncpy`` is called to copy 7 bytes from the start to the newly created buffer which will be ``jackRAT``. The rest is simple, ``jackRAT`` is xor-ed with the blob and finally [InternetCloseHandle](http://msdn.microsoft.com/en-us/library/windows/desktop/aa384350%28v=vs.85%29.aspx) is called three times to close the three function calls.
+
+![xor(blob,"jackRAT")](/images/2014/flare/7-22.jpg "xor(blob,"jackRAT")
+
+{% codeblock lang:python jackRAT xor %}
+blob = xor(blob,"jackRAT")
+{% endcodeblock %}
+
+### Are we there yet? gratz but not yet
+
+{% codeblock lang:nasm %}
+.text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
+.text:00401B83 call    InternetRootz
+.text:00401B88 call    jackRAT
+.text:00401B8D mov     ecx, [esi+4]          ; you are here
+.text:00401B90 movzx   edx, byte ptr [ecx]   ; application crashes here if no arguments are provided
+.text:00401B93 mov     blob, dl              ; blob[0] = arg1[0]; first character of arg1 written to blob
+.text:00401B99 mov     eax, [esi+4]
+.text:00401B9C mov     cl, [eax+1]           ; cl = arg1[1]; second character of arg1
+.text:00401B9F mov     byte_4131F9, cl       ; blob[1] = arg1[1];
+.text:00401BA5 mov     edx, [esi+8]          ; edx = *(arg2);
+.text:00401BA8 mov     al, [edx]             ; al = arg2[0];
+.text:00401BAA mov     byte_413278, al       ; blob[0x80] = arg2[0]; 413278 - 413F9 = 0x7F
+.text:00401BAF mov     ecx, [esi+8]          ; ecx = *(arg2);
+.text:00401BB2 movzx   edx, byte ptr [ecx+1] ; edx = arg2[1];
+.text:00401BB6 lea     eax, [ebp-10h]
+.text:00401BB9 push    offset aWb            ; mode: "wb" - write in binary mode
+.text:00401BBE push    eax                   ; push current path
+.text:00401BBF mov     byte_413279, dl       ; blob[0x81] = arg2[1];
+.text:00401BC5 mov     dword ptr [ebp-10h], 74617267h
+.text:00401BCC mov     dword ptr [ebp-0Ch], 78652E7Ah
+.text:00401BD3 mov     word ptr [ebp-8], 65h ; "gratz.exe" saved in [ebp-10]
+.text:00401BD9 call    _fopen                ; fopen(filename="currentpath\gratz.exe",mode="wb"); Open if exists and if not create it
+
+.text:00401BDE mov     ecx, blob_length
+.text:00401BE4 mov     esi, eax              ; *(gratz.exe)
+.text:00401BE6 push    esi                   ; FILE = *(gratz.exe)
+.text:00401BE7 push    ecx                   ; size = blob length
+.text:00401BE8 push    1                     ; count = 1
+.text:00401BEA push    offset blob           ; buffer = *(blob)
+.text:00401BEF call    _fwrite               ; fwrite( *(blob), 1, blob_length, *(gratz.exe) ); Write blob to gratz.exe
+
+.text:00401BF4 push    esi                   ; push *(gratz.exe)
+.text:00401BF5 call    _fclose               ; fclose( *(gratz.exe) ); Close gratz.exe
+
+.text:00401BFA lea     edx, [ebp-10h]        ; edx = "gratz.exe"
+.text:00401BFD push    edx
+.text:00401BFE call    _system               ; system("gratz.exe"); Execute gratz.exe
+.text:00401C03 mov     ecx, [ebp-4]
+
+{% endcodeblock %}
+
+The application crashed in line 5 over and over again. When I looked inside ecx I saw empty space but looking around I saw the application's complete path. After a while I realized that it is trying to read arguments. The rest is obvious from the code. First two characters of rist argument are written over the first two characters of the blob. First and second characters of second argument are written at offset ``0x80``.
+
+Then [fopen](http://msdn.microsoft.com/en-us/library/yeby3zcb.aspx) is called to create/open a file named ``gratz.exe`` for writing in binary mode ("wb"). Then blob is written to it by calling [fwrite](http://msdn.microsoft.com/en-us/library/h9t88zwz.aspx) and finally it is closed with [fclose](http://msdn.microsoft.com/en-us/library/fxfsw25t.aspx). Then command ``gratz.exe`` is run via the [system](http://msdn.microsoft.com/en-us/library/277bwbdz.aspx) call. So we are writing the blob to a file and then executing it.
+
+What is special about first two bytes in a Windows binary? It's the start of the DOS stub with the magic bytes ``MZ`` and you have already guessed that the second argument should be ``PE``.
+
+### How do I XOR?
+
+But how do we get the correct binary. As we have already seen, there are a series of checks and depending on the checks, different strings are xor-ed with the original blob. A correct sequence of strings will produce a correct binary. The path is probably known at this point, just bypass any Anti-VM/Anti-Debug countermeasures and other checks. But I am lazy and instead wrote a bruteforcer. In order for the bruteforcer to work, we need the original blob before any xors. That is easy. Set a breakpoint before any of the functions. Then set the Instruction Pointer to ``00401B8D`` and step through. Stop before the ``system`` call and copy the ``gratz.exe`` file.
+
+Here's my bruteforcer. This is not good code but at this point I just wanted to finish.
+
+{% codeblock lang:python bruteforcer %}
+
+key1={}
+key1[0]='oh happy dayz'
+key1[1]='the final countdown'
+ 
+key2={}
+key2[0]='UNACCEPTABLE!'
+key2[1]='omglob'
+ 
+key3={}
+key3[0]='you\x27re so good'
+key3[1]='you\x27re so bad'
+ 
+key4={}
+key4[0]='\x66'
+key4[1]='\x01'
+ 
+key5={}
+key5[0]='Sandboxes are fun to play in'
+key5[1]='I\x27m gonna sandbox your face'
+ 
+key6={}
+key6[0]='I can haz decode?'
+key6[1]='Such fire. Much burn. Wow.'
+ 
+key7={}
+key7[0]='\x09\x00\x00\x01'
+key7[1]='Feel the sting of the Monarch!'
+ 
+key8={}
+key8[0]='! 50 1337'
+key8[1]='1337'
+ 
+key9={}
+key9[0]='LETS GO SHOPPING'
+key9[1]='MATH IS HARD'
+ 
+key10={}
+key10[0]='LETS GO MATH'
+key10[1]='SHOPPING IS HARD'
+ 
+key11={}
+key11[0]='\x01\x02\x03\x05\x00\x78\x30\x38\x0d'
+key11[1]='\x07\x77'
+
+key12={}
+key12[0]="backdoge.exe"
+key12[1]="\x00"
+ 
+key13={}
+key13[0]='192.203.230.10'
+key13[1]='\x00'
+ 
+key14={}
+key14[0]='\x00'
+key14[1]='jackRAT'
+
+index={}
+for i in xrange(15):
+    index[i] = 0
+
+
+# we want this to support variable length keys
+# so if the key is smaller than data, it will wrap around
+def xor(mydata,mykey):
+    keylen = len(mykey)
+    datalen = len(mydata)
+    
+    # easier to just extend the key array, but probably not that memory efficient
+    # not that we care about it here ;)
+    key = mykey * ( (datalen/keylen)+1 ) 
+    
+    return ''.join(chr(ord(a) ^ ord(b)) for a,b in zip(mydata,key))
+
+
+from binascii import hexlify, unhexlify
+
+myfile = file('c:\\extractedgratz.exe','rb')
+
+wholefile = myfile.read()
+
+out = wholefile[:0x10]
+
+myfile.close()
+
+
+counter = 0
+
+for index[1] in xrange(2):
+  for index[2] in xrange(2):
+    for index[3] in xrange(2):
+      for index[4] in xrange(2):
+        for index[5] in xrange(2):
+          for index[6] in xrange(2):
+            for index[7] in xrange(2):
+              for index[8] in xrange(2):
+                for index[9] in xrange(2):
+                  for index[10] in xrange(2):
+                    for index[11] in xrange(2):
+                      for index[12] in xrange(2):
+                        for index[13] in xrange(2):
+                          for index[14] in xrange(2):
+                            out = xor(out,key1[index[1]])
+                            out = xor(out,key2[index[2]])
+                            out = xor(out,key3[index[3]])
+                            out = xor(out,key4[index[4]])
+                            out = xor(out,key5[index[5]])
+                            out = xor(out,key6[index[6]])
+                            out = xor(out,key7[index[7]])
+                            out = xor(out,key8[index[8]])
+                            out = xor(out,key9[index[9]])
+                            out = xor(out,key10[index[10]])
+                            out = xor(out,key11[index[11]])
+                            out = xor(out,key12[index[12]])
+                            out = xor(out,key13[index[13]])
+                            out = xor(out,key14[index[14]])
+                            
+                            if ( out[0]=='M' and out[1]=='Z'):
+                              print "Found it"
+                              print out
+                              print hexlify(out)
+                          
+                              out = wholefile
+                              
+                              out = xor(out,key1[ind1])
+                              out = xor(out,key2[ind2])
+                              out = xor(out,key3[ind3])
+                              out = xor(out,key4[ind4])
+                              out = xor(out,key5[ind5])
+                              out = xor(out,key6[ind6])
+                              out = xor(out,key7[ind7])
+                              out = xor(out,key8[ind8])
+                              out = xor(out,key9[ind9])
+                              out = xor(out,key10[ind10])
+                              out = xor(out,key11[ind11])
+                              out = xor(out,key13[ind13])
+                              out = xor(out,key14[ind14])
+                              out = xor(out,'backdoge.exe')
+                          
+                              decodedfilename = "c:\\gratz" + str(counter) + ".exe"
+                              decodedfile = file(decodedfilename,'wb')
+                              decodedfile.write(out)
+                              decodedfile.close()
+                                
+                            # be sure to reset the wholefile after reading it, thanks Curtis :)                                                                  
+                            out = wholefile[:0x10]
+                            counter +=1
+
+{% endcodeblock %}
+
+It's a bad bruteforcer but it does the job. To speed things up, it only performs the xor-es with the first ``0x80`` bytes of the binary which is the ``DOS Stub``. In the end, it compares the first two bytes with ``MZ`` and then xor-es the whole binary before writing it to a file.
+
+I got two files and after opening them in hex editors, one was clearly a false positive. I ran the correct binary.
+
+![Almost done](/images/2014/flare/7-23.jpg "Almost done")
+
+But we cannot see the email. Augh. This is a .NET application. We need to decompile it like the first challenge.
+
+{% codeblock lang:c# Decompiled gratz.exe %}
+public Form1()
+{
+  this.InitializeComponent();
+  new Thread(new ThreadStart(this.lulzors)).Start();
+}
+
+public void lulzors()
+{
+  lulz lulz = new lulz();
+  Thread thread = new Thread(new ThreadStart(lulz.datwork));
+  thread.Start();
+  do
+    ;
+  while (thread.IsAlive);
+  this.label2.Text = lulz.decoder4("\v\fP\x000E\x000FBA\x0006\rG\x0015I\x001A\x0001\x0016H\\\t\b\x0002\x0013/\b\t^\x001D\bJO\a]C\x001B\x0005");
+}
+
+{% endcodeblock %}
+
+And inside ``lulz.cs``.
+
+{% codeblock lang:c# lulz.cs %}
+// decoder1 and decoder3 omitted
+
+public string decoder2(string encoded)
+{
+  string str1 = "";
+  string str2 = "this";
+  for (int index = 0; index < encoded.Length; ++index)
+    str1 = str1 + (object) (char) ((uint) encoded[index] ^ (uint) str2[index % str2.Length]);
+  return str1;
+}
+
+public string decoder4(string encoded)
+{
+  string str1 = "";
+  string str2 = this.decoder2("\x001B\x0005\x000ES\x001D\x001BI\a\x001C\x0001\x001AS\0\0\fS\x0006\r\b\x001FT\a\a\x0016K");
+  for (int index = 0; index < encoded.Length; ++index)
+    str1 = str1 + (object) (char) ((uint) encoded[index] ^ (uint) str2[index % str2.Length]);
+  return str1;
+}
+
+{% endcodeblock %}
+
+We can either write code or paste it into an online C# compiler. In the end we have the flag:
+
+{% codeblock Flag 7 %}
+da7.f1are.finish.lin3@flare-on.com
+{% endcodeblock %}
+
+And the email:
+
+```
+Alright, we give in. You've done it. Your reversing-fu is strong.
+I'll pass your info on to the FLARE team and someone will be in touch.
+-FLARE
+```
