@@ -4,7 +4,7 @@
   <title><![CDATA[Category: CSS | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/css/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2014-10-05T20:31:39-04:00</updated>
+  <updated>2014-10-07T02:42:33-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -20,7 +20,7 @@
     <id>http://parsiya.net/blog/amazon-s3-and-css</id>
     <content type="html"><![CDATA[<p>After I deployed my blog to Amazon S3, I realized that there was no CSS applied to the pages. In Octopress, the look and feel of website is managed by <code>stylesheets/screen.css</code>. It was fine in <code>rake preview</code> but not on the S3 bucket. I looked around for a few hours to no avail. There was one other person who had the same issue on <a href="http://stackoverflow.com/questions/17138615/discrepency-in-rake-preview-vs-rake-deploy">stackoverflow</a> but no answers. Relevant <a href="https://xkcd.com/979/">xkcd</a>:</p>
 
-<p>{% img center http://imgs.xkcd.com/comics/wisdom_of_the_ancients.png Wisdom of the Ancients %}</p>
+<p><img class="center" src="http://imgs.xkcd.com/comics/wisdom_of_the_ancients.png" title="Wisdom of the Ancients" ></p>
 
 <p>I finally found my answer. There are other static websites out there so I removed Octopress from my search terms (facepalm! I got my first MSc. in query expansion). This <a href="http://stackoverflow.com/a/14807743">stackoverflow answer</a> sent me to <a href="http://www.adamwilcox.org/2012/05/04/css-on-amazon-s3/">Adam Wilcox’s website</a> and saved the day. Thanks Adam.</p>
 
