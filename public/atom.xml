@@ -4,7 +4,7 @@
   <title><![CDATA[Parsiya's Den]]></title>
   <link href="http://parsiya.net/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2014-10-07T02:42:33-04:00</updated>
+  <updated>2014-11-22T21:55:26-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -12,6 +12,78 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Building Memfetch on Kali + Comments]]></title>
+    <link href="http://parsiya.net/blog/2014-11-18-building-memfetch-on-kali/"/>
+    <updated>2014-11-18T23:21:01-05:00</updated>
+    <id>http://parsiya.net/blog/building-memfetch-on-kali</id>
+    <content type="html"><![CDATA[<p>I’ve used Disqus to add comments. At the moment, guests can comment and comments do not need to be approved (unless they have links). Hopefully there won’t be much spam to sink the ocassional comment that I think will be posted.</p>
+
+<p>Note: I just wanted to make it work in a hurry. There are probably better ways of doing this.</p>
+
+<p>I stumbled upon the very useful tool <a href="http://lcamtuf.coredump.cx/soft/memfetch.tgz">memfetch</a> by the talented <em>lcamtuf</em>. The utility is quite old (from 2003 if I recall correctly) and I could not build it using the provided makefile.</p>
+
+<!-- more -->
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>make
+</span><span class="line">gcc -Wall -O9    memfetch.c   -o memfetch
+</span><span class="line">memfetch.c:30:22: fatal error: asm/page.h: No such file or directory
+</span><span class="line">compilation terminated.
+</span><span class="line">make: *** <span class="o">[</span>memfetch<span class="o">]</span> Error 1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Seems like the location of header files have moved since then. <a href="http://stackoverflow.com/a/19310710">This stackoverflow answer</a> mentions removing <code>asm/page.h</code> and adding <code>linux/types.h</code>. Let’s see what happens now:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>make
+</span><span class="line">gcc -Wall -O9    memfetch.c   -o memfetch
+</span><span class="line">memfetch.c: In <span class="k">function</span> ‘main’:
+</span><span class="line">memfetch.c:284:25: error: ‘PAGE_SIZE’ undeclared <span class="o">(</span>first use in this <span class="k">function</span><span class="o">)</span>
+</span><span class="line">memfetch.c:284:25: note: each undeclared identifier is reported only once <span class="k">for </span>each <span class="k">function </span>it appears in
+</span><span class="line">make: *** <span class="o">[</span>memfetch<span class="o">]</span> Error 1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>page.h</code> file is located at <code>/usr/src/linux-headers-3.12-kali1-common/include/asm-generic/page.h</code> on Kali linux. This is where <code>PAGE_SIZE</code> is defined. Just adding it to <code>memfetch.c</code> along with changing <code>#include &lt;asm/page.h&gt;</code> to <code>#include &lt;linux/types.h&gt;</code> will do the trick.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">// #include &lt;asm/page.h&gt;
+</span><span class="line">#include &lt;linux/types.h&gt;
+</span><span class="line">
+</span><span class="line">// Copied from asm-generic/page.h
+</span><span class="line">/* PAGE_SHIFT determines the page size */
+</span><span class="line">#define PAGE_SHIFT	12
+</span><span class="line">#ifdef __ASSEMBLY__
+</span><span class="line">#define PAGE_SIZE	(1 &lt;&lt; PAGE_SHIFT)
+</span><span class="line">#else
+</span><span class="line">#define PAGE_SIZE	(1UL &lt;&lt; PAGE_SHIFT)
+</span><span class="line">#endif
+</span><span class="line">#define PAGE_MASK	(~(PAGE_SIZE-1))</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>If there is a better way to make this work, please let me know.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[My Adventure With Fireeye FLARE Challenge]]></title>
@@ -22,11 +94,17 @@
 
 <p>If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.</p>
 
-<p>I am a bit late to the party. There were two solutions posted. Check them out.</p>
+<p>I am a bit late to the party. There <del>were two</del> are now other three solutions posted (that I know of). Check them out.</p>
 
 <ul>
   <li><a href="https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge">Detailed Solutions to FireEye FLARE Challenge</a></li>
   <li><a href="http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html">A Walk through for FLARE RE Challenges</a></li>
+  <li>The FLARE On Challenge Solutions by Fireye
+    <ul>
+      <li><a href="http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html">Part 1 - solutions for challenges 1 to 5</a></li>
+      <li><a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html">Part 2 - solutions for challenges 6 and 7</a></li>
+    </ul>
+  </li>
 </ul>
 
 <!-- more -->

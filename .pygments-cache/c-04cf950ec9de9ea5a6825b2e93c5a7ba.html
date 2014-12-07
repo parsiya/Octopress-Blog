@@ -1,0 +1,9 @@
+<div class="highlight"><pre><span class="cm">/* PAGE_SHIFT determines the page size */</span>
+<span class="cp">#define PAGE_SHIFT	12</span>
+<span class="cp">#ifdef &lt;strong&gt;ASSEMBLY&lt;/strong&gt;</span>
+<span class="cp">#define PAGE_SIZE	(1 « PAGE_SHIFT)</span>
+<span class="cp">#else</span>
+<span class="cp">#define PAGE_SIZE	(1UL « PAGE_SHIFT)</span>
+<span class="cp">#endif</span>
+<span class="cp">#define PAGE_MASK	(~(PAGE_SIZE-1))</span>
+</pre></div>

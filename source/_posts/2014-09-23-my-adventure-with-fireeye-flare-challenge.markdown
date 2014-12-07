@@ -2,7 +2,6 @@
 layout: post
 title: "My Adventure with Fireeye FLARE Challenge"
 date: 2014-10-07 02:31:44 -0400
-# change the date later
 comments: true
 categories: [Reverse Engineering, FlareOn, Writeup]
 
@@ -12,10 +11,13 @@ These are my (rather long) solutions to Fireeye's FLARE challenge. This is just 
 
 If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.
 
-I am a bit late to the party. There were two solutions posted. Check them out.
+I am a bit late to the party. There <del>were two</del> are now other three solutions posted (that I know of). Check them out.
 
 * [Detailed Solutions to FireEye FLARE Challenge](https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge)
 * [A Walk through for FLARE RE Challenges](http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html)
+* The FLARE On Challenge Solutions by Fireye
+  - [Part 1 - solutions for challenges 1 to 5](http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html)
+  - [Part 2 - solutions for challenges 6 and 7](https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html)
 
 <!-- more -->
 

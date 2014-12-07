@@ -4,7 +4,7 @@
   <title><![CDATA[Category: FlareOn | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/flareon/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2014-10-07T02:42:33-04:00</updated>
+  <updated>2014-11-22T21:55:26-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -22,11 +22,17 @@
 
 <p>If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.</p>
 
-<p>I am a bit late to the party. There were two solutions posted. Check them out.</p>
+<p>I am a bit late to the party. There <del>were two</del> are now other three solutions posted (that I know of). Check them out.</p>
 
 <ul>
   <li><a href="https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge">Detailed Solutions to FireEye FLARE Challenge</a></li>
   <li><a href="http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html">A Walk through for FLARE RE Challenges</a></li>
+  <li>The FLARE On Challenge Solutions by Fireye
+    <ul>
+      <li><a href="http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html">Part 1 - solutions for challenges 1 to 5</a></li>
+      <li><a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html">Part 2 - solutions for challenges 6 and 7</a></li>
+    </ul>
+  </li>
 </ul>
 
 <!-- more -->
