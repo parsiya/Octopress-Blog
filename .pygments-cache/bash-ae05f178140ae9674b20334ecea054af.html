@@ -1,0 +1,35 @@
+<div class="highlight"><pre><span class="nv">$ </span>gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1...done.
+<span class="o">(</span>gdb<span class="o">)</span> <span class="nb">break </span>strncmp
+Breakpoint 1 at 0x8048350
+<span class="o">(</span>gdb<span class="o">)</span> r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz
+
+Breakpoint 1, __strncmp_ssse3 <span class="o">()</span>
+    at ../sysdeps/i386/i686/multiarch/strcmp-ssse3.S:65
+65	../sysdeps/i386/i686/multiarch/strcmp-ssse3.S: No such file or directory.
+<span class="o">(</span>gdb<span class="o">)</span> disass
+Dump of assembler code <span class="k">for function </span>__strncmp_ssse3:
+<span class="o">=</span>&gt; 0xb7f82b80 &lt;+0&gt;:	push   ebp
+   0xb7f82b81 &lt;+1&gt;:	mov    edx,DWORD PTR <span class="o">[</span>esp+0x8<span class="o">]</span>
+   0xb7f82b85 &lt;+5&gt;:	mov    eax,DWORD PTR <span class="o">[</span>esp+0xc<span class="o">]</span>
+   0xb7f82b89 &lt;+9&gt;:	mov    ebp,DWORD PTR <span class="o">[</span>esp+0x10<span class="o">]</span>
+   0xb7f82b8d &lt;+13&gt;:	cmp    ebp,0x10
+   0xb7f82b90 &lt;+16&gt;:	jb     0xb7f843d0 &lt;__strncmp_ssse3+6224&gt;
+   0xb7f82b96 &lt;+22&gt;:	mov    ecx,edx
+   0xb7f82b98 &lt;+24&gt;:	and    ecx,0xfff
+   0xb7f82b9e &lt;+30&gt;:	cmp    ecx,0xff0
+   0xb7f82ba4 &lt;+36&gt;:	ja     0xb7f82bfa &lt;__strncmp_ssse3+122&gt;
+   0xb7f82ba6 &lt;+38&gt;:	mov    ecx,eax
+   0xb7f82ba8 &lt;+40&gt;:	and    ecx,0xfff
+   0xb7f82bae &lt;+46&gt;:	cmp    ecx,0xff0
+   0xb7f82bb4 &lt;+52&gt;:	ja     0xb7f82bfa &lt;__strncmp_ssse3+122&gt;
+   0xb7f82bb6 &lt;+54&gt;:	pxor   xmm0,xmm0
+   0xb7f82bba &lt;+58&gt;:	movlpd xmm1,QWORD PTR <span class="o">[</span>eax<span class="o">]</span>
+   0xb7f82bbe &lt;+62&gt;:	movlpd xmm2,QWORD PTR <span class="o">[</span>edx<span class="o">]</span>
+   0xb7f82bc2 &lt;+66&gt;:	movhpd xmm1,QWORD PTR <span class="o">[</span>eax+0x8<span class="o">]</span>
+   0xb7f82bc7 &lt;+71&gt;:	movhpd xmm2,QWORD PTR <span class="o">[</span>edx+0x8<span class="o">]</span>
+   0xb7f82bcc &lt;+76&gt;:	pcmpeqb xmm0,xmm1
+   0xb7f82bd0 &lt;+80&gt;:	pcmpeqb xmm1,xmm2
+   0xb7f82bd4 &lt;+84&gt;:	psubb  xmm1,xmm0
+</pre></div>

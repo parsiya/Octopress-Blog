@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Kali | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/kali/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2014-11-22T21:55:26-05:00</updated>
+  <updated>2014-12-09T01:47:40-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -26,60 +26,41 @@
 
 <!-- more -->
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>make
-</span><span class='line'>gcc -Wall -O9    memfetch.c   -o memfetch
-</span><span class='line'>memfetch.c:30:22: fatal error: asm/page.h: No such file or directory
-</span><span class='line'>compilation terminated.
-</span><span class='line'>make: *** <span class="o">[</span>memfetch<span class="o">]</span> Error 1
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:bash %}
+$ make
+gcc -Wall -O9    memfetch.c   -o memfetch
+memfetch.c:30:22: fatal error: asm/page.h: No such file or directory
+compilation terminated.
+make: *** [memfetch] Error 1
+{% endcodeblock %}</p>
 
 <p>Seems like the location of header files have moved since then. <a href="http://stackoverflow.com/a/19310710">This stackoverflow answer</a> mentions removing <code>asm/page.h</code> and adding <code>linux/types.h</code>. Let’s see what happens now:</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>make
-</span><span class='line'>gcc -Wall -O9    memfetch.c   -o memfetch
-</span><span class='line'>memfetch.c: In <span class="k">function</span> ‘main’:
-</span><span class='line'>memfetch.c:284:25: error: ‘PAGE_SIZE’ undeclared <span class="o">(</span>first use in this <span class="k">function</span><span class="o">)</span>
-</span><span class='line'>memfetch.c:284:25: note: each undeclared identifier is reported only once <span class="k">for </span>each <span class="k">function </span>it appears in
-</span><span class='line'>make: *** <span class="o">[</span>memfetch<span class="o">]</span> Error 1
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:bash %}
+$ make
+gcc -Wall -O9    memfetch.c   -o memfetch
+memfetch.c: In function ‘main’:
+memfetch.c:284:25: error: ‘PAGE_SIZE’ undeclared (first use in this function)
+memfetch.c:284:25: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [memfetch] Error 1
+{% endcodeblock %}</p>
 
 <p>The <code>page.h</code> file is located at <code>/usr/src/linux-headers-3.12-kali1-common/include/asm-generic/page.h</code> on Kali linux. This is where <code>PAGE_SIZE</code> is defined. Just adding it to <code>memfetch.c</code> along with changing <code>#include &lt;asm/page.h&gt;</code> to <code>#include &lt;linux/types.h&gt;</code> will do the trick.</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>// #include &lt;asm/page.h&gt;
-</span><span class='line'>#include &lt;linux/types.h&gt;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>// Copied from asm-generic/page.h
-</span><span class='line'>/* PAGE_SHIFT determines the page size */
-</span><span class='line'>#define PAGE_SHIFT	12
-</span><span class='line'>#ifdef &lt;strong>ASSEMBLY&lt;/strong>
-</span><span class='line'>#define PAGE_SIZE	(1 « PAGE_SHIFT)
-</span><span class='line'>#else
-</span><span class='line'>#define PAGE_SIZE	(1UL « PAGE_SHIFT)
-</span><span class='line'>#endif
-</span><span class='line'>#define PAGE_MASK	(~(PAGE_SIZE-1))</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock %}
+// #include &lt;asm/page.h&gt;
+#include &lt;linux/types.h&gt;</p>
+
+<p>// Copied from asm-generic/page.h
+/* PAGE_SHIFT determines the page size */
+#define PAGE_SHIFT	12
+#ifdef <strong>ASSEMBLY</strong>
+#define PAGE_SIZE	(1 « PAGE_SHIFT)
+#else
+#define PAGE_SIZE	(1UL « PAGE_SHIFT)
+#endif
+#define PAGE_MASK	(~(PAGE_SIZE-1))
+{% endcodeblock %}</p>
 
 <p>If there is a better way to make this work, please let me know.</p>
 ]]></content>

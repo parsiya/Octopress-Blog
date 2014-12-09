@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: PIN | Parsiya's Den]]></title>
+  <link href="http://parsiya.net/blog/categories/pin/atom.xml" rel="self"/>
+  <link href="http://parsiya.net/"/>
+  <updated>2014-12-09T01:47:40-05:00</updated>
+  <id>http://parsiya.net/</id>
+  <author>
+    <name><![CDATA[Parsiya]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Pin Adventures - Chapter 1 - PinSolver MK1]]></title>
+    <link href="http://parsiya.net/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/"/>
+    <updated>2014-12-08T20:46:59-05:00</updated>
+    <id>http://parsiya.net/blog/pin-adventures-chapter-1-pinsolver-mk1</id>
+    <content type="html"><![CDATA[<p>While writing the writeups for the <a href="http://parsiya.net/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/#ch6">Flare On Challenge 6</a> I came upon <a href="http://gaasedelen.blogspot.com/2014/09/solving-fireeyes-flare-on-six-via-side.html">an alternative solution</a> by <a href="https://twitter.com/gaasedelen">@gaasedelen</a> to use the number of executed instructions as a side-channel. Recently during an engagement I used <a href="https://software.intel.com/en-us/articles/pintool">Pintool</a> to do <code>[redacted]</code>. Now that I have a bit of time, I decided to use the idea to write such a tool.</p>
+
+<p>As an example, we will use a C program that checks input for a hardcoded value using <code>strncmp</code>. We want to see if it’s vulnerable to this side-channel (number of executed instructions).</p>
+
+<!-- more -->
+
+<h2 id="my-setup">My Setup</h2>
+<p>I will be using a Kali 32-bit VM using VirtualBox. Installing Pin is as simple as extracting the appropriate distribution in a directory and adding it to path.</p>
+
+<h3 id="pintool">Pintool</h3>
+<p>Pin is a dynamic binary instrumentation framework by Intel. The default installation contains a good number of examples in <code>/pintool/source/tools/ManualExamples/</code>. If you look at various tutorials on it, most will use instruction count example in <code>inscount0.cpp</code>. I will be simplifying it to suit our needs and do <em>some</em> comments.</p>
+
+<p>Here is the modified code. Let’s name it <code>myins.cpp</code> and save it in the ManualExamples directory. Apologies for the legal stuff at the start of the code but I’d rather keep them than risk the wrath of opensource gods.</p>
+
+<p>{% codeblock lang:cpp myins.c %}
+/*BEGIN_LEGAL 
+Intel Open Source License </p>
+
+<p>Copyright (c) 2002-2014 Intel Corporation. All rights reserved.</p>
+
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:</p>
+
+<p>Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.  Redistributions
+in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.  Neither the name of
+the Intel Corporation nor the names of its contributors may be used to
+endorse or promote products derived from this software without
+specific prior written permission.</p>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS’’ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE INTEL OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+END_LEGAL */
+#include <iostream>
+#include "pin.H"</iostream></p>
+
+<p>// The running count of instructions is kept here
+// make it static to help the compiler optimize docount
+static UINT64 icount = 0;</p>
+
+<p>// This function is called before every instruction is executed
+// increase the count everytime it is called, which is before every instruction
+VOID docount() { icount++; }</p>
+
+<p>// Pin calls this function every time a new instruction is encountered
+VOID Instruction(INS ins, VOID *v)
+{
+    // Insert a call to docount before every instruction, no arguments are passed
+    // ins: instruction about to be executed
+    // IPOINT_BEFORE: call is placed before each instruction
+    // (AFUNPTR)docount: name of the function to call before every instruction
+    // If any arguments areto be passed to the called function, they will be placed here
+    // IARG_END: indicats the end of arguments</p>
+
+<pre><code>// as a result before each instruction, docount is called
+INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END); }
+</code></pre>
+
+<p>// This function is called when the application exits
+VOID Fini(INT32 code, VOID *v)
+{
+    // print the number of executed instructions
+    cout « “Count: “ « icount « endl;</p>
+
+<p>}</p>
+
+<p>/* ===================================================================== <em>/
+/</em> Print Help Message                                                    <em>/
+/</em> ===================================================================== */</p>
+
+<p>INT32 Usage()
+{
+    cout « “This tool counts the number of dynamic instructions executed” « endl;
+    return -1;
+}</p>
+
+<p>/* ===================================================================== <em>/
+/</em> Main                                                                  <em>/
+/</em> ===================================================================== <em>/
+/</em>   argc, argv are the entire command line: pin -t <toolname> -- ...    */
+/* ===================================================================== */</toolname></p>
+
+<p>int main(int argc, char * argv[])
+{
+    // Initialize pin
+    if (PIN_Init(argc, argv)) return Usage();</p>
+
+<pre><code>// Register Instruction to be called to instrument instructions
+INS_AddInstrumentFunction(Instruction, 0);
+
+// Register Fini to be called when the application exits
+PIN_AddFiniFunction(Fini, 0);
+
+// Start the program, never returns
+PIN_StartProgram();
+
+return 0; }
+</code></pre>
+
+<p>{% endcodeblock %}</p>
+
+<p>To compile it, we can use the provided makefile. In ManualExamples run <code>make obj-ia32/myins.so</code>. Note the filename and path. If everything works correctly, we will have <code>myins.so</code>. Let’s copy it to where we want to write our example program.</p>
+
+<h3 id="crackme-1---example-c-program">Crackme 1 - Example C Program</h3>
+<p>The progam is quite simple, it checks the first argument against the hardcoded value <code>7bc3a60fbf38e98f6fef654afa26d270</code>. We will use this program to test our Pin tool.
+{% codeblock lang:cpp crkme1.c %}
+#include <stdio.h>
+#include <string.h /></stdio.h></p>
+
+<p>int main(int argc, char **argv)
+{</p>
+
+<p>if ( argc!=2 )
+  {
+    printf(“usage: ./crkme1 code\n”);
+    return 1;
+  }</p>
+
+<p>char code[] = “7bc3a60fbf38e98f6fef654afa26d270”;</p>
+
+<p>if ( !strncmp(argv[1],code,32) )
+  {
+    printf(“Correct\n”);
+  }
+  else
+  {
+    printf(“Wrong\n”);
+  }</p>
+
+<p>return 0;
+}
+{% endcodeblock %}</p>
+
+<p>Remember to use the <code>ggdb</code> option to compile with debug information (for GDB). From what I understand this is very similar to the <code>g</code> option. We will be using GDB to dive into the binary to observe strncmp’s behavior. Let’s use <code>gcc -ggdb -o crkme1 crkme1.c</code>.</p>
+
+<h3 id="using-pin-with-crkme1">Using Pin with Crkme1</h3>
+<p>To run our Pin tool against any executable execute <code>pin -t myins.so -- ./crkme1 012345</code>. Now let’s experiment with some input. Our super secret code starts with <code>7b</code> so I will be <code>fuzzing</code> (for very simplisitic definition of fuzzing) the first character and look at the number of executed instructions.</p>
+
+<p>{% codeblock lang:bash Changing first character %}
+$ pin -t myins.so – ./crkme1 1zzz
+Wrong
+Count: 100013
+$ pin -t myins.so – ./crkme1 5zzz
+Wrong
+Count: 100013
+$ pin -t myins.so – ./crkme1 7zzz
+Wrong
+Count: 100015 # interesting
+$ pin -t myins.so – ./crkme1 bzzz
+Wrong
+Count: 100013
+$pin -t myins.so – ./crkme1 @zzz
+Wrong
+Count: 100013
+{% endcodeblock %}</p>
+
+<p>Notice a pattern? Seems like we executed two extra instructions when our first character matched. Assuming our theory is correct and we have the first character <code>7</code>, let’s experiment with the second character.</p>
+
+<p>{% codeblock lang:bash Changing second character %}
+$ pin -t myins.so – ./crkme1 71zz
+Wrong
+Count: 100015
+$ pin -t myins.so – ./crkme1 75zz
+Wrong
+Count: 100015
+$ pin -t myins.so – ./crkme1 7bzz
+Wrong
+Count: 100017 # 2 extra instructions executed
+$ pin -t myins.so – ./crkme1 7@zz
+Wrong
+Count: 100015
+{% endcodeblock %}</p>
+
+<p>At this point you probably have a good idea why this is happening. But let’s look at the assembly code.</p>
+
+<h3 id="gdb-and-strncmp">GDB and strncmp</h3>
+<p>Good thing we compiled our binary with debug information. Let’s look at the assembly code for strncmp:</p>
+
+<p>{% codeblock lang:bash Running crkme1 in gdb %}
+# q starts gdb in quiet mode
+$ gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1…done.
+# putting a break on strncmp, this is possible because we compiled with -ggdb option
+(gdb) break strncmp
+Breakpoint 1 at 0x8048350
+# passing 7bzz as a run-time argument. r stands for run
+(gdb) r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz</p>
+
+<p>Breakpoint 1, 0xb7f82b80 in ?? () from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+(gdb) disass
+No function contains program counter for selected frame.
+# oops what happened here?
+(gdb) 
+{% endcodeblock %}</p>
+
+<p>To get a better a picture of the problem, we’re going to go through the same process in verbose mode in GDB using the <code>set verbose on</code> command.</p>
+
+<p>{% codeblock lang:bash Running in gdb with verbose on %}
+$ gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1…done.
+(gdb) set verbose on
+(gdb) break strncmp
+Breakpoint 1 at 0x8048350
+(gdb) r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz
+Reading symbols from /lib/ld-linux.so.2…(no debugging symbols found)…done.
+Loaded symbols for /lib/ld-linux.so.2
+Reading symbols from system-supplied DSO at 0xb7fe1000…(no debugging symbols found)…done.
+# aha, no debugging symbols found for libc6
+Reading symbols from /lib/i386-linux-gnu/i686/cmov/libc.so.6…(no debugging symbols found)…done.
+Loaded symbols for /lib/i386-linux-gnu/i686/cmov/libc.so.6</p>
+
+<p>Breakpoint 1, 0xb7f82b80 in ?? () from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+(gdb) disass
+No function contains program counter for selected frame.</p>
+
+<p>{% endcodeblock %}</p>
+
+<p>According to line 12, we we need the debugging symbols for libc to look inside the code. 
+On Kali use <code>apt-get install libc6-dbg</code>. Here we go again:</p>
+
+<p>{% codeblock lang:nasm After installing libc6-dbg %}
+root@kali:~/Desktop/kek# gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1…done.
+(gdb) break strncmp
+Breakpoint 1 at 0x8048350
+(gdb) r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz</p>
+
+<p>Breakpoint 1, __strncmp_ssse3 ()
+    at ../sysdeps/i386/i686/multiarch/strcmp-ssse3.S:65
+65	../sysdeps/i386/i686/multiarch/strcmp-ssse3.S: No such file or directory.
+(gdb) disass
+Dump of assembler code for function __strncmp_ssse3:
+=&gt; 0xb7f82b80 &lt;+0&gt;:	push   ebp
+   0xb7f82b81 &lt;+1&gt;:	mov    edx,DWORD PTR [esp+0x8]
+   0xb7f82b85 &lt;+5&gt;:	mov    eax,DWORD PTR [esp+0xc]
+   0xb7f82b89 &lt;+9&gt;:	mov    ebp,DWORD PTR [esp+0x10]
+   0xb7f82b8d &lt;+13&gt;:	cmp    ebp,0x10
+   0xb7f82b90 &lt;+16&gt;:	jb     0xb7f843d0 &lt;__strncmp_ssse3+6224&gt;
+{% endcodeblock %}</p>
+
+<p>Now we can see what happens in strncmp. The following is the cleaned up version of the assembly of strncmp.</p>
+
+<p>{% codeblock lang:nasm strncmp %}
+; assuming we called strncmp (argv[1],code,32);</p>
+
+<p>0xb7f82b80 &lt;+0&gt;:	push   ebp
+0xb7f82b81 &lt;+1&gt;: 	mov    edx,DWORD PTR [esp+0x8]  ; argv[1] or “7bzz”
+0xb7f82b85 &lt;+5&gt;: 	mov    eax,DWORD PTR [esp+0xc]  ; code or “7bc3 ..”
+0xb7f82b89 &lt;+9&gt;: 	mov    ebp,DWORD PTR [esp+0x10] ; 32 or 0x20
+0xb7f82b8d &lt;+13&gt;: 	cmp    ebp,0x10                 ; 32 compared to 0x10 (16 decimal)
+0xb7f82b90 &lt;+16&gt;: 	jb     0xb7f843d0 &lt;__strncmp_ssse3+6224&gt;
+…
+; if number of bytes to compare is bigger than 16
+; let’s assume it is and see what happens next
+…
+0xb7f843d0 &lt;+6224&gt;:	test   ebp,ebp  ; if (ebp == 0) goto 0xb7f843c3
+0xb7f843d2 &lt;+6226&gt;:	je     0xb7f843c3 &lt;__strncmp_ssse3+6211&gt; 
+0xb7f843d4 &lt;+6228&gt;:	movzx  ecx,BYTE PTR [eax] ; ecx = code
+0xb7f843d7 &lt;+6231&gt;:	cmp    BYTE PTR [edx],cl  ; if (code[0] != argv[1][0]) goto 0xb7f843b0;
+0xb7f843d9 &lt;+6233&gt;:	jne    0xb7f843b0 &lt;__strncmp_ssse3+6192&gt;
+0xb7f843db &lt;+6235&gt;:	test   cl,cl  ; if (code[0] == 0) goto 0xb7f843c3; // have we reached the end of code?
+0xb7f843dd &lt;+6237&gt;:	je     0xb7f843c3 &lt;__strncmp_ssse3+6211&gt;
+0xb7f843df &lt;+6239&gt;:	cmp    ebp,0x1  ; if (counter == 1) goto 0xb7f843c3; // was this our last compare?
+0xb7f843e2 &lt;+6242&gt;:	je     0xb7f843c3 &lt;__strncmp_ssse3+6211&gt;
+0xb7f843e4 &lt;+6244&gt;:	movzx  ecx,BYTE PTR [eax+0x1]	; ecx = code[1];
+0xb7f843e8 &lt;+6248&gt;:	cmp    BYTE PTR [edx+0x1],cl  ; if (code[1] != argv[1][1]) goto 0xb7f843b0;
+0xb7f843eb &lt;+6251&gt;:	jne    0xb7f843b0 &lt;__strncmp_ssse3+6192&gt;
+0xb7f843ed &lt;+6253&gt;:	test   cl,cl  ; if (code[1] == 0) goto 0xb7f843c3; // have we reached the end of code?
+0xb7f843ef &lt;+6255&gt;:	je     0xb7f843c3 &lt;__strncmp_ssse3+6211&gt;
+0xb7f843f1 &lt;+6257&gt;:	cmp    ebp,0x2
+0xb7f843f4 &lt;+6260&gt;:	je     0xb7f843c3 &lt;__strncmp_ssse3+6211&gt;
+…
+; similar byte compares until the end
+…
+0xb7f8453f &lt;+6591&gt;:	test   cl,cl
+0xb7f84541 &lt;+6593&gt;:	je     0xb7f843c3 &lt;__strncmp_ssse3+621
+0xb7f84547 &lt;+6599&gt;:	cmp    ebp,0xf
+0xb7f8454a &lt;+6602&gt;:	je     0xb7f843c3 &lt;__strncmp_ssse3+621
+0xb7f84550 &lt;+6608&gt;:	movzx  ecx,BYTE PTR [eax+0xf]
+0xb7f84554 &lt;+6612&gt;:	cmp    BYTE PTR [edx+0xf],cl
+0xb7f84557 &lt;+6615&gt;:	jne    0xb7f843b0 &lt;__strncmp_ssse3+619
+0xb7f8455d &lt;+6621&gt;;	test   cl,cl
+{% endcodeblock %}</p>
+
+<p>We can see that the implementation has unrolled the for and compares 16 bytes one by one. If a character is correct, two more instructions are executed (as we saw) which are <code>test   cl,cl</code> and <code>je     0xb7f843c3</code> which basically checks if we have reached the end of first string. Now we know why. Let us build our tool.</p>
+
+<h3 id="pinsolver-mk1">PinSolver MK1</h3>
+<p>I am going to use Python’s subprocess module and reuse <a href="http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/">some old code</a>. The script simply iterates through all valid characters (note: do not include space or some other special characters). For this example I am going to use alphanumeric characters. Character with the largest number of executed instructions will be chose and we move on to the next character.</p>
+
+<p>{% codeblock lang:python %}</p>
+
+<p>{% endcodeblock %}</p>
+
+]]></content>
+  </entry>
+  
+</feed>

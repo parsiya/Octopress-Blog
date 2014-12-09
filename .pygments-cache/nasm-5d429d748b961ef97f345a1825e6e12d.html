@@ -1,0 +1,40 @@
+<div class="highlight"><pre><span class="c1">; assuming we called strncmp (argv[1],code,32);&lt;/p&gt;</span>
+
+<span class="err">&lt;</span><span class="nf">p</span><span class="o">&gt;</span><span class="mh">0xb7f82b80</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+0&amp;gt;:	push   ebp</span>
+<span class="err">0</span><span class="nf">xb7f82b81</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+1&amp;gt;: 	mov    edx,DWORD PTR [esp+0x8]  ; argv[1] or “7bzz”</span>
+<span class="err">0</span><span class="nf">xb7f82b85</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+5&amp;gt;: 	mov    eax,DWORD PTR [esp+0xc]  ; code or “7bc3 ..”</span>
+<span class="err">0</span><span class="nf">xb7f82b89</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+9&amp;gt;: 	mov    ebp,DWORD PTR [esp+0x10] ; 32 or 0x20</span>
+<span class="err">0</span><span class="nf">xb7f82b8d</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+13&amp;gt;: 	cmp    ebp,0x10               ; 32 compared to 0x10 (16 decimal)</span>
+<span class="err">0</span><span class="nf">xb7f82b90</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+16&amp;gt;: 	jb     0xb7f843d0 &amp;lt;__strncmp_ssse3+6224&amp;gt;</span>
+<span class="err">…</span>
+<span class="c1">; if number of bytes to compare is bigger than 16</span>
+<span class="c1">; let’s assume it is and see what happens next</span>
+<span class="err">…</span>
+<span class="err">0</span><span class="nf">xb7f843d0</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6224&amp;gt;:	test   ebp,ebp  ; if (ebp == 0) goto 0xb7f843c3</span>
+<span class="err">0</span><span class="nf">xb7f843d2</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6226&amp;gt;:	je     0xb7f843c3 &amp;lt;__strncmp_ssse3+6211&amp;gt; </span>
+<span class="err">0</span><span class="nf">xb7f843d4</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6228&amp;gt;:	movzx  ecx,BYTE PTR [eax] ; ecx = code</span>
+<span class="err">0</span><span class="nf">xb7f843d7</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6231&amp;gt;:	cmp    BYTE PTR [edx],cl  ; if (code[0] != argv[1][0]) goto 0xb7f843b0;</span>
+<span class="err">0</span><span class="nf">xb7f843d9</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6233&amp;gt;:	jne    0xb7f843b0 &amp;lt;__strncmp_ssse3+6192&amp;gt;</span>
+<span class="err">0</span><span class="nf">xb7f843db</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6235&amp;gt;:	test   cl,cl    ; if (code[0] == 0) goto 0xb7f843c3; // have we reached the end of code?</span>
+<span class="err">0</span><span class="nf">xb7f843dd</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6237&amp;gt;:	je     0xb7f843c3 &amp;lt;__strncmp_ssse3+6211&amp;gt;</span>
+<span class="err">0</span><span class="nf">xb7f843df</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6239&amp;gt;:	cmp    ebp,0x1  ; if (counter == 1) goto 0xb7f843c3; // was this our last compare?</span>
+<span class="err">0</span><span class="nf">xb7f843e2</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6242&amp;gt;:	je     0xb7f843c3 &amp;lt;__strncmp_ssse3+6211&amp;gt;</span>
+<span class="err">0</span><span class="nf">xb7f843e4</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6244&amp;gt;:	movzx  ecx,BYTE PTR [eax+0x1]	; ecx = code[1];</span>
+<span class="err">0</span><span class="nf">xb7f843e8</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6248&amp;gt;:	cmp    BYTE PTR [edx+0x1],cl	; if (code[1] != argv[1][1]) goto 0xb7f843b0;</span>
+<span class="err">0</span><span class="nf">xb7f843eb</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6251&amp;gt;:	jne    0xb7f843b0 &amp;lt;__strncmp_ssse3+6192&amp;gt;</span>
+<span class="err">0</span><span class="nf">xb7f843ed</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6253&amp;gt;:	test   cl,cl				; if (code[1] == 0) goto 0xb7f843c3; // have we reached the end of code?</span>
+<span class="err">0</span><span class="nf">xb7f843ef</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6255&amp;gt;:	je     0xb7f843c3 &amp;lt;__strncmp_ssse3+6211&amp;gt;</span>
+<span class="err">0</span><span class="nf">xb7f843f1</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6257&amp;gt;:	cmp    ebp,0x2</span>
+<span class="err">0</span><span class="nf">xb7f843f4</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6260&amp;gt;:	je     0xb7f843c3 &amp;lt;__strncmp_ssse3+6211&amp;gt;</span>
+<span class="err">…</span>
+<span class="c1">; similar byte compares until the end</span>
+<span class="err">…</span>
+<span class="err">0</span><span class="nf">xb7f8453f</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6591&amp;gt;: test   cl,cl</span>
+<span class="err">0</span><span class="nf">xb7f84541</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6593&amp;gt;: je     0xb7f843c3 &amp;lt;__strncmp_ssse3+621</span>
+<span class="err">0</span><span class="nf">xb7f84547</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6599&amp;gt;: cmp    ebp,0xf</span>
+<span class="err">0</span><span class="nf">xb7f8454a</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6602&amp;gt;: je     0xb7f843c3 &amp;lt;__strncmp_ssse3+621</span>
+<span class="err">0</span><span class="nf">xb7f84550</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6608&amp;gt;: movzx  ecx,BYTE PTR [eax+0xf]</span>
+<span class="err">0</span><span class="nf">xb7f84554</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6612&amp;gt;: cmp    BYTE PTR [edx+0xf],cl</span>
+<span class="err">0</span><span class="nf">xb7f84557</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6615&amp;gt;: jne    0xb7f843b0 &amp;lt;__strncmp_ssse3+619</span>
+<span class="err">0</span><span class="nf">xb7f8455d</span> <span class="o">&amp;</span><span class="nv">lt</span><span class="c1">;+6621&amp;gt;; test   cl,cl</span>
+</pre></div>

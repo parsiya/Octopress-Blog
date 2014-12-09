@@ -1,0 +1,18 @@
+<div class="highlight"><pre><span class="nv">$ </span>gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1...done.
+<span class="o">(</span>gdb<span class="o">)</span> <span class="nb">set </span>verbose on
+<span class="o">(</span>gdb<span class="o">)</span> <span class="nb">break </span>strncmp
+Breakpoint 1 at 0x8048350
+<span class="o">(</span>gdb<span class="o">)</span> r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz
+Reading symbols from /lib/ld-linux.so.2...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+Loaded symbols <span class="k">for</span> /lib/ld-linux.so.2
+Reading symbols from system-supplied DSO at 0xb7fe1000...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+<span class="c"># aha, no debugging symbols found for libc6</span>
+Reading symbols from /lib/i386-linux-gnu/i686/cmov/libc.so.6...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+Loaded symbols <span class="k">for</span> /lib/i386-linux-gnu/i686/cmov/libc.so.6
+
+Breakpoint 1, 0xb7f82b80 in ?? <span class="o">()</span> from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+<span class="o">(</span>gdb<span class="o">)</span> disass
+No <span class="k">function </span>contains program counter <span class="k">for </span>selected frame.
+</pre></div>

@@ -1,0 +1,16 @@
+<div class="highlight"><pre><span class="c"># q starts gdb in quiet mode</span>
+<span class="nv">$ </span>gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1...done.
+<span class="c"># putting a break on strncmp, this is possible because we compiled with -ggdb option</span>
+<span class="o">(</span>gdb<span class="o">)</span> <span class="nb">break </span>strncmp
+Breakpoint 1 at 0x8048350
+<span class="c"># passing 7bzz as a run-time argument. r stands for run</span>
+<span class="o">(</span>gdb<span class="o">)</span> r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz
+
+Breakpoint 1, 0xb7f82b80 in ?? <span class="o">()</span> from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+<span class="o">(</span>gdb<span class="o">)</span> disass
+No <span class="k">function </span>contains program counter <span class="k">for </span>selected frame.
+<span class="c"># oops what happened here?</span>
+<span class="o">(</span>gdb<span class="o">)</span> 
+</pre></div>
