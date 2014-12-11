@@ -1,0 +1,100 @@
+<div class="highlight"><pre><span class="cm">/*BEGIN_LEGAL </span>
+<span class="cm">Intel Open Source License &lt;/p&gt;</span>
+
+<span class="cm">&lt;p&gt;Copyright (c) 2002-2014 Intel Corporation. All rights reserved.&lt;/p&gt;</span>
+
+<span class="cm">&lt;p&gt;Redistribution and use in source and binary forms, with or without</span>
+<span class="cm">modification, are permitted provided that the following conditions are</span>
+<span class="cm">met:&lt;/p&gt;</span>
+
+<span class="cm">&lt;p&gt;Redistributions of source code must retain the above copyright notice,</span>
+<span class="cm">this list of conditions and the following disclaimer.  Redistributions</span>
+<span class="cm">in binary form must reproduce the above copyright notice, this list of</span>
+<span class="cm">conditions and the following disclaimer in the documentation and/or</span>
+<span class="cm">other materials provided with the distribution.  Neither the name of</span>
+<span class="cm">the Intel Corporation nor the names of its contributors may be used to</span>
+<span class="cm">endorse or promote products derived from this software without</span>
+<span class="cm">specific prior written permission.&lt;/p&gt;</span>
+
+<span class="cm">&lt;p&gt;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</span>
+<span class="cm">``AS IS’’ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</span>
+<span class="cm">LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR</span>
+<span class="cm">A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE INTEL OR</span>
+<span class="cm">ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="cm">SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT</span>
+<span class="cm">LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,</span>
+<span class="cm">DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY</span>
+<span class="cm">THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</span>
+<span class="cm">(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE</span>
+<span class="cm">OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="cm">END_LEGAL */</span>
+<span class="cp">#include &lt;iostream&gt;</span>
+<span class="cp">#include &quot;pin.H&quot;&lt;/iostream&gt;&lt;/p&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// modified version of /pintool/source/tools/ManualExamples/inscount0.cpp&lt;/p&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// The running count of instructions is kept here</span>
+<span class="c1">// make it static to help the compiler optimize docount</span>
+<span class="k">static</span> <span class="n">UINT64</span> <span class="n">icount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// This function is called before every instruction is executed</span>
+<span class="c1">// increase the count everytime it is called, which is before every instruction</span>
+<span class="n">VOID</span> <span class="n">docount</span><span class="p">()</span> <span class="p">{</span> <span class="n">icount</span><span class="o">++</span><span class="p">;</span> <span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// Pin calls this function every time a new instruction is encountered</span>
+<span class="n">VOID</span> <span class="n">Instruction</span><span class="p">(</span><span class="n">INS</span> <span class="n">ins</span><span class="p">,</span> <span class="n">VOID</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Insert a call to docount before every instruction, no arguments are passed</span>
+    <span class="c1">// ins: instruction about to be executed</span>
+    <span class="c1">// IPOINT_BEFORE: call is placed before each instruction</span>
+    <span class="c1">// (AFUNPTR)docount: name of the function to call before every instruction</span>
+    <span class="c1">// If any arguments areto be passed to the called function, they will be placed here</span>
+    <span class="c1">// IARG_END: indicats the end of arguments&lt;/p&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">// as a result before each instruction, docount is called</span>
+<span class="n">INS_InsertCall</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">IPOINT_BEFORE</span><span class="p">,</span> <span class="p">(</span><span class="n">AFUNPTR</span><span class="p">)</span><span class="n">docount</span><span class="p">,</span> <span class="n">IARG_END</span><span class="p">);</span> <span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// This function is called when the application exits</span>
+<span class="n">VOID</span> <span class="n">Fini</span><span class="p">(</span><span class="n">INT32</span> <span class="n">code</span><span class="p">,</span> <span class="n">VOID</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// print the number of executed instructions</span>
+    <span class="n">cout</span> <span class="err">« “</span><span class="nl">Count:</span> <span class="err">“</span> <span class="err">« </span><span class="n">icount</span> <span class="err">« </span><span class="n">endl</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/* ===================================================================== &lt;em&gt;/</span>
+<span class="cm">/&lt;/em&gt; Print Help Message                                                    &lt;em&gt;/</span>
+<span class="cm">/&lt;/em&gt; ===================================================================== */</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">INT32</span> <span class="n">Usage</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="err">« “</span><span class="n">This</span> <span class="n">tool</span> <span class="n">counts</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">dynamic</span> <span class="n">instructions</span> <span class="n">executed</span><span class="err">”</span> <span class="err">« </span><span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/* ===================================================================== &lt;em&gt;/</span>
+<span class="cm">/&lt;/em&gt; Main                                                                  &lt;em&gt;/</span>
+<span class="cm">/&lt;/em&gt; ===================================================================== &lt;em&gt;/</span>
+<span class="cm">/&lt;/em&gt;   argc, argv are the entire command line: pin -t &lt;toolname&gt; -- ...    */</span>
+<span class="cm">/* ===================================================================== */</span><span class="o">&lt;/</span><span class="n">toolname</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="c1">// Initialize pin</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">PIN_Init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">))</span> <span class="k">return</span> <span class="n">Usage</span><span class="p">();</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">// Register Instruction to be called to instrument instructions</span>
+<span class="n">INS_AddInstrumentFunction</span><span class="p">(</span><span class="n">Instruction</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// Register Fini to be called when the application exits</span>
+<span class="n">PIN_AddFiniFunction</span><span class="p">(</span><span class="n">Fini</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// Start the program, never returns</span>
+<span class="n">PIN_StartProgram</span><span class="p">();</span>
+
+<span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

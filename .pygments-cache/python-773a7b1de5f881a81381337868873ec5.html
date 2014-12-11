@@ -1,0 +1,39 @@
+<div class="highlight"><pre><span class="c">#!/usr/bin/python</span>
+
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+
+<span class="c"># create a set of alphanumeric chars</span>
+<span class="n">alphanumeric</span> <span class="o">=</span> <span class="s">&quot;0123456789&quot;</span> <span class="o">+</span> <span class="s">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span> <span class="o">+</span> <span class="s">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>
+
+<span class="n">solution</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">flag</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+
+  <span class="n">maxcount</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">candidate_char</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">alphanumeric</span><span class="p">:</span>
+    <span class="c"># construct</span>
+    <span class="n">fez</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span> <span class="o">+</span> <span class="n">char</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">([</span><span class="s">&quot;pin&quot;</span><span class="p">,</span> <span class="s">&quot;-t&quot;</span><span class="p">,</span> <span class="s">&quot;myins.so&quot;</span><span class="p">,</span> <span class="s">&quot;--&quot;</span><span class="p">,</span><span class="s">&quot;./crkme1&quot;</span><span class="p">,</span> <span class="n">fez</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
+  
+    <span class="c"># read output and split by lines</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+  
+    <span class="k">if</span> <span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Correct&quot;</span><span class="p">):</span>
+      <span class="k">print</span> <span class="s">&quot;Code found: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+      <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span> <span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    
+      <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">maxcount</span><span class="p">):</span>
+        <span class="n">maxcount</span> <span class="o">=</span> <span class="n">count</span>
+        <span class="n">candidate_char</span> <span class="o">=</span> <span class="n">char</span>
+    
+    <span class="c"># print (&quot;Trying %s - Count is: %d - Maxcount is: %d - Candidate_char is: %s&quot;) % (fez, count, maxcount, candidate_char)</span>
+  
+  <span class="c"># after a loop has finished, add the chosen char to the solution</span>
+  <span class="n">solution</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate_char</span><span class="p">)</span>
+</pre></div>

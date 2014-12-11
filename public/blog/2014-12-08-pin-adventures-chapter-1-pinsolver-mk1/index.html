@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Pin Adventures - Chapter 1 - PinSolver MK1 - Parsiya's Den</title>
+  <title>Pin Adventures - Chapter 1 - PinSolver Mk1 - Parsiya's Den</title>
   <meta name="author" content="Parsiya">
 
   
@@ -81,7 +81,7 @@
   
   <header>
     
-      <h1 class="entry-title">Pin Adventures - Chapter 1 - PinSolver MK1</h1>
+      <h1 class="entry-title">Pin Adventures - Chapter 1 - PinSolver Mk1</h1>
     
     
       <p class="meta">
@@ -119,7 +119,7 @@
 <h3 id="pintool">Pintool</h3>
 <p>Pin is a dynamic binary instrumentation framework by Intel. The default installation contains a good number of examples in <code>/pintool/source/tools/ManualExamples/</code>. If you look at various tutorials on it, most will use instruction count example in <code>inscount0.cpp</code>. I will be simplifying it to suit our needs and do <em>some</em> comments.</p>
 
-<p>Here is the modified code. Let’s name it <code>myins.cpp</code> and save it in the ManualExamples directory. Apologies for the legal stuff at the start of the code but I’d rather keep them than risk the wrath of opensource gods.</p>
+<p>Here is the modified code. Let’s name it <code>myins.cpp</code> and save it in the ManualExamples directory. Apologies for the legal stuff at the start but I’d rather keep them than risk the wrath of open source gods.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myins.c </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -217,6 +217,9 @@
 <span class="line-number">93</span>
 <span class="line-number">94</span>
 <span class="line-number">95</span>
+<span class="line-number">96</span>
+<span class="line-number">97</span>
+<span class="line-number">98</span>
 </pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="cm">/*BEGIN_LEGAL </span>
 </span><span class="line"><span class="cm">Intel Open Source License </span>
 </span><span class="line">
@@ -250,12 +253,15 @@
 </span><span class="line"><span class="cp">#include &lt;iostream&gt;</span>
 </span><span class="line"><span class="cp">#include &quot;pin.H&quot;</span>
 </span><span class="line">
+</span><span class="line"><span class="c1">// modified version of /pintool/source/tools/ManualExamples/inscount0.cpp</span>
+</span><span class="line">
+</span><span class="line">
 </span><span class="line"><span class="c1">// The running count of instructions is kept here</span>
 </span><span class="line"><span class="c1">// make it static to help the compiler optimize docount</span>
 </span><span class="line"><span class="k">static</span> <span class="n">UINT64</span> <span class="n">icount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </span><span class="line">
 </span><span class="line"><span class="c1">// This function is called before every instruction is executed</span>
-</span><span class="line"><span class="c1">// increase the count everytime it is called, which is before every instruction</span>
+</span><span class="line"><span class="c1">// increase the count every time it is called, which is before every instruction</span>
 </span><span class="line"><span class="n">VOID</span> <span class="n">docount</span><span class="p">()</span> <span class="p">{</span> <span class="n">icount</span><span class="o">++</span><span class="p">;</span> <span class="p">}</span>
 </span><span class="line">
 </span><span class="line"><span class="c1">// Pin calls this function every time a new instruction is encountered</span>
@@ -265,8 +271,8 @@
 </span><span class="line">    <span class="c1">// ins: instruction about to be executed</span>
 </span><span class="line">    <span class="c1">// IPOINT_BEFORE: call is placed before each instruction</span>
 </span><span class="line">    <span class="c1">// (AFUNPTR)docount: name of the function to call before every instruction</span>
-</span><span class="line">    <span class="c1">// If any arguments areto be passed to the called function, they will be placed here</span>
-</span><span class="line">    <span class="c1">// IARG_END: indicats the end of arguments</span>
+</span><span class="line">    <span class="c1">// If any arguments are to be passed to the called function, they will be placed here</span>
+</span><span class="line">    <span class="c1">// IARG_END: indicates the end of arguments</span>
 </span><span class="line">
 </span><span class="line">    <span class="c1">// as a result before each instruction, docount is called</span>
 </span><span class="line">    <span class="n">INS_InsertCall</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">IPOINT_BEFORE</span><span class="p">,</span> <span class="p">(</span><span class="n">AFUNPTR</span><span class="p">)</span><span class="n">docount</span><span class="p">,</span> <span class="n">IARG_END</span><span class="p">);</span>
@@ -317,7 +323,7 @@
 <p>To compile it, we can use the provided makefile. In ManualExamples run <code>make obj-ia32/myins.so</code>. Note the filename and path. If everything works correctly, we will have <code>myins.so</code>. Let’s copy it to where we want to write our example program.</p>
 
 <h3 id="crackme-1---example-c-program">Crackme 1 - Example C Program</h3>
-<p>The progam is quite simple, it checks the first argument against the hardcoded value <code>7bc3a60fbf38e98f6fef654afa26d270</code>. We will use this program to test our Pin tool.</p>
+<p>The program is quite simple, it checks the first argument against the hardcoded value <code>7bc3a60fbf38e98f6fef654afa26d270</code>. We will use this program to test our Pin tool.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>crkme1.c </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -375,7 +381,7 @@
 <p>Remember to use the <code>ggdb</code> option to compile with debug information (for GDB). From what I understand this is very similar to the <code>g</code> option. We will be using GDB to dive into the binary to observe strncmp’s behavior. Let’s use <code>gcc -ggdb -o crkme1 crkme1.c</code>.</p>
 
 <h3 id="using-pin-with-crkme1">Using Pin with Crkme1</h3>
-<p>To run our Pin tool against any executable execute <code>pin -t myins.so -- ./crkme1 012345</code>. Now let’s experiment with some input. Our super secret code starts with <code>7b</code> so I will be <code>fuzzing</code> (for very simplisitic definition of fuzzing) the first character and look at the number of executed instructions.</p>
+<p>To run our Pin tool against any executable execute <code>pin -t myins.so -- ./crkme1 012345</code>. Now let’s experiment with some input. Our super secret code starts with <code>7b</code> so I will be <code>fuzzing</code> (for very simplistic definition of fuzzing) the first character and look at the number of executed instructions.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Changing first character </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -643,13 +649,98 @@ On Kali use <code>apt-get install libc6-dbg</code>. Here we go again:</p>
 
 <p>We can see that the implementation has unrolled the for and compares 16 bytes one by one. If a character is correct, two more instructions are executed (as we saw) which are <code>test   cl,cl</code> and <code>je     0xb7f843c3</code> which basically checks if we have reached the end of first string. Now we know why. Let us build our tool.</p>
 
-<h3 id="pinsolver-mk1">PinSolver MK1</h3>
+<h3 id="pinsolver-mk1">PinSolver Mk1</h3>
 <p>I am going to use Python’s subprocess module and reuse <a href="http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/">some old code</a>. The script simply iterates through all valid characters (note: do not include space or some other special characters). For this example I am going to use alphanumeric characters. Character with the largest number of executed instructions will be chose and we move on to the next character.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line">
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c">#!/usr/bin/python</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+</span><span class="line">
+</span><span class="line"><span class="c"># create a set of alphanumeric chars</span>
+</span><span class="line"><span class="n">alphanumeric</span> <span class="o">=</span> <span class="s">&quot;0123456789&quot;</span> <span class="o">+</span> <span class="s">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span> <span class="o">+</span> <span class="s">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">solution</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">flag</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class="line">
+</span><span class="line"><span class="k">while</span> <span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">maxcount</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">  <span class="n">candidate_char</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">alphanumeric</span><span class="p">:</span>
+</span><span class="line">    <span class="c"># construct</span>
+</span><span class="line">    <span class="n">fez</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span> <span class="o">+</span> <span class="n">char</span>
+</span><span class="line">    <span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">([</span><span class="s">&quot;pin&quot;</span><span class="p">,</span> <span class="s">&quot;-t&quot;</span><span class="p">,</span> <span class="s">&quot;myins.so&quot;</span><span class="p">,</span> <span class="s">&quot;--&quot;</span><span class="p">,</span><span class="s">&quot;./crkme1&quot;</span><span class="p">,</span> <span class="n">fez</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="c"># read output and split by lines</span>
+</span><span class="line">    <span class="n">output</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Correct&quot;</span><span class="p">):</span>
+</span><span class="line">      <span class="k">print</span> <span class="s">&quot;Code found: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+</span><span class="line">      <span class="k">break</span>
+</span><span class="line">    <span class="k">else</span><span class="p">:</span>
+</span><span class="line">      <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span> <span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+</span><span class="line">
+</span><span class="line">      <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">maxcount</span><span class="p">):</span>
+</span><span class="line">        <span class="n">maxcount</span> <span class="o">=</span> <span class="n">count</span>
+</span><span class="line">        <span class="n">candidate_char</span> <span class="o">=</span> <span class="n">char</span>
+</span><span class="line">
+</span><span class="line">    <span class="c"># print (&quot;Trying %s - Count is: %d - Maxcount is: %d - Candidate_char is: %s&quot;) % (fez, count, maxcount, candidate_char)</span>
+</span><span class="line">
+</span><span class="line">  <span class="c"># after a loop has finished, add the chosen char to the solution</span>
+</span><span class="line">  <span class="n">solution</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate_char</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>Note: If your VM has multiple CPUs this will not work. At this moment I do not know why.</p>
+
+<p>TODO in next chapter:</p>
+
+<ol>
+  <li>Try to find some simple crackmes2 from CTFs to run this tool on</li>
+  <li>Find a way to increase pin’s performance</li>
+  <li>Why is the instruction count not calculated correctly occasionally when VM has multiple CPUs?</li>
+</ol>
+
+<p>As usual, if there is a any feedback please feel free to comment or contact me on Twitter. My handle is in the side bar —-&gt;.</p>
 </div>
 
 
@@ -722,7 +813,7 @@ On Kali use <code>apt-get install libc6-dbg</code>. Here we go again:</p>
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/">Pin Adventures - Chapter 1 - PinSolver MK1</a>
+        <a href="/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/">Pin Adventures - Chapter 1 - PinSolver Mk1</a>
       </li>
     
       <li class="post">

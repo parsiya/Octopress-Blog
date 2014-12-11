@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Pin Adventures - Chapter 1 - PinSolver MK1"
+title: "Pin Adventures - Chapter 1 - PinSolver Mk1"
 date: 2014-12-08 20:46:59 -0500
 comments: true
 categories: [PIN, PIN tool, PINSolver]
@@ -18,7 +18,7 @@ I will be using a Kali 32-bit VM using VirtualBox. Installing Pin is as simple a
 ###Pintool
 Pin is a dynamic binary instrumentation framework by Intel. The default installation contains a good number of examples in ``/pintool/source/tools/ManualExamples/``. If you look at various tutorials on it, most will use instruction count example in ``inscount0.cpp``. I will be simplifying it to suit our needs and do *some* comments.
 
-Here is the modified code. Let's name it ``myins.cpp`` and save it in the ManualExamples directory. Apologies for the legal stuff at the start of the code but I'd rather keep them than risk the wrath of opensource gods.
+Here is the modified code. Let's name it ``myins.cpp`` and save it in the ManualExamples directory. Apologies for the legal stuff at the start but I'd rather keep them than risk the wrath of open source gods.
 
 {% codeblock lang:cpp myins.c %}
 /*BEGIN_LEGAL 
@@ -54,12 +54,15 @@ END_LEGAL */
 #include <iostream>
 #include "pin.H"
 
+// modified version of /pintool/source/tools/ManualExamples/inscount0.cpp
+
+
 // The running count of instructions is kept here
 // make it static to help the compiler optimize docount
 static UINT64 icount = 0;
 
 // This function is called before every instruction is executed
-// increase the count everytime it is called, which is before every instruction
+// increase the count every time it is called, which is before every instruction
 VOID docount() { icount++; }
     
 // Pin calls this function every time a new instruction is encountered
@@ -69,8 +72,8 @@ VOID Instruction(INS ins, VOID *v)
     // ins: instruction about to be executed
     // IPOINT_BEFORE: call is placed before each instruction
     // (AFUNPTR)docount: name of the function to call before every instruction
-    // If any arguments areto be passed to the called function, they will be placed here
-    // IARG_END: indicats the end of arguments
+    // If any arguments are to be passed to the called function, they will be placed here
+    // IARG_END: indicates the end of arguments
     
     // as a result before each instruction, docount is called
     INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
@@ -122,7 +125,7 @@ int main(int argc, char * argv[])
 To compile it, we can use the provided makefile. In ManualExamples run ``make obj-ia32/myins.so``. Note the filename and path. If everything works correctly, we will have ``myins.so``. Let's copy it to where we want to write our example program.
 
 ### Crackme 1 - Example C Program
-The progam is quite simple, it checks the first argument against the hardcoded value ``7bc3a60fbf38e98f6fef654afa26d270``. We will use this program to test our Pin tool.
+The program is quite simple, it checks the first argument against the hardcoded value ``7bc3a60fbf38e98f6fef654afa26d270``. We will use this program to test our Pin tool.
 {% codeblock lang:cpp crkme1.c %}
 #include <stdio.h>
 #include <string.h>
@@ -154,7 +157,7 @@ int main(int argc, char **argv)
 Remember to use the ``ggdb`` option to compile with debug information (for GDB). From what I understand this is very similar to the ``g`` option. We will be using GDB to dive into the binary to observe strncmp's behavior. Let's use ``gcc -ggdb -o crkme1 crkme1.c``.
 
 ### Using Pin with Crkme1
-To run our Pin tool against any executable execute ``pin -t myins.so -- ./crkme1 012345``. Now let's experiment with some input. Our super secret code starts with ``7b`` so I will be ``fuzzing`` (for very simplisitic definition of fuzzing) the first character and look at the number of executed instructions.
+To run our Pin tool against any executable execute ``pin -t myins.so -- ./crkme1 012345``. Now let's experiment with some input. Our super secret code starts with ``7b`` so I will be ``fuzzing`` (for very simplistic definition of fuzzing) the first character and look at the number of executed instructions.
 
 {% codeblock lang:bash Changing first character %}
 $ pin -t myins.so -- ./crkme1 1zzz
@@ -307,11 +310,56 @@ Now we can see what happens in strncmp. The following is the cleaned up version 
 
 We can see that the implementation has unrolled the for and compares 16 bytes one by one. If a character is correct, two more instructions are executed (as we saw) which are ``test   cl,cl`` and ``je     0xb7f843c3`` which basically checks if we have reached the end of first string. Now we know why. Let us build our tool.
 
-### PinSolver MK1
+### PinSolver Mk1
 I am going to use Python's subprocess module and reuse [some old code](http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/). The script simply iterates through all valid characters (note: do not include space or some other special characters). For this example I am going to use alphanumeric characters. Character with the largest number of executed instructions will be chose and we move on to the next character.
 
 {% codeblock lang:python %}
+#!/usr/bin/python
 
+from subprocess import Popen, PIPE
+
+# create a set of alphanumeric chars
+alphanumeric = "0123456789" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz"
+
+solution = []
+
+flag = False
+
+while (True):
+
+  maxcount = 0
+  candidate_char = 0
+
+  for char in alphanumeric:
+    # construct
+    fez = "".join(solution) + char
+    proc = Popen(["pin", "-t", "myins.so", "--","./crkme1", fez], stdout=PIPE, stderr=PIPE)
+  
+    # read output and split by lines
+    output = proc.stdout.read().splitlines()
+  
+    if (output[0] == "Correct"):
+      print "Code found: ", "".join(solution)
+      break
+    else:
+      count = int (output[1].split(' ')[1])
+    
+      if (count > maxcount):
+        maxcount = count
+        candidate_char = char
+    
+    # print ("Trying %s - Count is: %d - Maxcount is: %d - Candidate_char is: %s") % (fez, count, maxcount, candidate_char)
+  
+  # after a loop has finished, add the chosen char to the solution
+  solution.append(candidate_char)
 {% endcodeblock %}
 
+Note: If your VM has multiple CPUs this will not work. At this moment I do not know why.
 
+TODO in next chapter:
+
+1. Try to find some simple crackmes2 from CTFs to run this tool on
+2. Find a way to increase pin's performance
+3. Why is the instruction count not calculated correctly occasionally when VM has multiple CPUs?
+
+As usual, if there is a any feedback please feel free to comment or contact me on Twitter. My handle is in the side bar ---->.
