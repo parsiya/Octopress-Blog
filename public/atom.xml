@@ -4,7 +4,7 @@
   <title><![CDATA[Parsiya's Den]]></title>
   <link href="http://parsiya.net/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2014-12-10T23:57:02-05:00</updated>
+  <updated>2015-01-05T08:13:31-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -3216,7 +3216,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B47</span> <span class="nv">call</span>    <span class="nv">sub_4016F0</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p><img src="http://parsiya.net/images/2014/flare/7-11.jpg/" alt="0xCC Check" title="0xCC Check" /></p>
+<p><img src="http://parsiya.net/images/2014/flare/7-11.jpg" alt="0xCC Check" title="0xCC Check" /></p>
 
 <p>Offsets from two functions are loaded and then compared. The first one calls <code>isDebuggerPresent</code> and the second one just prints something and exits. We have seen this function before, it is the first check.</p>
 
@@ -3315,17 +3315,19 @@ We have already seen the transitive property of xor so we can calculate the corr
 
 <p><img src="http://parsiya.net/images/2014/flare/7-12.jpg" alt="&quot;NtGlobalFlag Checked&quot;" title="NtGlobalFlag Checked" /></p>
 
-<p>If <code>NtGlobalFlag</code> is <code>0x70</code> then <code>\x09\x00\x00\x01</code> will be xor-ed with the blob, otherwise <code>Feel the sting of the monarch!</code>.</p>
+<p>If <code>NtGlobalFlag</code> is not <code>0x70</code> then <code>\x09\x00\x00\x01</code> will be xor-ed with the blob, otherwise <code>Feel the sting of the monarch!</code>.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>NtGlobalFlag </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
+<span class="line-number">5</span>
 </pre></td><td class="code"><pre><code class="python"><span class="line"><span class="k">if</span> <span class="p">(</span><span class="n">NtGlobalFlag</span> <span class="o">==</span> <span class="mh">0x70</span><span class="p">):</span>
-</span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;</span><span class="se">\x09\x00\x00\x01</span><span class="s">&quot;</span><span class="p">)</span>
-</span><span class="line"><span class="k">else</span><span class="p">:</span>
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;Feel the sting of the monarch!&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">else</span><span class="p">:</span>
+</span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;</span><span class="se">\x09\x00\x00\x01</span><span class="s">&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h3 id="function-8---sands-of-time">Function 8 - Sands of Time</h3>
@@ -3420,7 +3422,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B2C</span> <span class="nv">call</span>    <span class="nv">ICanHaz?</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B31</span> <span class="nv">call</span>    <span class="nv">NtGlobalFlag</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B36</span> <span class="nv">call</span>    <span class="nv">SandsOfTime</span>
-</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B3B</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="p">]</span>   <span class="c1">; eax = executable&#39;s complete path</span>
+</span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B3B</span> <span class="nv">mov</span>     <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">esi</span><span class="p">]</span>   <span class="c1">; eax = executable&#39;s name</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B3D</span> <span class="nv">call</span>    <span class="nv">sub_4014F0</span>   <span class="c1">; you are here</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B42</span> <span class="nv">call</span>    <span class="nv">sub_401590</span>
 </span><span class="line"><span class="nl">.text:</span><span class="err">00401</span><span class="nf">B47</span> <span class="nv">call</span>    <span class="nv">sub_4016F0</span>
@@ -3428,9 +3430,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 
 <p>Before next function, executable’s complete path is saved into <code>eax</code>. Then <code>sub_4014F0</code> is called.</p>
 
-<p><img src="http://parsiya.net/images/2014/flare/7-14.jpg" alt="Comparing complete path with backdoge.exe" title="Comparing complete path with backdoge.exe" /></p>
+<p><img src="http://parsiya.net/images/2014/flare/7-14.jpg" alt="Comparing executable's name with backdoge.exe" title="Comparing executable's name with backdoge.exe" /></p>
 
-<p>Again, this is just a check. Executable’s complete path is compared with <code>backdoge.exe</code> two characters in each iteration.</p>
+<p>Again, this is just a check. Executable’s name is compared with <code>backdoge.exe</code> two characters in each iteration.</p>
 
 <p><img src="http://parsiya.net/images/2014/flare/7-15.jpg" alt="Filename check" title="Filename check" /></p>
 

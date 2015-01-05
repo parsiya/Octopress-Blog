@@ -1599,7 +1599,7 @@ else:
 .text:00401B47 call    sub_4016F0
 {% endcodeblock %}
 
-![0xCC Check](/images/2014/flare/7-11.jpg/ "0xCC Check")
+![0xCC Check](/images/2014/flare/7-11.jpg "0xCC Check")
 
 Offsets from two functions are loaded and then compared. The first one calls ``isDebuggerPresent`` and the second one just prints something and exits. We have seen this function before, it is the first check.
 
@@ -1663,13 +1663,14 @@ This one is pretty straightforward. A field inside the ``PEB`` (we have already 
 
 !["NtGlobalFlag Checked"](/images/2014/flare/7-12.jpg "NtGlobalFlag Checked")
 
-If ``NtGlobalFlag`` is ``0x70`` then ``\x09\x00\x00\x01`` will be xor-ed with the blob, otherwise ``Feel the sting of the monarch!``.
+If ``NtGlobalFlag`` is not ``0x70`` then ``\x09\x00\x00\x01`` will be xor-ed with the blob, otherwise ``Feel the sting of the monarch!``.
 
 {% codeblock lang:python NtGlobalFlag %}
 if (NtGlobalFlag == 0x70):
-    blob = xor(blob,"\x09\x00\x00\x01")
-else:
     blob = xor(blob,"Feel the sting of the monarch!")
+    
+else:
+    blob = xor(blob,"\x09\x00\x00\x01")
 {% endcodeblock %}
 
 ### Function 8 - Sands of Time
@@ -1728,7 +1729,7 @@ else:
 .text:00401B2C call    ICanHaz?
 .text:00401B31 call    NtGlobalFlag
 .text:00401B36 call    SandsOfTime
-.text:00401B3B mov     eax, [esi]   ; eax = executable's complete path
+.text:00401B3B mov     eax, [esi]   ; eax = executable's name
 .text:00401B3D call    sub_4014F0   ; you are here
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
@@ -1736,9 +1737,9 @@ else:
 
 Before next function, executable's complete path is saved into ``eax``. Then ``sub_4014F0`` is called.
 
-![Comparing complete path with backdoge.exe](/images/2014/flare/7-14.jpg "Comparing complete path with backdoge.exe")
+![Comparing executable's name with backdoge.exe](/images/2014/flare/7-14.jpg "Comparing executable's name with backdoge.exe")
 
-Again, this is just a check. Executable's complete path is compared with ``backdoge.exe`` two characters in each iteration.
+Again, this is just a check. Executable's name is compared with ``backdoge.exe`` two characters in each iteration.
 
 ![Filename check](/images/2014/flare/7-15.jpg "Filename check")
 
