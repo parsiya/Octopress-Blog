@@ -1,0 +1,1351 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Tales From the Crypt(o) - Leaking AES Keys - Parsiya's Den</title>
+  <meta name="author" content="Parsiya">
+
+  
+  <meta name="description" content="This post is part one of a two part internal blog entry on creating a Pintool for an assessment. Unfortunately I cannot talk about it, so I decided &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://parsiya.net/blog/2015-01-06-tales-from-the-crypt-o-leaking-aes-keys">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Parsiya's Den" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-55491306-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Parsiya's Den</a></h1>
+  
+    <h2>A n00b reverser's adventures down the rabbit hole.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:parsiya.net" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <!-- <li><a href="/about.html">About Me</a></li> -->
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Tales From the Crypt(o) - Leaking AES Keys</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T23:36:48-05:00" pubdate data-updated="true">Jan 6<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This post is part one of a two part internal blog entry on creating a Pintool for an assessment. Unfortunately I cannot talk about it, so I decided to put the first part out. If I find an opensource program similar to the assessment I will try and recreate the tool (but I am not holding my breath). As this part is essentially a build up, it may not be coherent at times. Alterntively, if you really want to read it, you can join us. We are almost always hiring (let me do the referal though ;).</p>
+
+<p>Today we are going to talk about discovering encryption keys in sneaky ways. We will start with simple examples, do a bit of Digital Forensics or DF (for low standards of DF) and finally in part two we will use our recently acquired knowledge of Pintool to do <code>[redacted]</code>. </p>
+
+<p>First let’s talk a bit about the inner-workings of AES decryption. By inner-workings of AES I do not mean the following diagrams that you have seen so many times.</p>
+
+<!-- more -->
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/tales1/CBC-Mode-Wikipedia.jpg" width="" height="" title="These are not the diagrams you are looking for - Source: Wikipedia" /><span class="caption-text">These are not the diagrams you are looking for - Source: Wikipedia</span></span></p>
+
+<p>Instead I am going to talk about what happens inside those rectangles labeled “block cipher encryption/decryption.” If you don’t want to know about the AES stuff, jump directly to <a href="#aeskeysinaction">2. AES Keys in Action</a>.</p>
+
+<h3 id="thinking-inside-the-box">1. Thinking Inside the Box</h3>
+<p>Each of these boxes consist of a few rounds. The number of rounds is based on key size in AES. Keep in mind that AES is a subset of the <em>Rijndael</em> family of ciphers (and I still do not know how to pronounce the name). NIST (National Institute of Standards and Technology) selected a fixed block size (16 bytes) and three different key sizes (128, 192 and 256 bits) and called it AES (Advanced Encryption Standard) because that’s what NIST does (other than allegedly embedding backdoors in <a href="https://www.mail-archive.com/openssl-announce@openssl.org/msg00127.html">almost never used</a> random number generators, see <a href="http://blog.cryptographyengineering.com/2013/09/the-many-flaws-of-dualecdrbg.html">DUAL_EC_DRBG</a> ;)). You do not need to memorize the formula that calculates the number of rounds based on key and block size. You can see the result of my painstaking calculations in the following table:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Key Size (bits)</th>
+      <th style="text-align: center">Number of Rounds (potatoes)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">128</td>
+      <td style="text-align: center">10</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">192</td>
+      <td style="text-align: center">12</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">256</td>
+      <td style="text-align: center">14</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>That was easy. So what happens inside each of these rounds. Except the last round, there are four steps in each round (encryption/decryption). For the remainder of this section I am going to assume that we are using a 128-bit key (16 bytes) resulting in 10 rounds.</p>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/tales1/AES-Rounds.jpg" width="" height="" title="Inside AES - Source: [http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png](http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png)" /><span class="caption-text">Inside AES - Source: <a href="http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png">http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png</a></span></span></p>
+
+<p>There are four different operations but I am going to go into some detail about <code>AddRoundKey</code>. It is also the only operation which introduces an unknown element (key) into the process. The other operations are also simple and we can probably guess what they do based on their names.</p>
+
+<h4 id="addroundkey">1.1 AddRoundKey</h4>
+<p>It’s a simple XOR. A 16 byte round key is XOR-ed with the current block. If we count the number of AddRoundKey operations for Nr==10, we get 11. But we only have one 16 byte key and need 16<em>11 or 176 bytes. *“How am I going to create the extra 160 (176-16) bytes Senpai?”</em> one may ask. This is done through some magic known as <code>key expansion</code> which creates bytes out of thin air. It expands the original key into the 176 bytes also known as <code>key schedule</code>.</p>
+
+<h5 id="aes-key-schedule-aka-rijndael-key-schedule">1.1.1 AES Key Schedule (aka Rijndael Key Schedule)</h5>
+<p>The key expansion algorithm takes the original key and returns the key schedule. I could talk about the boring details of it but you are already bored and I am lazy. Search for Rijndael Key Schedule if you want to know more. Instead we are going to talk about some interesting stuff.</p>
+
+<p>Don’t make the convenient mistake of thinking of the key schedule as a Pseudo-Random Number Generator (PRNG) where we enter the original key as the seed and then reap bytes. In a good PRNG, we should not be able to discover the seed by observing the output. In the Rijndael/AES key schedule there is direct correlation between the original key and each round key.</p>
+
+<p>In AES-128, knowing a single round key (regardless of round number) is enough to generate the original key. In AES-256 we need to know two consecutive round keys and that is a good thing for AES-256. If not, the schedule had reduced the entropy of a 256-bit key to 128 bits. In a lot of hardware (a.k.a limited on-board memory), the first (actual encryption key) and last round keys (first two and last two round keys for AES-256) are stored for encryption/decryption and the rest are generated when needed from them.</p>
+
+<p>Also by looking at the key schedule, we can see that the original AES key is copied directly to the start of the key schedule. In other words, the first 128 bits (16 bytes) of the AES-128 key schedule are the same as the original key.</p>
+
+<h5 id="round-key-usage">1.1.2 Round Key Usage</h5>
+<p>Great, so we have 16 bytes that are XOR-ed with something in each round. For decryption, we can create the key schedule and inverse it. This works because XOR is transitive (i.e. If ciphertext = plaintext XOR key then plaintext = ciphertext XOR key).</p>
+
+<p>Notice the first AddRoundKey block in both encryption and decryption. In encryption this is first 16 bytes of the original key (or the whole key in case of AES-128). In decryption, this is the last round key. Keep this in mind, we are going to use it later.</p>
+
+<h3 id="a-nameaeskeysinactiona-aes-keys-in-action">2. <a name="aeskeysinaction"></a> AES Keys in Action</h3>
+<p>By now we know how AES keys are used. Let’s do some stuff. We’re going to use the same set up as last time. A Kali 32-bit VM running in VirtualBox.</p>
+
+<h4 id="function-calls">2.1 Function Calls</h4>
+<p>External function calls leak information. I am going to divide them into two parts <code>System Calls</code> (syscalls) and <code>Library Calls</code>. Basically these are functions that you can call and use in your program. If these functions part of the Operating System they are System Calls and if they are provided by a 3rd party library (shared library, DLL etc) they are Library Calls. For an excellent description of system calls, read the blog post by Gustavo Duartes named <a href="">System Calls Make the World Go Round</a> (also read the rest of his blog).</p>
+
+<h5 id="openssl-example">2.1.1 OpenSSL Example</h5>
+<p>Our example will be a simple Encryption/Decryption program in C using OpenSSL modified from [​http://wiki.openssl.org/index.php/EVP_Symmetric_Encryption_and_Decryption. It will encrypt and decrypt the string “The quick brown fox jumps over the lazy dog” with AES using the 256 bit (32 byte) key <code>ee12c03ceacdfb5d4c0e67c8f5ab3362</code> and IV <code>d36a4bf2e6dd9c68</code> (128 bits or 16 bytes). My comments start with <code>///</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>AES-OpenSSL.cpp </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+<span class="line-number">69</span>
+<span class="line-number">70</span>
+<span class="line-number">71</span>
+<span class="line-number">72</span>
+<span class="line-number">73</span>
+<span class="line-number">74</span>
+<span class="line-number">75</span>
+<span class="line-number">76</span>
+<span class="line-number">77</span>
+<span class="line-number">78</span>
+<span class="line-number">79</span>
+<span class="line-number">80</span>
+<span class="line-number">81</span>
+<span class="line-number">82</span>
+<span class="line-number">83</span>
+<span class="line-number">84</span>
+<span class="line-number">85</span>
+<span class="line-number">86</span>
+<span class="line-number">87</span>
+<span class="line-number">88</span>
+<span class="line-number">89</span>
+<span class="line-number">90</span>
+<span class="line-number">91</span>
+<span class="line-number">92</span>
+<span class="line-number">93</span>
+<span class="line-number">94</span>
+<span class="line-number">95</span>
+<span class="line-number">96</span>
+<span class="line-number">97</span>
+<span class="line-number">98</span>
+<span class="line-number">99</span>
+<span class="line-number">100</span>
+<span class="line-number">101</span>
+<span class="line-number">102</span>
+<span class="line-number">103</span>
+<span class="line-number">104</span>
+<span class="line-number">105</span>
+<span class="line-number">106</span>
+<span class="line-number">107</span>
+<span class="line-number">108</span>
+<span class="line-number">109</span>
+<span class="line-number">110</span>
+<span class="line-number">111</span>
+<span class="line-number">112</span>
+<span class="line-number">113</span>
+<span class="line-number">114</span>
+<span class="line-number">115</span>
+<span class="line-number">116</span>
+<span class="line-number">117</span>
+<span class="line-number">118</span>
+<span class="line-number">119</span>
+<span class="line-number">120</span>
+<span class="line-number">121</span>
+<span class="line-number">122</span>
+<span class="line-number">123</span>
+<span class="line-number">124</span>
+<span class="line-number">125</span>
+<span class="line-number">126</span>
+<span class="line-number">127</span>
+<span class="line-number">128</span>
+<span class="line-number">129</span>
+<span class="line-number">130</span>
+<span class="line-number">131</span>
+<span class="line-number">132</span>
+<span class="line-number">133</span>
+<span class="line-number">134</span>
+<span class="line-number">135</span>
+<span class="line-number">136</span>
+<span class="line-number">137</span>
+<span class="line-number">138</span>
+<span class="line-number">139</span>
+<span class="line-number">140</span>
+<span class="line-number">141</span>
+<span class="line-number">142</span>
+<span class="line-number">143</span>
+<span class="line-number">144</span>
+<span class="line-number">145</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="cp">#include &lt;openssl/conf.h&gt;</span>
+</span><span class="line"><span class="cp">#include &lt;openssl/evp.h&gt;</span>
+</span><span class="line"><span class="cp">#include &lt;openssl/err.h&gt;</span>
+</span><span class="line"><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">/// Code from OpenSSL Wiki at http://wiki.openssl.org/index.php/EVP_Symmetric_Encryption_and_Decryption</span>
+</span><span class="line"><span class="c1">/// Needs libssl-dev (e.g. sudo apt-get install libssl-dev )</span>
+</span><span class="line"><span class="c1">/// Compile with gcc [filename].c -o [outputfile] -lcrypto -ggdb</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">void</span> <span class="n">handleErrors</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="n">ERR_print_errors_fp</span><span class="p">(</span><span class="n">stderr</span><span class="p">);</span>
+</span><span class="line">  <span class="n">abort</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">int</span> <span class="n">encrypt</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">plaintext</span><span class="p">,</span> <span class="kt">int</span> <span class="n">plaintext_len</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span>
+</span><span class="line">  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">ciphertext</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="n">EVP_CIPHER_CTX</span> <span class="o">*</span><span class="n">ctx</span><span class="p">;</span>
+</span><span class="line">  <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+</span><span class="line">  <span class="kt">int</span> <span class="n">ciphertext_len</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Create and initialise the context */</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">EVP_CIPHER_CTX_new</span><span class="p">()))</span> <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Initialise the encryption operation. IMPORTANT - ensure you use a key</span>
+</span><span class="line"><span class="cm">   * and IV size appropriate for your cipher</span>
+</span><span class="line"><span class="cm">   * In this example we are using 256 bit AES (i.e. a 256 bit key). The</span>
+</span><span class="line"><span class="cm">   * IV size for *most* modes is the same as the block size. For AES this</span>
+</span><span class="line"><span class="cm">   * is 128 bits */</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_EncryptInit_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">EVP_aes_256_cbc</span><span class="p">(),</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">))</span>  <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Provide the message to be encrypted, and obtain the encrypted output.</span>
+</span><span class="line"><span class="cm">   * EVP_EncryptUpdate can be called multiple times if necessary</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_EncryptUpdate</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">,</span> <span class="n">plaintext_len</span><span class="p">))</span> <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">  <span class="n">ciphertext_len</span> <span class="o">=</span> <span class="n">len</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Finalise the encryption. Further ciphertext bytes may be written at</span>
+</span><span class="line"><span class="cm">   * this stage.</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_EncryptFinal_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">ciphertext</span> <span class="o">+</span> <span class="n">len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">))</span> <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">  <span class="n">ciphertext_len</span> <span class="o">+=</span> <span class="n">len</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Clean up */</span>
+</span><span class="line">  <span class="n">EVP_CIPHER_CTX_free</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">return</span> <span class="n">ciphertext_len</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">int</span> <span class="n">decrypt</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">ciphertext</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ciphertext_len</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span>
+</span><span class="line">  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">plaintext</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="n">EVP_CIPHER_CTX</span> <span class="o">*</span><span class="n">ctx</span><span class="p">;</span>
+</span><span class="line">  <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+</span><span class="line">  <span class="kt">int</span> <span class="n">plaintext_len</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Create and initialise the context */</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">EVP_CIPHER_CTX_new</span><span class="p">()))</span> <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Initialise the decryption operation. IMPORTANT - ensure you use a key</span>
+</span><span class="line"><span class="cm">   * and IV size appropriate for your cipher</span>
+</span><span class="line"><span class="cm">   * In this example we are using 256 bit AES (i.e. a 256 bit key). The</span>
+</span><span class="line"><span class="cm">   * IV size for *most* modes is the same as the block size. For AES this</span>
+</span><span class="line"><span class="cm">   * is 128 bits */</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_DecryptInit_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">EVP_aes_256_cbc</span><span class="p">(),</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">))</span>  <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Provide the message to be decrypted, and obtain the plaintext output.</span>
+</span><span class="line"><span class="cm">   * EVP_DecryptUpdate can be called multiple times if necessary</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_DecryptUpdate</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">))</span>  <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">  <span class="n">plaintext_len</span> <span class="o">=</span> <span class="n">len</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Finalise the decryption. Further plaintext bytes may be written at</span>
+</span><span class="line"><span class="cm">   * this stage.</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_DecryptFinal_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">plaintext</span> <span class="o">+</span> <span class="n">len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">))</span> <span class="n">handleErrors</span><span class="p">();</span>
+</span><span class="line">  <span class="n">plaintext_len</span> <span class="o">+=</span> <span class="n">len</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Clean up */</span>
+</span><span class="line">  <span class="n">EVP_CIPHER_CTX_free</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">return</span> <span class="n">plaintext_len</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">arc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="cm">/* Set up the key and iv. Do I need to say to not hard code these in a</span>
+</span><span class="line"><span class="cm">   * real application? :-)</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* A 256 bit key */</span>
+</span><span class="line">  <span class="c1">/// unsigned char *key = &quot;01234567890123456789012345678901&quot;;</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">/// this is still a 256-bit (32 byte) key, each character is treated as one byte</span>
+</span><span class="line">  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span> <span class="o">=</span> <span class="s">&quot;ee12c03ceacdfb5d4c0e67c8f5ab3362&quot;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* A 128 bit IV */</span>
+</span><span class="line">  <span class="c1">/// unsigned char *iv = &quot;01234567890123456&quot;;</span>
+</span><span class="line">  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span> <span class="o">=</span> <span class="s">&quot;d36a4bf2e6dd9c68&quot;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Message to be encrypted */</span>
+</span><span class="line">  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">plaintext</span> <span class="o">=</span>
+</span><span class="line">    <span class="s">&quot;The quick brown fox jumps over the lazy dog&quot;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Buffer for ciphertext. Ensure the buffer is long enough for the</span>
+</span><span class="line"><span class="cm">   * ciphertext which may be longer than the plaintext, dependant on the</span>
+</span><span class="line"><span class="cm">   * algorithm and mode</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">ciphertext</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Buffer for the decrypted text */</span>
+</span><span class="line">  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">decryptedtext</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">  <span class="kt">int</span> <span class="n">decryptedtext_len</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Initialise the library */</span>
+</span><span class="line">  <span class="n">ERR_load_crypto_strings</span><span class="p">();</span>
+</span><span class="line">  <span class="n">OpenSSL_add_all_algorithms</span><span class="p">();</span>
+</span><span class="line">  <span class="n">OPENSSL_config</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Encrypt the plaintext */</span>
+</span><span class="line">  <span class="n">ciphertext_len</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">plaintext</span><span class="p">),</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Do something useful with the ciphertext here */</span>
+</span><span class="line">  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Ciphertext is:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class="line">  <span class="n">BIO_dump_fp</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Decrypt the ciphertext */</span>
+</span><span class="line">  <span class="n">decryptedtext_len</span> <span class="o">=</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">decryptedtext</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Add a NULL terminator. We are expecting printable text */</span>
+</span><span class="line">  <span class="n">decryptedtext</span><span class="p">[</span><span class="n">decryptedtext_len</span><span class="p">]</span> <span class="o">=</span> <span class="err">&#39;&#39;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Show the decrypted text */</span>
+</span><span class="line">  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Decrypted text is:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class="line">  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">decryptedtext</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/* Clean up */</span>
+</span><span class="line">  <span class="n">EVP_cleanup</span><span class="p">();</span>
+</span><span class="line">  <span class="n">ERR_free_strings</span><span class="p">();</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>we need the <code>libssl-dev</code> library which can be installed by <code>sudo apt-get install libssl-dev</code>. To compile use <code>gcc [filename].c -o [outputfile] -lcrypto -ggdb</code>. We will use the debug information in GDB later. Here is the output:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>output </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>gcc AES-OpenSSL.c -ggdb -lcrypto -o sampleaes
+</span><span class="line"><span class="nv">$ </span>./sampleaes
+</span><span class="line">Ciphertext is:
+</span><span class="line">0000 - 51 34 3f 21 87 5d 4e f6-18 1d c6 6d 41 c1 12 ae   Q4?!.<span class="o">]</span>N....mA...
+</span><span class="line">0010 - e0 a7 de a0 fa b9 6c b0-91 5e 21 c6 d3 90 96 36   ......l..^!....6
+</span><span class="line">0020 - 70 7b ec 69 89 e1 bc 0a-2c 61 f4 c6 26 61 5f 2e   p<span class="o">{</span>.i....,a..&amp;a_.
+</span><span class="line">Decrypted text is:
+</span><span class="line">The quick brown fox jumps over the lazy dog
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="monitoring-library-calls">2.2 Monitoring Library Calls</h4>
+<p>To monitor these calls, we have a few tools at hand. On *nix operating systems we can use strace (for system calls) and ltrace (for both syscalls and library calls). On Windows we can use <a href="http://www.rohitab.com/apimonitor">API Monitor</a> as I have used in the <a href="http://parsiya.net/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/#ch7">past</a>. If you have a Mac you can try your luck with <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/dtruss.1m.html">dtruss</a> which uses dtrace. I am not quite sure if it can be used to trace library calls and if it works on iOS.</p>
+
+<h5 id="discovering-shared-libraries">2.2.1 Discovering Shared Libraries</h5>
+<p>Assuming we are approaching this application from a black-box perspective, we need to discover the shared libraries first. This can be done in different ways. We will talk about <code>ldd</code>, <code>nm</code>, <code>strings</code> or just <code>ltrace</code>. Just using ltrace may do the job but if there are a lot of library calls, we need to spot critical/interesting libraries to filter out the noise.</p>
+
+<h6 id="ldd">2.2.1.1 ldd</h6>
+<p><code>ldd</code> “prints shared library dependencies” according to the <a href="http://man7.org/linux/man-pages/man1/ldd.1.html">man</a> page. Let’s run it.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running ldd </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ldd</span> sampleaes
+</span><span class="line">  linux-gate.so.1 <span class="o">=</span>&gt;  <span class="o">(</span>0xb77b8000<span class="o">)</span>
+</span><span class="line">  libcrypto.so.1.0.0 <span class="o">=</span>&gt; /usr/lib/i386-linux-gnu/i686/cmov/libcrypto.so.1.0.0 <span class="o">(</span>0xb75df000<span class="o">)</span>
+</span><span class="line">  libc.so.6 <span class="o">=</span>&gt; /lib/i386-linux-gnu/i686/cmov/libc.so.6 <span class="o">(</span>0xb747b000<span class="o">)</span>
+</span><span class="line">  libdl.so.2 <span class="o">=</span>&gt; /lib/i386-linux-gnu/i686/cmov/libdl.so.2 <span class="o">(</span>0xb7476000<span class="o">)</span>
+</span><span class="line">  libz.so.1 <span class="o">=</span>&gt; /lib/i386-linux-gnu/libz.so.1 <span class="o">(</span>0xb745d000<span class="o">)</span>
+</span><span class="line">  /lib/ld-linux.so.2 <span class="o">(</span>0xb77b9000<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In line 3 we can see <a href="http://wiki.openssl.org/index.php/Libcrypto_API">libcrypto</a> which means the application is using OpenSSL (the other OpenSSL library is <code>libssl</code>).</p>
+
+<h6 id="nm">2.2.1.2 nm</h6>
+<p><code>nm</code> “<a href="http://unixhelp.ed.ac.uk/CGI/man-cgi?nm">lists symbols from object files.</a>” It’s a good idea to look at its output and look for familiar symbols. We can clearly see OPENSSL and function names in the truncated output.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running nm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>nm sampleaes
+</span><span class="line">         U BIO_dump_fp@@OPENSSL_1.0.0
+</span><span class="line">         U ERR_free_strings@@OPENSSL_1.0.0
+</span><span class="line">         U ERR_load_crypto_strings@@OPENSSL_1.0.0
+</span><span class="line">         U ERR_print_errors_fp@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_CIPHER_CTX_free@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_CIPHER_CTX_new@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_DecryptFinal_ex@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_DecryptInit_ex@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_DecryptUpdate@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_EncryptFinal_ex@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_EncryptInit_ex@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_EncryptUpdate@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_aes_256_cbc@@OPENSSL_1.0.0
+</span><span class="line">         U EVP_cleanup@@OPENSSL_1.0.0
+</span><span class="line">         U OPENSSL_add_all_algorithms_noconf@@OPENSSL_1.0.0
+</span><span class="line">         U OPENSSL_config@@OPENSSL_1.0.0
+</span><span class="line">0804900c d _DYNAMIC
+</span><span class="line">08049108 d _GLOBAL_OFFSET_TABLE_
+</span><span class="line">08048d4c R _IO_stdin_used
+</span><span class="line">         w _ITM_deregisterTMCloneTable
+</span><span class="line">         w _ITM_registerTMCloneTable
+</span><span class="line">         w _Jv_RegisterClasses
+</span><span class="line">...
+</span><span class="line"><span class="c"># removed the rest of the output</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h6 id="strings">2.2.1.3 strings</h6>
+<p><code>strings</code> is useful because it may leak great information about the binary. It will give us the key and IV directly in our example. We can also see OpenSSL and libcrypto strings. It also gives us the version of the used OpenSSL library.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running strings </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="n">strings</span> <span class="n">sampleaes</span>
+</span><span class="line"><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">ld</span><span class="o">-</span><span class="n">linux</span><span class="p">.</span><span class="n">so</span><span class="mf">.2</span>
+</span><span class="line"><span class="n">libcrypto</span><span class="p">.</span><span class="n">so</span><span class="mf">.1.0.0</span>
+</span><span class="line"><span class="n">_ITM_deregisterTMCloneTable</span>
+</span><span class="line"><span class="n">__gmon_start__</span>
+</span><span class="line"><span class="n">_Jv_RegisterClasses</span>
+</span><span class="line"><span class="n">_ITM_registerTMCloneTable</span>
+</span><span class="line"><span class="n">EVP_aes_256_cbc</span>
+</span><span class="line"><span class="n">ERR_free_strings</span>
+</span><span class="line"><span class="n">OPENSSL_config</span>
+</span><span class="line"><span class="n">EVP_cleanup</span>
+</span><span class="line"><span class="n">ERR_load_crypto_strings</span>
+</span><span class="line"><span class="n">OPENSSL_add_all_algorithms_noconf</span>
+</span><span class="line"><span class="n">EVP_CIPHER_CTX_free</span>
+</span><span class="line"><span class="n">EVP_DecryptFinal_ex</span>
+</span><span class="line"><span class="n">ERR_print_errors_fp</span>
+</span><span class="line"><span class="n">EVP_DecryptInit_ex</span>
+</span><span class="line"><span class="n">EVP_EncryptFinal_ex</span>
+</span><span class="line"><span class="n">EVP_CIPHER_CTX_new</span>
+</span><span class="line"><span class="n">EVP_DecryptUpdate</span>
+</span><span class="line"><span class="n">EVP_EncryptInit_ex</span>
+</span><span class="line"><span class="n">BIO_dump_fp</span>
+</span><span class="line"><span class="n">EVP_EncryptUpdate</span>
+</span><span class="line"><span class="n">libc</span><span class="p">.</span><span class="n">so</span><span class="mf">.6</span>
+</span><span class="line"><span class="n">_IO_stdin_used</span>
+</span><span class="line"><span class="n">puts</span>
+</span><span class="line"><span class="n">abort</span>
+</span><span class="line"><span class="n">strlen</span>
+</span><span class="line"><span class="n">stdout</span>
+</span><span class="line"><span class="n">stderr</span>
+</span><span class="line"><span class="n">__libc_start_main</span>
+</span><span class="line"><span class="n">OPENSSL_1</span><span class="mf">.0.0</span>
+</span><span class="line"><span class="n">GLIBC_2</span><span class="mf">.0</span>
+</span><span class="line"><span class="n">PTRh</span>
+</span><span class="line"><span class="p">[</span><span class="o">^</span><span class="n">_</span><span class="p">]</span>
+</span><span class="line"><span class="n">ee12c03ceacdfb5d4c0e67c8f5ab3362</span>
+</span><span class="line"><span class="n">d36a4bf2e6dd9c68</span>
+</span><span class="line"><span class="n">The</span> <span class="n">quick</span> <span class="n">brown</span> <span class="n">fox</span> <span class="n">jumps</span> <span class="n">over</span> <span class="n">the</span> <span class="n">lazy</span> <span class="n">dog</span>
+</span><span class="line"><span class="n">Ciphertext</span> <span class="nl">is:</span>
+</span><span class="line"><span class="n">Decrypted</span> <span class="n">text</span> <span class="nl">is:</span>
+</span><span class="line"><span class="p">;</span><span class="o">*</span><span class="mi">2</span><span class="err">$</span><span class="s">&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="using-ltrace-to-find-the-key">2.3  Using ltrace to Find the Key</h4>
+<p>Finally let’s run ltrace on the binary. The <code>i</code> switch prints the value of instruction pointer at the time of library call (we will need it later). You can also trace syscalls using the <code>S</code> (capital S) switch.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running ltrace </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nf">$</span> <span class="nv">ltrace</span> <span class="o">-</span><span class="nv">i</span> <span class="nv">.</span><span class="o">/</span><span class="nv">sampleaes</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048921</span><span class="p">]</span> <span class="nv">__libc_start_main</span><span class="p">(</span><span class="mh">0x8048b8c</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mh">0xbff88534</span><span class="p">,</span> <span class="mh">0x8048cd0</span><span class="p">,</span> <span class="mh">0x8048cc0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048bbe</span><span class="p">]</span> <span class="nv">ERR_load_crypto_strings</span><span class="p">(</span><span class="mh">0xb776dda6</span><span class="p">,</span> <span class="mh">0xb7439a30</span><span class="p">,</span> <span class="mh">0x8048629</span><span class="p">,</span> <span class="mh">0xb74266d0</span><span class="p">,</span> <span class="mh">0x80485d0</span><span class="p">)</span> <span class="err">=</span> <span class="mi">0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048bc3</span><span class="p">]</span> <span class="nv">OPENSSL_add_all_algorithms_noconf</span><span class="p">(</span><span class="mh">0xb776dda6</span><span class="p">,</span> <span class="mh">0xb7439a30</span><span class="p">,</span> <span class="mh">0x8048629</span><span class="p">,</span> <span class="mh">0xb74266d0</span><span class="p">,</span> <span class="mh">0x80485d0</span><span class="p">)</span> <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048bcf</span><span class="p">]</span> <span class="nv">OPENSSL_config</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0xb7439a30</span><span class="p">,</span> <span class="mh">0x8048629</span><span class="p">,</span> <span class="mh">0xb74266d0</span><span class="p">,</span> <span class="mh">0x80485d0</span><span class="p">)</span>    <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048bde</span><span class="p">]</span> <span class="nv">strlen</span><span class="p">(</span><span class="s">&quot;The quick brown fox jumps over t&quot;</span><span class="nv">...</span><span class="p">)</span>                      <span class="err">=</span> <span class="mi">43</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048a0f</span><span class="p">]</span> <span class="nv">EVP_CIPHER_CTX_new</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mh">0x8048434</span><span class="p">,</span> <span class="mh">0x8049140</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0xb742e0b4</span><span class="p">)</span>         <span class="err">=</span> <span class="mh">0x90bdce0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048a22</span><span class="p">]</span> <span class="nv">EVP_aes_256_cbc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mh">0x8048434</span><span class="p">,</span> <span class="mh">0x8049140</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0xb742e0b4</span><span class="p">)</span>            <span class="err">=</span> <span class="mh">0xb7735040</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048a47</span><span class="p">]</span> <span class="nv">EVP_EncryptInit_ex</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xb7735040</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x8048d50</span><span class="p">,</span> <span class="mh">0x8048d71</span><span class="p">)</span> <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048a78</span><span class="p">]</span> <span class="nv">EVP_EncryptUpdate</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xbff883ec</span><span class="p">,</span> <span class="mh">0xbff88324</span><span class="p">,</span> <span class="mh">0x8048d84</span><span class="p">,</span> <span class="mi">43</span><span class="p">)</span> <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048aa8</span><span class="p">]</span> <span class="nv">EVP_EncryptFinal_ex</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xbff8840c</span><span class="p">,</span> <span class="mh">0xbff88324</span><span class="p">,</span> <span class="mh">0x8048d84</span><span class="p">,</span> <span class="mi">43</span><span class="p">)</span> <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048ac3</span><span class="p">]</span> <span class="nv">EVP_CIPHER_CTX_free</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xbff8840c</span><span class="p">,</span> <span class="mh">0xbff88324</span><span class="p">,</span> <span class="mh">0x8048d84</span><span class="p">,</span> <span class="mi">43</span><span class="p">)</span> <span class="err">=</span> <span class="mi">0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048c25</span><span class="p">]</span> <span class="nv">puts</span><span class="p">(</span><span class="s">&quot;Ciphertext is:&quot;</span><span class="nv">Ciphertext</span> <span class="nv">is</span><span class="p">:</span>
+</span><span class="line"><span class="err">)</span>                                             <span class="err">=</span> <span class="err">15</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048c48</span><span class="p">]</span> <span class="nv">BIO_dump_fp</span><span class="p">(</span><span class="mh">0xb75874e0</span><span class="p">,</span> <span class="mh">0xbff883ec</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mh">0x8048d71</span><span class="p">,</span> <span class="mh">0xbff883ec0000</span> <span class="o">-</span> <span class="mi">51</span> <span class="mi">34</span> <span class="mi">3</span><span class="nv">f</span> <span class="mi">21</span> <span class="mi">87</span> <span class="mi">5</span><span class="nv">d</span> <span class="mi">4</span><span class="nv">e</span> <span class="nv">f6</span><span class="o">-</span><span class="mi">18</span> <span class="mi">1</span><span class="nv">d</span> <span class="nv">c6</span> <span class="mi">6</span><span class="nv">d</span> <span class="mi">41</span> <span class="nv">c1</span> <span class="mi">12</span> <span class="nv">ae</span>   <span class="nv">Q4?</span><span class="err">!</span><span class="nv">.</span><span class="p">]</span><span class="nv">N....mA...</span>
+</span><span class="line"><span class="err">0010</span> <span class="err">-</span> <span class="nf">e0</span> <span class="nv">a7</span> <span class="nv">de</span> <span class="nv">a0</span> <span class="nv">fa</span> <span class="nv">b9</span> <span class="mi">6</span><span class="nv">c</span> <span class="nv">b0</span><span class="o">-</span><span class="mi">91</span> <span class="mi">5</span><span class="nv">e</span> <span class="mi">21</span> <span class="nv">c6</span> <span class="nv">d3</span> <span class="mi">90</span> <span class="mi">96</span> <span class="mi">36</span>   <span class="nv">......l..</span><span class="o">^</span><span class="err">!</span><span class="nv">....6</span>
+</span><span class="line"><span class="err">0020</span> <span class="err">-</span> <span class="err">70</span> <span class="err">7</span><span class="nf">b</span> <span class="nv">ec</span> <span class="mi">69</span> <span class="mi">89</span> <span class="nv">e1</span> <span class="nv">bc</span> <span class="mi">0</span><span class="nv">a</span><span class="o">-</span><span class="mi">2</span><span class="nv">c</span> <span class="mi">61</span> <span class="nv">f4</span> <span class="nv">c6</span> <span class="mi">26</span> <span class="mi">61</span> <span class="mi">5</span><span class="nv">f</span> <span class="mi">2</span><span class="nv">e</span>   <span class="nv">p</span><span class="err">{</span><span class="nv">.i....</span><span class="p">,</span><span class="nv">a..</span><span class="o">&amp;</span><span class="nv">a_.</span>
+</span><span class="line"><span class="err">)</span>     <span class="err">=</span> <span class="err">3</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048ad3</span><span class="p">]</span> <span class="nv">EVP_CIPHER_CTX_new</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0xb77789c0</span><span class="p">,</span> <span class="mh">0xbff883ec</span><span class="p">,</span> <span class="mh">0xb764bda0</span><span class="p">,</span> <span class="mh">0xb764b910</span><span class="p">)</span> <span class="err">=</span> <span class="mh">0x90bdce0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048ae6</span><span class="p">]</span> <span class="nv">EVP_aes_256_cbc</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0xb77789c0</span><span class="p">,</span> <span class="mh">0xbff883ec</span><span class="p">,</span> <span class="mh">0xb764bda0</span><span class="p">,</span> <span class="mh">0xb764b910</span><span class="p">)</span> <span class="err">=</span> <span class="mh">0xb7735040</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048b0b</span><span class="p">]</span> <span class="nv">EVP_DecryptInit_ex</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xb7735040</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x8048d50</span><span class="p">,</span> <span class="mh">0x8048d71</span><span class="p">)</span> <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048b3c</span><span class="p">]</span> <span class="nv">EVP_DecryptUpdate</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xbff8836c</span><span class="p">,</span> <span class="mh">0xbff88324</span><span class="p">,</span> <span class="mh">0xbff883ec</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span> <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048b6c</span><span class="p">]</span> <span class="nv">EVP_DecryptFinal_ex</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xbff8838c</span><span class="p">,</span> <span class="mh">0xbff88324</span><span class="p">,</span> <span class="mh">0xbff883ec</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span> <span class="err">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048b87</span><span class="p">]</span> <span class="nv">EVP_CIPHER_CTX_free</span><span class="p">(</span><span class="mh">0x90bdce0</span><span class="p">,</span> <span class="mh">0xbff8838c</span><span class="p">,</span> <span class="mh">0xbff88324</span><span class="p">,</span> <span class="mh">0xbff883ec</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span> <span class="err">=</span> <span class="mi">0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048ca3</span><span class="p">]</span> <span class="nv">puts</span><span class="p">(</span><span class="s">&quot;Decrypted text is:&quot;</span><span class="nv">Decrypted</span> <span class="nv">text</span> <span class="nv">is</span><span class="p">:</span>
+</span><span class="line"><span class="err">)</span>                                         <span class="err">=</span> <span class="err">19</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048caf</span><span class="p">]</span> <span class="nv">puts</span><span class="p">(</span><span class="s">&quot;The quick brown fox jumps over t&quot;</span><span class="nv">...The</span> <span class="nv">quick</span> <span class="nv">brown</span> <span class="nv">fox</span> <span class="nv">jumps</span> <span class="nv">over</span> <span class="nv">the</span> <span class="nv">lazy</span> <span class="nv">dog</span>
+</span><span class="line"><span class="err">)</span>                        <span class="err">=</span> <span class="err">44</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048cb4</span><span class="p">]</span> <span class="nv">EVP_cleanup</span><span class="p">(</span><span class="mh">0xbff8836c</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mh">0x8048d50</span><span class="p">,</span> <span class="mh">0x8048d71</span><span class="p">,</span> <span class="mh">0xbff8836c</span><span class="p">)</span>      <span class="err">=</span> <span class="mi">0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">x8048cb9</span><span class="p">]</span> <span class="nv">ERR_free_strings</span><span class="p">(</span><span class="mh">0xbff8836c</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mh">0x8048d50</span><span class="p">,</span> <span class="mh">0x8048d71</span><span class="p">,</span> <span class="mh">0xbff8836c</span><span class="p">)</span> <span class="err">=</span> <span class="mi">0</span>
+</span><span class="line"><span class="err">[0</span><span class="nf">xffffffff</span><span class="p">]</span> <span class="o">+++</span> <span class="nv">exited</span> <span class="p">(</span><span class="nv">status</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+++</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In a non-ideal situation, we have to either recognize the good functions from past experience or search them all. Here we are looking for a function with key and IV as parameters. According to the <a href="https://www.openssl.org/docs/crypto/EVP_EncryptInit.html">documentation</a> <code>EVP_DecryptInit_ex</code> is what we are looking for:</p>
+
+<p><code>int EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *type, ENGINE *impl, unsigned char *key, unsigned char *iv);</code></p>
+
+<p>But what are these values:<br />
+<code>[0x8048b0b] EVP_DecryptInit_ex(0x90bdce0, 0xb7735040, 0, 0x8048d50, 0x8048d71) = 1</code>
+These are pointers and are 4 bytes each (remember we are in a 32-bit OS). “<em>But where are these pointers pointing to? Do I have to use GDB?</em>” Yes, we had to use GDB before I knew that we can configure ltrace to dereference pointers. But we will use GDB too.</p>
+
+<h5 id="configuring-ltrace">2.3.1 Configuring ltrace</h5>
+<p>If we know the type of pointers, we can dereference them by modifying <a href="http://man7.org/linux/man-pages/man5/ltrace.conf.5.html">~/.ltrace.conf</a>. We can also do more elaborate stuff like defining structs as explained <a href="https://github.com/zenovich/ltrace/blob/master/etc/ltrace.conf">here</a>. In short we can add lines to ltrace.conf for certain functions. In our case we know the 4th and 5th arguments for EVP_DecryptInit_ex are strings (char*). We do not care about the first three arguments so can ignore them by defining them as <code>addr</code> (for address). Let’s add the following line to ltrace.conf:<br />
+<code>int EVP_DecryptInit_ex(addr, addr, addr, string, string)</code></p>
+
+<p>run ltrace again and annnnnnnd voila (look at lines 4 for key and IV):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running ltrace after configuration </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="cp"># most of the output has been removed</span>
+</span><span class="line"><span class="n">EVP_CIPHER_CTX_new</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0xb77cc9c0</span><span class="p">,</span> <span class="mh">0xbfdecdec</span><span class="p">,</span> <span class="mh">0xb769fda0</span><span class="p">,</span> <span class="mh">0xb769f910</span><span class="p">)</span> <span class="o">=</span> <span class="mh">0x9ff5ce0</span>
+</span><span class="line"><span class="n">EVP_aes_256_cbc</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0xb77cc9c0</span><span class="p">,</span> <span class="mh">0xbfdecdec</span><span class="p">,</span> <span class="mh">0xb769fda0</span><span class="p">,</span> <span class="mh">0xb769f910</span><span class="p">)</span> <span class="o">=</span> <span class="mh">0xb7789040</span>
+</span><span class="line"><span class="n">EVP_DecryptInit_ex</span><span class="p">(</span><span class="mh">0x09ff5ce0</span><span class="p">,</span> <span class="mh">0xb7789040</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="s">&quot;ee12c03ceacdfb5d4c0e67c8f5ab3362&quot;</span><span class="p">,</span> <span class="s">&quot;d36a4bf2e6dd9c68&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="n">EVP_DecryptUpdate</span><span class="p">(</span><span class="mh">0x9ff5ce0</span><span class="p">,</span> <span class="mh">0xbfdecd6c</span><span class="p">,</span> <span class="mh">0xbfdecd24</span><span class="p">,</span> <span class="mh">0xbfdecdec</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="n">EVP_DecryptFinal_ex</span><span class="p">(</span><span class="mh">0x9ff5ce0</span><span class="p">,</span> <span class="mh">0xbfdecd8c</span><span class="p">,</span> <span class="mh">0xbfdecd24</span><span class="p">,</span> <span class="mh">0xbfdecdec</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="n">EVP_CIPHER_CTX_free</span><span class="p">(</span><span class="mh">0x9ff5ce0</span><span class="p">,</span> <span class="mh">0xbfdecd8c</span><span class="p">,</span> <span class="mh">0xbfdecd24</span><span class="p">,</span> <span class="mh">0xbfdecdec</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/tales1/Queen-Amused.jpg" width="" height="" title="Her Majesty is amused – If you are offended please don’t send James Bond after me" /><span class="caption-text">Her Majesty is amused – If you are offended please don’t send James Bond after me</span></span></p>
+
+<h4 id="finding-the-key-using-gdb-ii-electric-boogaloo">2.4  Finding the Key (Using GDB) II: Electric Boogaloo</h4>
+<p>That was too easy but we pleased a powerful friend. Let’s try and find it using GDB (gasp). Good thing that we compiled out binary using the ggdb switch. If not go ahead and do that. We know we are looking for <code>EVP_DecryptInit_ex</code> and we have already seen how to use GDB. We will <code>set verbose on</code> (in case stuff happens).</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running in GDB with debug info 1 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nf">$</span> <span class="nv">gdb</span> <span class="nv">.</span><span class="o">/</span><span class="nv">sampleaes</span> <span class="o">-</span><span class="nv">q</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">root</span><span class="o">/</span><span class="nv">Desktop</span><span class="o">/</span><span class="nv">kek</span><span class="o">/</span><span class="nv">sampleaes...done.</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nv">set</span> <span class="nv">verbose</span> <span class="nv">on</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nv">break</span> <span class="nv">EVP_DecryptInit_ex</span>  <span class="c1">; setting up the breakpoint</span>
+</span><span class="line"><span class="nf">Breakpoint</span> <span class="mi">1</span> <span class="nv">at</span> <span class="mh">0x8048830</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nv">run</span>                       <span class="c1">; running the program</span>
+</span><span class="line"><span class="nf">Starting</span> <span class="nv">program</span><span class="p">:</span> <span class="o">/</span><span class="nv">root</span><span class="o">/</span><span class="nv">Desktop</span><span class="o">/</span><span class="nv">kek</span><span class="o">/</span><span class="nv">sampleaes</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">ld</span><span class="o">-</span><span class="nv">linux.so.2...</span><span class="p">(</span><span class="nv">no</span> <span class="nv">debugging</span> <span class="nv">symbols</span> <span class="nv">found</span><span class="p">)</span><span class="nv">...done.</span>
+</span><span class="line"><span class="nf">Loaded</span> <span class="nv">symbols</span> <span class="nv">for</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">ld</span><span class="o">-</span><span class="nv">linux.so.2</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="nv">system</span><span class="o">-</span><span class="nv">supplied</span> <span class="nb">DS</span><span class="nv">O</span> <span class="nv">at</span> <span class="mh">0xb7fe1000</span><span class="nv">...</span><span class="p">(</span><span class="nv">no</span> <span class="nv">debugging</span> <span class="nv">symbols</span> <span class="nv">found</span><span class="p">)</span><span class="nv">...done.</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">usr</span><span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libcrypto.so.1.0.0...</span><span class="p">(</span><span class="nv">no</span> <span class="nv">debugging</span> <span class="nv">symbols</span> <span class="nv">found</span><span class="p">)</span><span class="nv">...done.</span>
+</span><span class="line"><span class="nf">Loaded</span> <span class="nv">symbols</span> <span class="nv">for</span> <span class="o">/</span><span class="nv">usr</span><span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libcrypto.so.1.0.0</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libc.so.6...</span><span class="p">(</span><span class="nv">no</span> <span class="nv">debugging</span> <span class="nv">symbols</span> <span class="nv">found</span><span class="p">)</span><span class="nv">...done.</span>
+</span><span class="line"><span class="nf">Loaded</span> <span class="nv">symbols</span> <span class="nv">for</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libc.so.6</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libdl.so.2...</span><span class="p">(</span><span class="nv">no</span> <span class="nv">debugging</span> <span class="nv">symbols</span> <span class="nv">found</span><span class="p">)</span><span class="nv">...done.</span>
+</span><span class="line"><span class="nf">Loaded</span> <span class="nv">symbols</span> <span class="nv">for</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libdl.so.2</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">libz.so.1...</span><span class="p">(</span><span class="nv">no</span> <span class="nv">debugging</span> <span class="nv">symbols</span> <span class="nv">found</span><span class="p">)</span><span class="nv">...done.</span>
+</span><span class="line"><span class="nf">Loaded</span> <span class="nv">symbols</span> <span class="nv">for</span> <span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">libz.so.1</span>
+</span><span class="line"><span class="nf">Ciphertext</span> <span class="nv">is</span><span class="p">:</span>
+</span><span class="line"><span class="err">0000</span> <span class="err">-</span> <span class="err">51</span> <span class="err">34</span> <span class="err">3</span><span class="nf">f</span> <span class="mi">21</span> <span class="mi">87</span> <span class="mi">5</span><span class="nv">d</span> <span class="mi">4</span><span class="nv">e</span> <span class="nv">f6</span><span class="o">-</span><span class="mi">18</span> <span class="mi">1</span><span class="nv">d</span> <span class="nv">c6</span> <span class="mi">6</span><span class="nv">d</span> <span class="mi">41</span> <span class="nv">c1</span> <span class="mi">12</span> <span class="nv">ae</span>   <span class="nv">Q4?</span><span class="err">!</span><span class="nv">.</span><span class="p">]</span><span class="nv">N....mA...</span>
+</span><span class="line"><span class="err">0010</span> <span class="err">-</span> <span class="nf">e0</span> <span class="nv">a7</span> <span class="nv">de</span> <span class="nv">a0</span> <span class="nv">fa</span> <span class="nv">b9</span> <span class="mi">6</span><span class="nv">c</span> <span class="nv">b0</span><span class="o">-</span><span class="mi">91</span> <span class="mi">5</span><span class="nv">e</span> <span class="mi">21</span> <span class="nv">c6</span> <span class="nv">d3</span> <span class="mi">90</span> <span class="mi">96</span> <span class="mi">36</span>   <span class="nv">......l..</span><span class="o">^</span><span class="err">!</span><span class="nv">....6</span>
+</span><span class="line"><span class="err">0020</span> <span class="err">-</span> <span class="err">70</span> <span class="err">7</span><span class="nf">b</span> <span class="nv">ec</span> <span class="mi">69</span> <span class="mi">89</span> <span class="nv">e1</span> <span class="nv">bc</span> <span class="mi">0</span><span class="nv">a</span><span class="o">-</span><span class="mi">2</span><span class="nv">c</span> <span class="mi">61</span> <span class="nv">f4</span> <span class="nv">c6</span> <span class="mi">26</span> <span class="mi">61</span> <span class="mi">5</span><span class="nv">f</span> <span class="mi">2</span><span class="nv">e</span>   <span class="nv">p</span><span class="err">{</span><span class="nv">.i....</span><span class="p">,</span><span class="nv">a..</span><span class="o">&amp;</span><span class="nv">a_.</span>
+</span><span class="line">
+</span><span class="line"><span class="nf">Breakpoint</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">Reading</span> <span class="nv">in</span> <span class="nv">symbols</span> <span class="nv">for</span> <span class="nv">AES</span><span class="o">-</span><span class="nv">OpenSSL.c...done.</span>
+</span><span class="line"><span class="err">0</span><span class="nf">xb7ed3a20</span> <span class="nv">in</span> <span class="nv">EVP_DecryptInit_ex</span> <span class="p">()</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">usr</span><span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libcrypto.so.1.0.0</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nb">di</span><span class="nv">sass</span>    <span class="c1">; disassembling the function</span>
+</span><span class="line"><span class="nf">Dump</span> <span class="nv">of</span> <span class="nv">assembler</span> <span class="nv">code</span> <span class="nv">for</span> <span class="nv">function</span> <span class="nv">EVP_DecryptInit_ex</span><span class="p">:</span>
+</span><span class="line"><span class="err">=&gt;</span> <span class="err">0</span><span class="nf">xb7ed3a20</span> <span class="o">&lt;+</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span> <span class="nv">push</span>   <span class="nb">ebx</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a21</span> <span class="o">&lt;+</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">sub</span>    <span class="nb">esp</span><span class="p">,</span><span class="mh">0x28</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a24</span> <span class="o">&lt;+</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x40</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a28</span> <span class="o">&lt;+</span><span class="mi">8</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0xb7e510db</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a2d</span> <span class="o">&lt;+</span><span class="mi">13</span><span class="o">&gt;</span><span class="p">:</span>    <span class="nv">add</span>    <span class="nb">ebx</span><span class="p">,</span><span class="mh">0xe65c7</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a33</span> <span class="o">&lt;+</span><span class="mi">19</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x14</span><span class="p">],</span><span class="mh">0x0</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a3b</span> <span class="o">&lt;+</span><span class="mi">27</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a3f</span> <span class="o">&lt;+</span><span class="mi">31</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x3c</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a43</span> <span class="o">&lt;+</span><span class="mi">35</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a47</span> <span class="o">&lt;+</span><span class="mi">39</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x38</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a4b</span> <span class="o">&lt;+</span><span class="mi">43</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x8</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a4f</span> <span class="o">&lt;+</span><span class="mi">47</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x34</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a53</span> <span class="o">&lt;+</span><span class="mi">51</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x4</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a57</span> <span class="o">&lt;+</span><span class="mi">55</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x30</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a5b</span> <span class="o">&lt;+</span><span class="mi">59</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a5e</span> <span class="o">&lt;+</span><span class="mi">62</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0xb7e50660</span> <span class="o">&lt;</span><span class="nv">EVP_CipherInit_ex@plt</span><span class="o">&gt;</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a63</span> <span class="o">&lt;+</span><span class="mi">67</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">add</span>    <span class="nb">esp</span><span class="p">,</span><span class="mh">0x28</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a66</span> <span class="o">&lt;+</span><span class="mi">70</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">pop</span>    <span class="nb">ebx</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a67</span> <span class="o">&lt;+</span><span class="mi">71</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">ret</span>
+</span><span class="line"><span class="nf">End</span> <span class="nv">of</span> <span class="nv">assembler</span> <span class="nv">dump.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can see <code>EVP_CipherInit_ex</code> called at <code>0xb7ed3a5e</code>. Let’s put a breakpoint there (right before function call) and look at its arguments.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running in gdb with debug info 2 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nv">b</span><span class="o">*</span><span class="mh">0xb7ed3a5e</span>
+</span><span class="line"><span class="nf">Breakpoint</span> <span class="mi">2</span> <span class="nv">at</span> <span class="mh">0xb7ed3a5e</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nv">c</span>
+</span><span class="line"><span class="nf">Continuing.</span>
+</span><span class="line">
+</span><span class="line"><span class="nf">Breakpoint</span> <span class="mi">2</span><span class="p">,</span> <span class="mh">0xb7ed3a5e</span> <span class="nv">in</span> <span class="nv">EVP_DecryptInit_ex</span> <span class="p">()</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">usr</span><span class="o">/</span><span class="nv">lib</span><span class="o">/</span><span class="nv">i386</span><span class="o">-</span><span class="nv">linux</span><span class="o">-</span><span class="nv">gnu</span><span class="o">/</span><span class="nv">i686</span><span class="o">/</span><span class="nv">cmov</span><span class="o">/</span><span class="nv">libcrypto.so.1.0.0</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nb">di</span><span class="nv">sass</span>
+</span><span class="line"><span class="nf">Dump</span> <span class="nv">of</span> <span class="nv">assembler</span> <span class="nv">code</span> <span class="nv">for</span> <span class="nv">function</span> <span class="nv">EVP_DecryptInit_ex</span><span class="p">:</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a20</span> <span class="o">&lt;+</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">push</span>   <span class="nb">ebx</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a21</span> <span class="o">&lt;+</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">sub</span>    <span class="nb">esp</span><span class="p">,</span><span class="mh">0x28</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a24</span> <span class="o">&lt;+</span><span class="mi">4</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x40</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a28</span> <span class="o">&lt;+</span><span class="mi">8</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0xb7e510db</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a2d</span> <span class="o">&lt;+</span><span class="mi">13</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">add</span>    <span class="nb">ebx</span><span class="p">,</span><span class="mh">0xe65c7</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a33</span> <span class="o">&lt;+</span><span class="mi">19</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x14</span><span class="p">],</span><span class="mh">0x0</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a3b</span> <span class="o">&lt;+</span><span class="mi">27</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a3f</span> <span class="o">&lt;+</span><span class="mi">31</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x3c</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a43</span> <span class="o">&lt;+</span><span class="mi">35</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a47</span> <span class="o">&lt;+</span><span class="mi">39</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x38</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a4b</span> <span class="o">&lt;+</span><span class="mi">43</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x8</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a4f</span> <span class="o">&lt;+</span><span class="mi">47</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x34</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a53</span> <span class="o">&lt;+</span><span class="mi">51</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x4</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a57</span> <span class="o">&lt;+</span><span class="mi">55</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x30</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a5b</span> <span class="o">&lt;+</span><span class="mi">59</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line"><span class="err">=&gt;</span> <span class="err">0</span><span class="nf">xb7ed3a5e</span> <span class="o">&lt;+</span><span class="mi">62</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0xb7e50660</span> <span class="o">&lt;</span><span class="nv">EVP_CipherInit_ex@plt</span><span class="o">&gt;</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a63</span> <span class="o">&lt;+</span><span class="mi">67</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">add</span>    <span class="nb">esp</span><span class="p">,</span><span class="mh">0x28</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a66</span> <span class="o">&lt;+</span><span class="mi">70</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">pop</span>    <span class="nb">ebx</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">xb7ed3a67</span> <span class="o">&lt;+</span><span class="mi">71</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">ret</span>
+</span><span class="line"><span class="nf">End</span> <span class="nv">of</span> <span class="nv">assembler</span> <span class="nv">dump.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can see the arguments loaded from memory to eax and then pushed to the stack (esp is the stack pointer and points to the top of the stack at all times). We are in a Linux 32-bit OS so arguments (or parameters whatever) are pushed to the stack from <a href="http://duartes.org/gustavo/blog/post/journey-to-the-stack/">right to left</a> (almost the same in 32-bit Windows systems). Here is what it looks like right before the call instruction:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>EVP_DecryptInit_ex arguments </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="kt">int</span> <span class="n">EVP_DecryptInit_ex</span><span class="p">(</span>
+</span><span class="line"><span class="n">EVP_CIPHER_CTX</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span>    <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="p">]</span>
+</span><span class="line"><span class="k">const</span> <span class="n">EVP_CIPHER</span> <span class="o">*</span><span class="n">type</span><span class="p">,</span> <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>
+</span><span class="line"><span class="n">ENGINE</span> <span class="o">*</span><span class="n">impl</span><span class="p">,</span>           <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x8</span><span class="p">]</span>
+</span><span class="line"><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span>     <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">]</span>
+</span><span class="line"><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span>       <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">]</span>
+</span><span class="line"><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can print the values of both key and IV. To do this in GDB we need to use this command <code>x/s *((char **) ( $esp+0x10 ))</code>. The s switch tells GDB to print the result as a string. <code>$esp+0x10</code> is a pointer that points to a location on the stack. In that location we have a <code>char *</code> which is another pointer to a string, so we need to dereference it twice (hence the <code>char **</code>). And finally to print it using the <code>s</code> switch we need to make it a string (e.g. <code>char *</code>) so we will use the first *. And it works.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>finding key and IV in gdb with debug info </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="p">(</span><span class="n">gdb</span><span class="p">)</span> <span class="n">x</span><span class="o">/</span><span class="n">s</span> <span class="o">*</span><span class="p">((</span><span class="kt">char</span> <span class="o">**</span><span class="p">)</span> <span class="p">(</span> <span class="err">$</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span> <span class="p">))</span>
+</span><span class="line"><span class="mh">0x8048d71</span><span class="o">:</span>	 <span class="s">&quot;d36a4bf2e6dd9c68&quot;</span>
+</span><span class="line"><span class="p">(</span><span class="n">gdb</span><span class="p">)</span> <span class="n">x</span><span class="o">/</span><span class="n">s</span> <span class="o">*</span><span class="p">((</span><span class="kt">char</span> <span class="o">**</span><span class="p">)</span> <span class="p">(</span> <span class="err">$</span><span class="n">esp</span><span class="o">+</span><span class="mh">0xc</span> <span class="p">))</span>
+</span><span class="line"><span class="mh">0x8048d50</span><span class="o">:</span>	 <span class="s">&quot;ee12c03ceacdfb5d4c0e67c8f5ab3362&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/tales1/Queen-Not-Amused.jpg" width="" height="" title="Her Majesty is bored because of GDB" /><span class="caption-text">Her Majesty is bored because of GDB</span></span></p>
+
+<h4 id="using-gdb-without-debug-info">2.5 Using GDB without Debug Info</h4>
+<p>Our example is in a controlled environment, so we were able to build the binary with debug info. But in a real world scenario we do not have this luxury. In this section I will discuss how to get to  <code>EVP_DecryptInit_ex</code> without debug info.</p>
+
+<p>First we have to build our binary without  debug info, just remove the <code>-ggdb</code> switch to get <code>gcc -o sampleaes-nodebug AES-OpenSSL.c -lcrypto</code>. Now how do we find the location of <code>EVP_DecryptInit_ex</code> call?</p>
+
+<p>Remember the following line in the original ltrace output.
+<code>[0x8048b0b] EVP_DecryptInit_ex(0x90bdce0, 0xb7735040, 0, 0x8048d50, 0x8048d71) = 1</code></p>
+
+<p>We used the <code>i</code> switch to print the value of instruction pointer after the call. This is our entry point. We will debug the binary in GDB and set up a breakpoint at <code>0x8048b0b</code> and see what happens.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>running in gdb without debug info 1 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+</pre></td><td class="code"><pre><code class="nasm"><span class="line"><span class="nf">$</span> <span class="nv">gdb</span> <span class="nv">.</span><span class="o">/</span><span class="nv">sampleaes</span><span class="o">-</span><span class="nv">nodebug</span> <span class="o">-</span><span class="nv">q</span>
+</span><span class="line"><span class="nf">Reading</span> <span class="nv">symbols</span> <span class="nv">from</span> <span class="o">/</span><span class="nv">root</span><span class="o">/</span><span class="nv">Desktop</span><span class="o">/</span><span class="nv">kek</span><span class="o">/</span><span class="nv">sampleaes</span><span class="o">-</span><span class="nv">nodebug...</span><span class="p">(</span><span class="nv">no</span> <span class="nv">debugging</span> <span class="nv">symbols</span> <span class="nv">found</span><span class="p">)</span><span class="nv">...done.</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nv">b</span> <span class="o">*</span><span class="mh">0x8048b0b</span>
+</span><span class="line"><span class="nf">Breakpoint</span> <span class="mi">1</span> <span class="nv">at</span> <span class="mh">0x8048b0b</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nv">run</span>
+</span><span class="line"><span class="nf">Starting</span> <span class="nv">program</span><span class="p">:</span> <span class="o">/</span><span class="nv">root</span><span class="o">/</span><span class="nv">Desktop</span><span class="o">/</span><span class="nv">kek</span><span class="o">/</span><span class="nv">sampleaes</span><span class="o">-</span><span class="nv">nodebug</span>
+</span><span class="line"><span class="nf">Ciphertext</span> <span class="nv">is</span><span class="p">:</span>
+</span><span class="line"><span class="err">0000</span> <span class="err">-</span> <span class="err">51</span> <span class="err">34</span> <span class="err">3</span><span class="nf">f</span> <span class="mi">21</span> <span class="mi">87</span> <span class="mi">5</span><span class="nv">d</span> <span class="mi">4</span><span class="nv">e</span> <span class="nv">f6</span><span class="o">-</span><span class="mi">18</span> <span class="mi">1</span><span class="nv">d</span> <span class="nv">c6</span> <span class="mi">6</span><span class="nv">d</span> <span class="mi">41</span> <span class="nv">c1</span> <span class="mi">12</span> <span class="nv">ae</span>   <span class="nv">Q4?</span><span class="err">!</span><span class="nv">.</span><span class="p">]</span><span class="nv">N....mA...</span>
+</span><span class="line"><span class="err">0010</span> <span class="err">-</span> <span class="nf">e0</span> <span class="nv">a7</span> <span class="nv">de</span> <span class="nv">a0</span> <span class="nv">fa</span> <span class="nv">b9</span> <span class="mi">6</span><span class="nv">c</span> <span class="nv">b0</span><span class="o">-</span><span class="mi">91</span> <span class="mi">5</span><span class="nv">e</span> <span class="mi">21</span> <span class="nv">c6</span> <span class="nv">d3</span> <span class="mi">90</span> <span class="mi">96</span> <span class="mi">36</span>   <span class="nv">......l..</span><span class="o">^</span><span class="err">!</span><span class="nv">....6</span>
+</span><span class="line"><span class="err">0020</span> <span class="err">-</span> <span class="err">70</span> <span class="err">7</span><span class="nf">b</span> <span class="nv">ec</span> <span class="mi">69</span> <span class="mi">89</span> <span class="nv">e1</span> <span class="nv">bc</span> <span class="mi">0</span><span class="nv">a</span><span class="o">-</span><span class="mi">2</span><span class="nv">c</span> <span class="mi">61</span> <span class="nv">f4</span> <span class="nv">c6</span> <span class="mi">26</span> <span class="mi">61</span> <span class="mi">5</span><span class="nv">f</span> <span class="mi">2</span><span class="nv">e</span>   <span class="nv">p</span><span class="err">{</span><span class="nv">.i....</span><span class="p">,</span><span class="nv">a..</span><span class="o">&amp;</span><span class="nv">a_.</span>
+</span><span class="line">
+</span><span class="line"><span class="nf">Breakpoint</span> <span class="mi">1</span><span class="p">,</span> <span class="mh">0x08048b0b</span> <span class="nv">in</span> <span class="nv">decrypt</span> <span class="p">()</span>
+</span><span class="line"><span class="err">(</span><span class="nf">gdb</span><span class="p">)</span> <span class="nb">di</span><span class="nv">sass</span>
+</span><span class="line"><span class="nf">Dump</span> <span class="nv">of</span> <span class="nv">assembler</span> <span class="nv">code</span> <span class="nv">for</span> <span class="nv">function</span> <span class="nv">decrypt</span><span class="p">:</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ac8</span> <span class="o">&lt;+</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">push</span>   <span class="nb">ebp</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ac9</span> <span class="o">&lt;+</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">ebp</span><span class="p">,</span><span class="nb">esp</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048acb</span> <span class="o">&lt;+</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">sub</span>    <span class="nb">esp</span><span class="p">,</span><span class="mh">0x38</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ace</span> <span class="o">&lt;+</span><span class="mi">6</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0x80487e0</span> <span class="o">&lt;</span><span class="nv">EVP_CIPHER_CTX_new@plt</span><span class="o">&gt;</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ad3</span> <span class="o">&lt;+</span><span class="mi">11</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">0xc</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ad6</span> <span class="o">&lt;+</span><span class="mi">14</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">cmp</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">0xc</span><span class="p">],</span><span class="mh">0x0</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ada</span> <span class="o">&lt;+</span><span class="mi">18</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">jne</span>    <span class="mh">0x8048ae1</span> <span class="o">&lt;</span><span class="nv">decrypt</span><span class="o">+</span><span class="mi">25</span><span class="o">&gt;</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048adc</span> <span class="o">&lt;+</span><span class="mi">20</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0x80489ec</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ae1</span> <span class="o">&lt;+</span><span class="mi">25</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0x80488a0</span> <span class="o">&lt;</span><span class="nv">EVP_aes_256_cbc@plt</span><span class="o">&gt;</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ae6</span> <span class="o">&lt;+</span><span class="mi">30</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">edx</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="mh">0x14</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048ae9</span> <span class="o">&lt;+</span><span class="mi">33</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">],</span><span class="nb">edx</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048aed</span> <span class="o">&lt;+</span><span class="mi">37</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">edx</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048af0</span> <span class="o">&lt;+</span><span class="mi">40</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">],</span><span class="nb">edx</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048af4</span> <span class="o">&lt;+</span><span class="mi">44</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x8</span><span class="p">],</span><span class="mh">0x0</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048afc</span> <span class="o">&lt;+</span><span class="mi">52</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x4</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b00</span> <span class="o">&lt;+</span><span class="mi">56</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">0xc</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b03</span> <span class="o">&lt;+</span><span class="mi">59</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b06</span> <span class="o">&lt;+</span><span class="mi">62</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0x8048830</span> <span class="o">&lt;</span><span class="nv">EVP_DecryptInit_ex@plt</span><span class="o">&gt;</span>
+</span><span class="line"><span class="err">=&gt;</span> <span class="err">0</span><span class="nf">x08048b0b</span> <span class="o">&lt;+</span><span class="mi">67</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">cmp</span>    <span class="nb">eax</span><span class="p">,</span><span class="mh">0x1</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b0e</span> <span class="o">&lt;+</span><span class="mi">70</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">je</span>     <span class="mh">0x8048b15</span> <span class="o">&lt;</span><span class="nv">decrypt</span><span class="o">+</span><span class="mi">77</span><span class="o">&gt;</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b10</span> <span class="o">&lt;+</span><span class="mi">72</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">call</span>   <span class="mh">0x80489ec</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b15</span> <span class="o">&lt;+</span><span class="mi">77</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b18</span> <span class="o">&lt;+</span><span class="mi">80</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b1c</span> <span class="o">&lt;+</span><span class="mi">84</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="nb">eax</span><span class="p">,</span><span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">ebp</span><span class="o">+</span><span class="mh">0x8</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b1f</span> <span class="o">&lt;+</span><span class="mi">87</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">],</span><span class="nb">eax</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b23</span> <span class="o">&lt;+</span><span class="mi">91</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">lea</span>    <span class="nb">eax</span><span class="p">,[</span><span class="nb">ebp</span><span class="o">-</span><span class="mh">0x14</span><span class="p">]</span>
+</span><span class="line">   <span class="err">0</span><span class="nf">x08048b26</span> <span class="o">&lt;+</span><span class="mi">94</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">mov</span>    <span class="kt">DWORD</span> <span class="nv">PTR</span> <span class="p">[</span><span class="nb">esp</span><span class="o">+</span><span class="mh">0x8</span><span class="p">],</span><span class="nb">eax</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Again we see the arguments pushed to the stack.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>EVP_DecryptInit_ex arguments </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="kt">int</span> <span class="n">EVP_DecryptInit_ex</span><span class="p">(</span>
+</span><span class="line"><span class="n">EVP_CIPHER_CTX</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span>    <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="p">]</span>
+</span><span class="line"><span class="k">const</span> <span class="n">EVP_CIPHER</span> <span class="o">*</span><span class="n">type</span><span class="p">,</span> <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x4</span><span class="p">]</span>
+</span><span class="line"><span class="n">ENGINE</span> <span class="o">*</span><span class="n">impl</span><span class="p">,</span>           <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x8</span><span class="p">]</span>
+</span><span class="line"><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span>     <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">]</span>
+</span><span class="line"><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span>       <span class="o">&lt;==</span> <span class="p">[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">]</span>
+</span><span class="line"><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We put a breakpoint at <code>0x08048b06</code> and re-run the binary. Then we can read key and IV like before:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>finding key and IV in gdb without debug info </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="p">(</span><span class="n">gdb</span><span class="p">)</span> <span class="n">x</span><span class="o">/</span><span class="n">s</span> <span class="o">*</span><span class="p">((</span><span class="kt">char</span> <span class="o">**</span><span class="p">)</span> <span class="p">(</span> <span class="err">$</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span> <span class="p">))</span>
+</span><span class="line"><span class="mh">0x8048d71</span><span class="o">:</span>	 <span class="s">&quot;d36a4bf2e6dd9c68&quot;</span>
+</span><span class="line"><span class="p">(</span><span class="n">gdb</span><span class="p">)</span> <span class="n">x</span><span class="o">/</span><span class="n">s</span> <span class="o">*</span><span class="p">((</span><span class="kt">char</span> <span class="o">**</span><span class="p">)</span> <span class="p">(</span> <span class="err">$</span><span class="n">esp</span><span class="o">+</span><span class="mh">0xc</span> <span class="p">))</span>
+</span><span class="line"><span class="mh">0x8048d50</span><span class="o">:</span>	 <span class="s">&quot;ee12c03ceacdfb5d4c0e67c8f5ab3362&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>However, notice the difference in the function name. It is not just called <code>(0xb7ed3a21) EVP_DecryptInit_ex</code> but <code>(0x08048b06) EVP_DecryptInit_ex@plt</code>. Addresses are different. Here’s a tip which is not scientific or anything but works for me. If you see an address starting with 0×08 you are in process-land and addresses starting with 0xb are in shared library land. But what is this @plt?
+In short, it’s the <code>Procedure Linkage Table</code>. The compiler does not know where <code>EVP_DecryptInit_ex</code> points to at runtime so it just puts the function call there (relocation) because it does not know the address of our shared library at runtime. Linker will get this function call and replace it with the correct address for the function (actually this is a lot more complex but PLT and Global Offset Table or GOT need their own article). You can read about GOT/PLT in The <a href="http://www.linuxjournal.com/article/1060">ELF Object File Format by Dissection on Linux Journal</a> (search for “plt” and read 3 paragraphs including the one with lazy binding).</p>
+
+<h4 id="ios-and-android">2.6 iOS and Android</h4>
+<p>I am not going to go into detail about how we can monitor crypto function calls in iOS and Android as we already have two excellent tools that accomplish this. <code>[redacted internal tool]</code> is for iOS and <code>[[redacted internal tool]]</code> is for Android. You can make them hook into crypto function calls and find keys. This is left as an exercise to the reader (meaning I am too lazy). There are also two excellent tutorials by two of my co-workers on how to create custom hooks in iOS and Android <a href="https://hexplo.it/substrate-hooking-native-code-iosandroid/">Substrate - hooking C on Android and iOS part1/2</a> and <a href="https://hexplo.it/substrate-android/">Substrate - hooking C on Android and iOS part 2/2</a>.</p>
+
+<h4 id="defence">2.7 Defence?</h4>
+<p>We saw that function calls (library calls) leak information. One defense against this side-channel is to link the binaries statically. This will replicate the library code inside the binary and will hopefully make the binary independent of any shared libraries (better for installation). On the other hand, it will increase code size (and thus binary size).</p>
+
+<h3 id="looking-for-key-in-memory">3.0 Looking for Key in Memory</h3>
+<p>But there are ways to defeat that too. This is our small incursion into the lands of Digital Forensics. The keys are going to be on memory. So that’s where we are going to look for them. But how do we find keys in memory. One step is to look for data with high entropy because keys usually look random. But there are many 128-bit (or 256) parts of memory that look random so what do we do?</p>
+
+<p>Remember the <code>Key Schedule</code>? It’s the original key, followed by a number of round keys. If we see a 176 byte structure on memory that looks random, that’s probably a key schedule. After finding memories with these characteristics, we can use the relation between the round keys and the original encryption key to determine if the structure is a key schedule.</p>
+
+<p>There are tools that do this for us and they were mostly created for use in Cold Boot Attacks and digital forensics. Imagine if you have a computer running disk encryption software. These keys may be stored in memory in plaintext. Open it up while running until you have access to the RAM. Get a can of air spray, turn it upside down and spray the RAM with it. It will freeze. Frozen RAM degrade much slower so we will have more time to read it. Read it and then run tools on it to find keys. Because memory may have been degraded, these tools use the relationship between round keys and original key to recover degraded bits. For more information you can read this paper <a href="https://citp.princeton.edu/research/memory/">Lest We Remember: Cold Boot Attacks on Encryption Keys</a>.</p>
+
+<h4 id="dumping-memory">3.1 Dumping Memory</h4>
+<p>First we need to dump process memory. I know of a couple of different tools. One is <a href="http://lcamtuf.coredump.cx/soft/memfetch.tgz">memfetch</a> by <code>lcamtuf</code> (creator of <a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop fuzzer</a>). In order to build it in Kali you need some <a href="http://parsiya.net/blog/2014-11-18-building-memfetch-on-kali/">modifications</a>. Another is <a href="https://code.google.com/p/shortstop/">shortstop</a> but has not been update for a long time. By using a <code>Loadable Kernel Module (LKM)</code> named <a href="https://github.com/504ensicsLabs/LiME">LiME</a> we can make a memory snapshot of the entire machine. And last but not least <a href="https://github.com/volatilityfoundation/volatility">Volatility</a> (a memory forensics framework). If you are interested the creators of Volatility recently released a book <a href="http://www.amazon.com/The-Art-Memory-Forensics-Detecting/dp/1118825098">The Art of Memory Forensics</a>. I have not had time to read it but it looks very useful.</p>
+
+<p>Let’s use LiME in our VM.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>building and using LiME </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/LiME/src<span class="nv">$ </span>make
+</span><span class="line">make -C /lib/modules/3.7-trunk-686-pae/build <span class="nv">M</span><span class="o">=</span>/root/LiME/src modules
+</span><span class="line">make<span class="o">[</span>1<span class="o">]</span>: Entering directory <span class="sb">`</span>/usr/src/linux-headers-3.7-trunk-686-pae<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">  CC [M]  /root/LiME/src/tcp.o</span>
+</span><span class="line"><span class="s1">  CC [M]  /root/LiME/src/disk.o</span>
+</span><span class="line"><span class="s1">  CC [M]  /root/LiME/src/main.o</span>
+</span><span class="line"><span class="s1">  LD [M]  /root/LiME/src/lime.o</span>
+</span><span class="line"><span class="s1">  Building modules, stage 2.</span>
+</span><span class="line"><span class="s1">  MODPOST 1 modules</span>
+</span><span class="line"><span class="s1">  CC      /root/LiME/src/lime.mod.o</span>
+</span><span class="line"><span class="s1">  LD [M]  /root/LiME/src/lime.ko</span>
+</span><span class="line"><span class="s1">make[1]: Leaving directory `/usr/src/linux-headers-3.7-trunk-686-pae&#39;</span>
+</span><span class="line">strip --strip-unneeded lime.ko
+</span><span class="line">mv lime.ko lime-3.7-trunk-686-pae.ko
+</span><span class="line">/LiME/src<span class="nv">$ </span>insmod lime-3.7-trunk-686-pae.ko <span class="nv">path</span><span class="o">=</span>memorydump.raw <span class="nv">format</span><span class="o">=</span>raw
+</span><span class="line">/LiME/src<span class="err">$</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This dumps Virtual Machine’s memory to <code>memorydump.raw</code>. Now we need to find keys.</p>
+
+<h4 id="finding-keys">3.2 Finding Keys</h4>
+<p>There are different tools that we can use here again. One is from the “Lest We Remember” paper called <code>aeskeyfind</code>. Another is <a href="http://www.forensicswiki.org/wiki/Bulk_extractor">Bulk extractor</a> which finds other memory artifacts such as URLs, emails and Credit Card numbers. We will use <code>aeskeyfind</code>. The <code>v</code> switch is for verbose mode that prints the key schedule among other information. This is really not recommended in memory forensics because we are running the dump program inside the VM memory and it will alter memory but it is enough for our purposes. Another thing to note is that I was not running our example program while making the memory snapshot but I found encryption keys.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>keys inside VM memory dump </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">./aeskeyfind -v memorydump.raw
+</span><span class="line">FOUND POSSIBLE 128-BIT KEY AT BYTE 376ecc30
+</span><span class="line">
+</span><span class="line">KEY: 10b57f8070a27e482fd3713da5303108
+</span><span class="line">
+</span><span class="line">EXTENDED KEY:
+</span><span class="line">10b57f8070a27e482fd3713da5303108
+</span><span class="line">15724f8665d031ce4a0340f3ef3371fb
+</span><span class="line">d4d14059b1017197fb0231641431409f
+</span><span class="line">17d89ba3a6d9ea345ddbdb5049ea9bcf
+</span><span class="line">98cc11983e15fbac63ce20fc2a24bb33
+</span><span class="line">be26d27d803329d1e3fd092dc9d9b21e
+</span><span class="line">ab11a0a02b228971c8df805c01063242
+</span><span class="line">84328cdcaf1005ad67cf85f166c9b7b3
+</span><span class="line">d99be1ef768be442114461b3778dd600
+</span><span class="line">9f6d821ae9e66658f8a207eb8f2fd1eb
+</span><span class="line">bc536b6955b50d31ad170ada2238db31
+</span><span class="line">
+</span><span class="line">CONSTRAINTS ON ROWS:
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">00000000000000000000000000000000
+</span><span class="line">Keyfind progress: 100%
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The 0 constraints mean that no keys were degraded (because we took an on a VM). <strong>I do not know what the encryption key is, it’s just in memory of VM</strong>. If you find out please let me know. In order to find the key for our OpenSSL program this way, we need to stop execution when the key schedule is on memory. This is left as an exercise to the reader (lol).</p>
+
+<p>This concludes our part one. I initially wanted to write everything in one blog post but it this was already too long. Hopefully I can find a 3rd party app to demonstrate my technique in part 2. As usual if you have any feedback/questions, you know where to find me (side bar —&gt;).</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Parsiya</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T23:36:48-05:00" pubdate data-updated="true">Jan 6<span>th</span>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/aes-keys/'>AES Keys</a>, <a class='category' href='/blog/categories/cryptography/'>Cryptography</a>, <a class='category' href='/blog/categories/reverse-engineering/'>Reverse Engineering</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/" title="Previous Post: Pin Adventures - Chapter 1 - PinSolver Mk1">&laquo; Pin Adventures - Chapter 1 - PinSolver Mk1</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Who am I?</h1>
+  <p>I am Parsia Hakimian, ex-dev and current (mostly) software security consultant at <a href="http://www.cigital.com/" target="_blank">Cigital</a> .</p>
+  <p>I am interested in Reverse Engineering, Crypto, Assembly, C, Python, EvE Online and other things (not necessarily in that order).</p>
+  <p>bitbucket: <a href="https://bitbucket.org/parsiya/" target="_blank">https://bitbucket.org/parsiya/</a></p>
+  <p>email: parsiya [at] google's email [dot]com</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015-01-06-tales-from-the-crypt-o-leaking-aes-keys/">Tales From the Crypt(o) - Leaking AES Keys</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/">Pin Adventures - Chapter 1 - PinSolver Mk1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-11-18-building-memfetch-on-kali/">Building Memfetch on Kali + Comments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/">My Adventure With Fireeye FLARE Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-09-21-malware-adventure/">Malware Adventure</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-09-02-fireeyes-flare-challenge/">Fireeye's FLARE Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/">Apple's Common Crypto Library Defaults to a Zero IV if One Is Not Provided</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-06-25-piping-ssl-slash-tls-traffic-from-soapui-through-burp/">Piping SSL/TLS Traffic From SoapUI to Burp</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/">Pasting Shellcode in GDB Using Python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-04-22-amazon-s3-and-css/">Amazon S3 and CSS</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline"  href="https://twitter.com/CryptoGangsta"  data-widget-id="458841047112482817">Tweets by @CryptoGangsta</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Parsiya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

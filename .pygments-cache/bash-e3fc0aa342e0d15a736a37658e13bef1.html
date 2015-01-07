@@ -1,0 +1,17 @@
+<div class="highlight"><pre>/LiME/src<span class="nv">$ </span>make
+make -C /lib/modules/3.7-trunk-686-pae/build <span class="nv">M</span><span class="o">=</span>/root/LiME/src modules
+make<span class="o">[</span>1<span class="o">]</span>: Entering directory &lt;code&gt;/usr/src/linux-headers-3.7-trunk-686-pae<span class="err">&#39;</span>
+  CC <span class="o">[</span>M<span class="o">]</span>  /root/LiME/src/tcp.o
+  CC <span class="o">[</span>M<span class="o">]</span>  /root/LiME/src/disk.o
+  CC <span class="o">[</span>M<span class="o">]</span>  /root/LiME/src/main.o
+  LD <span class="o">[</span>M<span class="o">]</span>  /root/LiME/src/lime.o
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /root/LiME/src/lime.mod.o
+  LD <span class="o">[</span>M<span class="o">]</span>  /root/LiME/src/lime.ko
+make<span class="o">[</span>1<span class="o">]</span>: Leaving directory &lt;/code&gt;/usr/src/linux-headers-3.7-trunk-686-pae’
+strip –strip-unneeded lime.ko
+mv lime.ko lime-3.7-trunk-686-pae.ko
+/LiME/src<span class="nv">$ </span>insmod lime-3.7-trunk-686-pae.ko <span class="nv">path</span><span class="o">=</span>memorydump.raw <span class="nv">format</span><span class="o">=</span>raw
+/LiME/src<span class="err">$</span>
+</pre></div>

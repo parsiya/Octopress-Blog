@@ -108,7 +108,7 @@ private void btnDecode_Click(object sender, EventArgs e)
 
 Line 4 reads ``dat_secret`` and the rest of the function manipulates it before displaying it on the form. To save this file expand ``resources`` and select ``rev_challenge_1.dat_secret.encode``. Right click and select ``Save Resource to File.``
 
-![Saving private secret](/images/2014/flare/1-4.jpg/ "Saving private secret") 
+![Saving private secret](/images/2014/flare/1-4.jpg "Saving private secret") 
 
 I used ``HxD`` to look at the contents.
 
@@ -1554,7 +1554,7 @@ else:
     blob = xor(blob,0x66)
 {% endcodeblock %}
 
-### Function 5 - OutputDebugString
+#### Function 5 - OutputDebugString
 
 {% codeblock lang:nasm %}
 .text:00401B13 call    isDebuggerPresent
@@ -1582,7 +1582,7 @@ else:
     blob = xor(blob, "I'm gonna sandbox your face")
 {% endcodeblock %}
 
-### Function 6 - I Can Haz Breakpoint?
+#### Function 6 - I Can Haz Breakpoint?
 
 {% codeblock lang:nasm %}
 .text:00401B13 call    isDebuggerPresent
@@ -1642,7 +1642,7 @@ else:
 {% endcodeblock %}
 
 
-### Function 7 - NtGlobalFlag
+#### Function 7 - NtGlobalFlag
 
 {% codeblock lang:nasm %}
 .text:00401B13 call    isDebuggerPresent
@@ -1673,7 +1673,7 @@ else:
     blob = xor(blob,"\x09\x00\x00\x01")
 {% endcodeblock %}
 
-### Function 8 - Sands of Time
+#### Function 8 - Sands of Time
 
 {% codeblock lang:nasm %}
 .text:00401B13 call    isDebuggerPresent
@@ -1718,7 +1718,7 @@ else:
     blob = xor(blob,"1337")
 {% endcodeblock %}
 
-### Function 9 - Backdoge.exe
+#### Function 9 - Backdoge.exe
 
 {% codeblock lang:nasm %}
 .text:00401B13 call    isDebuggerPresent
@@ -1752,7 +1752,7 @@ else:
     blob = xor(blob,"LETS GO SHOPPING")
 {% endcodeblock %}
 
-### Function 10 - Dogecoin.com IP Check
+#### Function 10 - Dogecoin.com IP Check
 
 {% codeblock lang:nasm %}
 .text:00401B13 call    isDebuggerPresent
@@ -1798,7 +1798,7 @@ if (Dogecoin_ip != "127.0.0.1"):
     blob = xor(blob,"SHOPPING IS HARD")
 {% endcodeblock %}
 
-### Function 11 - Hour of the Wolf
+#### Function 11 - Hour of the Wolf
 
 {% codeblock lang:nasm %}
 .text:00401B13 call    isDebuggerPresent
@@ -1843,7 +1843,7 @@ else:
     blob = xor(blob,"\x07\x77")
 {% endcodeblock %}
 
-### Interlude - 12 - Fullpath xor
+#### Interlude - 12 - Fullpath xor
 
 {% codeblock lang:nasm %}
 .text:00401B3D call    BackDoge
@@ -1883,7 +1883,7 @@ blob = xor(blob, fullpath)
 {% endcodeblock %}
 
 
-### Function 13 - Internet Rootz
+#### Function 13 - Internet Rootz
 
 {% codeblock lang:nasm %}
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
@@ -1908,7 +1908,7 @@ The rest is pretty simple. ``192.203.230.10`` is xor-ed with the blob.
 blob = xor(blob,"192.203.230.10")
 {% endcodeblock %}
 
-### Function 14 - jackRAT
+#### Function 14 - jackRAT
 
 {% codeblock lang:nasm %}
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j

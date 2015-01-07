@@ -4,7 +4,7 @@
   <title><![CDATA[Category: FlareOn | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/flareon/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-01-05T08:13:31-05:00</updated>
+  <updated>2015-01-07T01:56:24-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -158,7 +158,7 @@
 
 <p>Line 4 reads <code>dat_secret</code> and the rest of the function manipulates it before displaying it on the form. To save this file expand <code>resources</code> and select <code>rev_challenge_1.dat_secret.encode</code>. Right click and select <code>Save Resource to File.</code></p>
 
-<p><img src="/images/2014/flare/1-4.jpg/" alt="Saving private secret" title="Saving private secret" /> </p>
+<p><img src="/images/2014/flare/1-4.jpg" alt="Saving private secret" title="Saving private secret" /> </p>
 
 <p>I used <code>HxD</code> to look at the contents.</p>
 
@@ -2499,7 +2499,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="mh">0x66</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-5---outputdebugstring">Function 5 - OutputDebugString</h3>
+<h4 id="function-5---outputdebugstring">Function 5 - OutputDebugString</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2542,7 +2542,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="nf">blob</span> <span class="err">=</span> <span class="nv">xor</span><span class="p">(</span><span class="nb">bl</span><span class="nv">ob</span><span class="p">,</span> <span class="err">“</span><span class="nv">I</span><span class="err">’</span><span class="nv">m</span> <span class="nv">gonna</span> <span class="nv">sandbox</span> <span class="nv">your</span> <span class="nv">face</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-6---i-can-haz-breakpoint">Function 6 - I Can Haz Breakpoint?</h3>
+<h4 id="function-6---i-can-haz-breakpoint">Function 6 - I Can Haz Breakpoint?</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2637,7 +2637,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span><span class="n">Such</span> <span class="n">fire</span><span class="o">.</span> <span class="n">Much</span> <span class="n">burn</span><span class="o">.</span> <span class="n">Wow</span><span class="o">.</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-7---ntglobalflag">Function 7 - NtGlobalFlag</h3>
+<h4 id="function-7---ntglobalflag">Function 7 - NtGlobalFlag</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2684,7 +2684,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span>\<span class="n">x09</span>\<span class="n">x00</span>\<span class="n">x00</span>\<span class="n">x01</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-8---sands-of-time">Function 8 - Sands of Time</h3>
+<h4 id="function-8---sands-of-time">Function 8 - Sands of Time</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2758,7 +2758,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span><span class="mi">1337</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-9---backdogeexe">Function 9 - Backdoge.exe</h3>
+<h4 id="function-9---backdogeexe">Function 9 - Backdoge.exe</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2807,7 +2807,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span><span class="n">LETS</span> <span class="n">GO</span> <span class="n">SHOPPING</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-10---dogecoincom-ip-check">Function 10 - Dogecoin.com IP Check</h3>
+<h4 id="function-10---dogecoincom-ip-check">Function 10 - Dogecoin.com IP Check</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2875,7 +2875,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span><span class="n">SHOPPING</span> <span class="n">IS</span> <span class="n">HARD</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-11---hour-of-the-wolf">Function 11 - Hour of the Wolf</h3>
+<h4 id="function-11---hour-of-the-wolf">Function 11 - Hour of the Wolf</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2949,7 +2949,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </span><span class='line'>    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span>\<span class="n">x07</span>\<span class="n">x77</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="interlude---12---fullpath-xor">Interlude - 12 - Fullpath xor</h3>
+<h4 id="interlude---12---fullpath-xor">Interlude - 12 - Fullpath xor</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -3016,7 +3016,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">fullpath</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-13---internet-rootz">Function 13 - Internet Rootz</h3>
+<h4 id="function-13---internet-rootz">Function 13 - Internet Rootz</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -3047,7 +3047,7 @@ Alright! Last one, can you get to the finish line? Keep it up!
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="err">”</span><span class="mf">192.203</span><span class="o">.</span><span class="mf">230.10</span><span class="err">”</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3 id="function-14---jackrat">Function 14 - jackRAT</h3>
+<h4 id="function-14---jackrat">Function 14 - jackRAT</h4>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

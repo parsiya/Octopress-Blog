@@ -1,0 +1,146 @@
+<div class="highlight"><pre><span class="cp">#include &lt;openssl/conf.h&gt;</span>
+<span class="cp">#include &lt;openssl/evp.h&gt;</span>
+<span class="cp">#include &lt;openssl/err.h&gt;</span>
+<span class="cp">#include &lt;string.h&gt;</span>
+
+<span class="c1">/// Code from OpenSSL Wiki at http://wiki.openssl.org/index.php/EVP_Symmetric_Encryption_and_Decryption</span>
+<span class="c1">/// Needs libssl-dev (e.g. sudo apt-get install libssl-dev )</span>
+<span class="c1">/// Compile with gcc [filename].c -o [outputfile] -lcrypto -ggdb</span>
+
+<span class="kt">void</span> <span class="n">handleErrors</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">ERR_print_errors_fp</span><span class="p">(</span><span class="n">stderr</span><span class="p">);</span>
+  <span class="n">abort</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">encrypt</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">plaintext</span><span class="p">,</span> <span class="kt">int</span> <span class="n">plaintext_len</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">ciphertext</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">EVP_CIPHER_CTX</span> <span class="o">*</span><span class="n">ctx</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">ciphertext_len</span><span class="p">;</span>
+
+  <span class="cm">/* Create and initialise the context */</span>
+  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">EVP_CIPHER_CTX_new</span><span class="p">()))</span> <span class="n">handleErrors</span><span class="p">();</span>
+
+  <span class="cm">/* Initialise the encryption operation. IMPORTANT - ensure you use a key</span>
+<span class="cm">   * and IV size appropriate for your cipher</span>
+<span class="cm">   * In this example we are using 256 bit AES (i.e. a 256 bit key). The</span>
+<span class="cm">   * IV size for *most* modes is the same as the block size. For AES this</span>
+<span class="cm">   * is 128 bits */</span>
+  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_EncryptInit_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">EVP_aes_256_cbc</span><span class="p">(),</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">))</span>  <span class="n">handleErrors</span><span class="p">();</span>
+
+  <span class="cm">/* Provide the message to be encrypted, and obtain the encrypted output.</span>
+<span class="cm">   * EVP_EncryptUpdate can be called multiple times if necessary</span>
+<span class="cm">   */</span>
+  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_EncryptUpdate</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">,</span> <span class="n">plaintext_len</span><span class="p">))</span> <span class="n">handleErrors</span><span class="p">();</span>
+  <span class="n">ciphertext_len</span> <span class="o">=</span> <span class="n">len</span><span class="p">;</span>
+
+  <span class="cm">/* Finalise the encryption. Further ciphertext bytes may be written at</span>
+<span class="cm">   * this stage.</span>
+<span class="cm">   */</span>
+  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_EncryptFinal_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">ciphertext</span> <span class="o">+</span> <span class="n">len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">))</span> <span class="n">handleErrors</span><span class="p">();</span>
+  <span class="n">ciphertext_len</span> <span class="o">+=</span> <span class="n">len</span><span class="p">;</span>
+
+  <span class="cm">/* Clean up */</span>
+  <span class="n">EVP_CIPHER_CTX_free</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">ciphertext_len</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">decrypt</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">ciphertext</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ciphertext_len</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">plaintext</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">EVP_CIPHER_CTX</span> <span class="o">*</span><span class="n">ctx</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">plaintext_len</span><span class="p">;</span>
+
+  <span class="cm">/* Create and initialise the context */</span>
+  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">EVP_CIPHER_CTX_new</span><span class="p">()))</span> <span class="n">handleErrors</span><span class="p">();</span>
+
+  <span class="cm">/* Initialise the decryption operation. IMPORTANT - ensure you use a key</span>
+<span class="cm">   * and IV size appropriate for your cipher</span>
+<span class="cm">   * In this example we are using 256 bit AES (i.e. a 256 bit key). The</span>
+<span class="cm">   * IV size for *most* modes is the same as the block size. For AES this</span>
+<span class="cm">   * is 128 bits */</span>
+  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_DecryptInit_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">EVP_aes_256_cbc</span><span class="p">(),</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">))</span>  <span class="n">handleErrors</span><span class="p">();</span>
+  
+  <span class="cm">/* Provide the message to be decrypted, and obtain the plaintext output.</span>
+<span class="cm">   * EVP_DecryptUpdate can be called multiple times if necessary</span>
+<span class="cm">   */</span>
+  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_DecryptUpdate</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">))</span>  <span class="n">handleErrors</span><span class="p">();</span>
+  <span class="n">plaintext_len</span> <span class="o">=</span> <span class="n">len</span><span class="p">;</span>
+
+  <span class="cm">/* Finalise the decryption. Further plaintext bytes may be written at</span>
+<span class="cm">   * this stage.</span>
+<span class="cm">   */</span>
+ 
+  <span class="k">if</span><span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="n">EVP_DecryptFinal_ex</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">plaintext</span> <span class="o">+</span> <span class="n">len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">len</span><span class="p">))</span> <span class="n">handleErrors</span><span class="p">();</span>
+  <span class="n">plaintext_len</span> <span class="o">+=</span> <span class="n">len</span><span class="p">;</span>
+
+  <span class="cm">/* Clean up */</span>
+  <span class="n">EVP_CIPHER_CTX_free</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">plaintext_len</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">arc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="cm">/* Set up the key and iv. Do I need to say to not hard code these in a</span>
+<span class="cm">   * real application? :-)</span>
+<span class="cm">   */</span>
+
+  <span class="cm">/* A 256 bit key */</span>
+  <span class="c1">/// unsigned char *key = &quot;01234567890123456789012345678901&quot;;</span>
+  
+  <span class="c1">/// this is still a 256-bit (32 byte) key, each character is treated as one byte</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span> <span class="o">=</span> <span class="s">&quot;ee12c03ceacdfb5d4c0e67c8f5ab3362&quot;</span><span class="p">;</span>
+
+  <span class="cm">/* A 128 bit IV */</span>
+  <span class="c1">/// unsigned char *iv = &quot;01234567890123456&quot;;</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span> <span class="o">=</span> <span class="s">&quot;d36a4bf2e6dd9c68&quot;</span><span class="p">;</span>
+
+  <span class="cm">/* Message to be encrypted */</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">plaintext</span> <span class="o">=</span>
+    <span class="s">&quot;The quick brown fox jumps over the lazy dog&quot;</span><span class="p">;</span>
+
+  <span class="cm">/* Buffer for ciphertext. Ensure the buffer is long enough for the</span>
+<span class="cm">   * ciphertext which may be longer than the plaintext, dependant on the</span>
+<span class="cm">   * algorithm and mode</span>
+<span class="cm">   */</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">ciphertext</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+
+  <span class="cm">/* Buffer for the decrypted text */</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">decryptedtext</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+
+  <span class="kt">int</span> <span class="n">decryptedtext_len</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">;</span>
+
+  <span class="cm">/* Initialise the library */</span>
+  <span class="n">ERR_load_crypto_strings</span><span class="p">();</span>
+  <span class="n">OpenSSL_add_all_algorithms</span><span class="p">();</span>
+  <span class="n">OPENSSL_config</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+  <span class="cm">/* Encrypt the plaintext */</span>
+  <span class="n">ciphertext_len</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">plaintext</span><span class="p">),</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">);</span>
+
+  <span class="cm">/* Do something useful with the ciphertext here */</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Ciphertext is:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+  <span class="n">BIO_dump_fp</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">);</span>
+
+  <span class="cm">/* Decrypt the ciphertext */</span>
+  <span class="n">decryptedtext_len</span> <span class="o">=</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext_len</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">decryptedtext</span><span class="p">);</span>
+
+  <span class="cm">/* Add a NULL terminator. We are expecting printable text */</span>
+  <span class="n">decryptedtext</span><span class="p">[</span><span class="n">decryptedtext_len</span><span class="p">]</span> <span class="o">=</span> <span class="err">&#39;&#39;</span><span class="p">;</span>
+
+  <span class="cm">/* Show the decrypted text */</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Decrypted text is:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">decryptedtext</span><span class="p">);</span>
+
+  <span class="cm">/* Clean up */</span>
+  <span class="n">EVP_cleanup</span><span class="p">();</span>
+  <span class="n">ERR_free_strings</span><span class="p">();</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>

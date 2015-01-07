@@ -9,7 +9,7 @@
   <meta name="author" content="Parsiya">
 
   
-  <meta name="description" content="While writing the writeups for the Flare On Challenge 6 I came upon an alternative solution by @gaasedelen to use the number of executed instructions &hellip;">
+  <meta name="description" content="This post is part one of a two part internal blog entry on creating a Pintool for an assessment. Unfortunately I cannot talk about it, so I decided &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +78,51 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015-01-06-tales-from-the-crypt-o-leaking-aes-keys/">Tales From the Crypt(o) - Leaking AES Keys</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T23:36:48-05:00" pubdate data-updated="true">Jan 6<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This post is part one of a two part internal blog entry on creating a Pintool for an assessment. Unfortunately I cannot talk about it, so I decided to put the first part out. If I find an opensource program similar to the assessment I will try and recreate the tool (but I am not holding my breath). As this part is essentially a build up, it may not be coherent at times. Alterntively, if you really want to read it, you can join us. We are almost always hiring (let me do the referal though ;).</p>
+
+<p>Today we are going to talk about discovering encryption keys in sneaky ways. We will start with simple examples, do a bit of Digital Forensics or DF (for low standards of DF) and finally in part two we will use our recently acquired knowledge of Pintool to do <code>[redacted]</code>. </p>
+
+<p>First let’s talk a bit about the inner-workings of AES decryption. By inner-workings of AES I do not mean the following diagrams that you have seen so many times.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015-01-06-tales-from-the-crypt-o-leaking-aes-keys/">Would you like to know more? &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -710,49 +755,6 @@ When I wrote this, I thought it was a clever idea but then someone told me I cou
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014-04-20-now-hosted-on-amazon-s3/">Now Hosted on Amazon S3</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-20T13:20:24-04:00" pubdate data-updated="true">Apr 20<span>th</span>, 2014</time>
-        
-           | <a href="/blog/2014-04-20-now-hosted-on-amazon-s3/#disqus_thread"
-             data-disqus-identifier="http://parsiya.net/blog/2014-04-20-now-hosted-on-amazon-s3/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I moved my blog from Bluehost to Amazon S3. I have not used Cloudfront yet, I doubt my blog has any visitors to justify that.</p>
-
-<p>It was really easy to redirect everything to <a href="http://www.cryptogangsta.com">cryptogangsta.com</a>. <a href="http://parsiya.net">parsiya.net</a>, <a href="http://www.parsiya.net">www.parsiya.net</a> and <a href="http://www.cryptogangsta.com">www.cryptogangsta.com</a> should all point to cryptogangsta.com.</p>
-
-<p>I have decided (for n-th time) to start updating this blog. Hopefully I will do it this time, I have some ideas to keep this blog running ;).</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -773,6 +775,10 @@ When I wrote this, I thought it was a clever idea but then someone told me I cou
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015-01-06-tales-from-the-crypt-o-leaking-aes-keys/">Tales From the Crypt(o) - Leaking AES Keys</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/">Pin Adventures - Chapter 1 - PinSolver Mk1</a>
@@ -808,10 +814,6 @@ When I wrote this, I thought it was a clever idea but then someone told me I cou
     
       <li class="post">
         <a href="/blog/2014-04-22-amazon-s3-and-css/">Amazon S3 and CSS</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014-04-20-now-hosted-on-amazon-s3/">Now Hosted on Amazon S3</a>
       </li>
     
   </ul>
