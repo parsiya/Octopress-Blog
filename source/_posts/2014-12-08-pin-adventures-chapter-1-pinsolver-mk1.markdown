@@ -277,7 +277,7 @@ Now we can see what happens in strncmp. The following is the cleaned up version 
 0xb7f82b90 <+16>: 	jb     0xb7f843d0 <__strncmp_ssse3+6224>
 ...
 ; if number of bytes to compare is bigger than 16
-; let's assume it is and see what happens next
+; let's assume it is not and see what happens next
 ...
 0xb7f843d0 <+6224>:	test   ebp,ebp  ; if (ebp == 0) goto 0xb7f843c3
 0xb7f843d2 <+6226>:	je     0xb7f843c3 <__strncmp_ssse3+6211> 

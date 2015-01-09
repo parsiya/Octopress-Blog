@@ -2,7 +2,7 @@
 layout: post
 title: "Tales from the Crypt(o) - Leaking AES Keys"
 date: 2015-01-06 23:36:48 -0500
-comments: false 
+comments: true 
 categories: ['AES Keys','Cryptography','Reverse Engineering']
 ---
 

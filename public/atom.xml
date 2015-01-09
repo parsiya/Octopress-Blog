@@ -4,7 +4,7 @@
   <title><![CDATA[Parsiya's Den]]></title>
   <link href="http://parsiya.net/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-01-08T22:31:13-05:00</updated>
+  <updated>2015-01-09T08:47:46-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -1641,7 +1641,7 @@ On Kali use <code>apt-get install libc6-dbg</code>. Here we go again:</p>
 </span><span class="line"><span class="err">0</span><span class="nf">xb7f82b90</span> <span class="o">&lt;+</span><span class="mi">16</span><span class="o">&gt;</span><span class="p">:</span> 	<span class="nv">jb</span>     <span class="mh">0xb7f843d0</span> <span class="o">&lt;</span><span class="nv">__strncmp_ssse3</span><span class="o">+</span><span class="mi">6224</span><span class="o">&gt;</span>
 </span><span class="line"><span class="nf">...</span>
 </span><span class="line"><span class="c1">; if number of bytes to compare is bigger than 16</span>
-</span><span class="line"><span class="c1">; let&#39;s assume it is and see what happens next</span>
+</span><span class="line"><span class="c1">; let&#39;s assume it is not and see what happens next</span>
 </span><span class="line"><span class="nf">...</span>
 </span><span class="line"><span class="err">0</span><span class="nf">xb7f843d0</span> <span class="o">&lt;+</span><span class="mi">6224</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">test</span>   <span class="nb">ebp</span><span class="p">,</span><span class="nb">ebp</span>  <span class="c1">; if (ebp == 0) goto 0xb7f843c3</span>
 </span><span class="line"><span class="err">0</span><span class="nf">xb7f843d2</span> <span class="o">&lt;+</span><span class="mi">6226</span><span class="o">&gt;</span><span class="p">:</span>	<span class="nv">je</span>     <span class="mh">0xb7f843c3</span> <span class="o">&lt;</span><span class="nv">__strncmp_ssse3</span><span class="o">+</span><span class="mi">6211</span><span class="o">&gt;</span>
