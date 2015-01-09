@@ -4,7 +4,7 @@
   <title><![CDATA[Parsiya's Den]]></title>
   <link href="http://parsiya.net/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-01-07T01:56:24-05:00</updated>
+  <updated>2015-01-08T22:31:13-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -4618,7 +4618,7 @@ We have already seen the transitive property of xor so we can calculate the corr
 
 <p><img src="http://parsiya.net/images/2014/flare/7-17.jpg" alt="xor paths for ip check" title="xor paths for ip check" /></p>
 
-<p>The xor-string is <code>SHOPPING IS HARD</code> if the resolved IP address is not <code>127.0.0.1</code>. If the IP address is <code>127.0.0.1</code> or <code>h_addrtype</code> is not <code>2</code> then <code>LETS GO MATH</code> will be xor-ed with the blob.</p>
+<p>The xor-string is <code>LETS GO MATH</code> if the resolved IP address is not <code>127.0.0.1</code>. If the IP address is <code>127.0.0.1</code> or <code>h_addrtype</code> is not <code>2</code> then <code>SHOPPING IS HARD</code> will be xor-ed with the blob.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Dogecoin.com IP check </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -4626,9 +4626,9 @@ We have already seen the transitive property of xor so we can calculate the corr
 <span class="line-number">3</span>
 <span class="line-number">4</span>
 </pre></td><td class="code"><pre><code class="python"><span class="line"><span class="k">if</span> <span class="p">(</span><span class="n">h_addrtype</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Dogecoin_ip</span> <span class="o">==</span> <span class="s">&quot;127.0.0.1&quot;</span><span class="p">)):</span>
-</span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;LETS GO MATH&quot;</span><span class="p">)</span>
-</span><span class="line"><span class="k">if</span> <span class="p">(</span><span class="n">Dogecoin_ip</span> <span class="o">!=</span> <span class="s">&quot;127.0.0.1&quot;</span><span class="p">):</span>
 </span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;SHOPPING IS HARD&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="k">if</span> <span class="p">(</span><span class="n">Dogecoin_ip</span> <span class="o">!=</span> <span class="s">&quot;127.0.0.1&quot;</span><span class="p">):</span>
+</span><span class="line">    <span class="n">blob</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="s">&quot;LETS GO MATH&quot;</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h4 id="function-11---hour-of-the-wolf">Function 11 - Hour of the Wolf</h4>

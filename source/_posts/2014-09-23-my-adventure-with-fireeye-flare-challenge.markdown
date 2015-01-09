@@ -1789,13 +1789,13 @@ Then 8th byte will be compared with ``2`` which is ``h_addrtype``. According to 
 
 ![xor paths for ip check](/images/2014/flare/7-17.jpg "xor paths for ip check")
 
-The xor-string is ``SHOPPING IS HARD`` if the resolved IP address is not ``127.0.0.1``. If the IP address is ``127.0.0.1`` or ``h_addrtype`` is not ``2`` then ``LETS GO MATH`` will be xor-ed with the blob.
+The xor-string is ``LETS GO MATH`` if the resolved IP address is not ``127.0.0.1``. If the IP address is ``127.0.0.1`` or ``h_addrtype`` is not ``2`` then ``SHOPPING IS HARD`` will be xor-ed with the blob.
 
 {% codeblock lang:python Dogecoin.com IP check %}
 if (h_addrtype != 2 or (Dogecoin_ip == "127.0.0.1")):
-    blob = xor(blob,"LETS GO MATH")
-if (Dogecoin_ip != "127.0.0.1"):
     blob = xor(blob,"SHOPPING IS HARD")
+if (Dogecoin_ip != "127.0.0.1"):
+    blob = xor(blob,"LETS GO MATH")
 {% endcodeblock %}
 
 #### Function 11 - Hour of the Wolf
