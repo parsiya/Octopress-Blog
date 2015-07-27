@@ -17,6 +17,9 @@ group :development do
   gem 'directory_watcher', '1.4.1'
   gem 'kramdown'
   gem 'coderay'
+  gem 'erubis'
+  gem 'mini_magick'
+  
 end
 
 gem 'sinatra', '~> 1.4.2'

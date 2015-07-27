@@ -9,7 +9,7 @@
   <meta name="author" content="Parsiya">
 
   
-  <meta name="description" content="I moved my blog from Bluehost to Amazon S3. I have not used Cloudfront yet, I doubt my blog has any visitors to justify that. It was really easy to &hellip;">
+  <meta name="description" content="After I deployed my blog to Amazon S3, I realized that there was no CSS applied to the pages. In Octopress, the look and feel of website is managed &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -29,6 +29,15 @@
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- start image popup stuff -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+
+<!-- end image popup stuff -->
+
+<!-- Look at me, I am looking at source!!11! -->
 
   
   <script type="text/javascript">
@@ -78,6 +87,66 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014-04-22-amazon-s3-and-css/">Amazon S3 and CSS</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-22T14:03:32-04:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2014</time>
+        
+           | <a href="/blog/2014-04-22-amazon-s3-and-css/#disqus_thread"
+             data-disqus-identifier="http://parsiya.net/blog/2014-04-22-amazon-s3-and-css/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After I deployed my blog to Amazon S3, I realized that there was no CSS applied to the pages. In Octopress, the look and feel of website is managed by <code>stylesheets/screen.css</code>. It was fine in <code>rake preview</code> but not on the S3 bucket. I looked around for a few hours to no avail. There was one other person who had the same issue on <a href="http://stackoverflow.com/questions/17138615/discrepency-in-rake-preview-vs-rake-deploy">stackoverflow</a> but no answers. Relevant <a href="https://xkcd.com/979/">xkcd</a>:</p>
+
+<p><img class="center" src="http://imgs.xkcd.com/comics/wisdom_of_the_ancients.png" title="Wisdom of the Ancients" /></p>
+
+<p>I finally found my answer. There are other static websites out there so I removed Octopress from my search terms (facepalm! I got my first MSc. in query expansion). This <a href="http://stackoverflow.com/a/14807743">stackoverflow answer</a> sent me to <a href="http://www.adamwilcox.org/2012/05/04/css-on-amazon-s3/">Adam Wilcox’s website</a> and saved the day. Thanks Adam.</p>
+
+<p>Simple fix, go to Amazon S3 bucket web interface. Find <code>stylesheets/screen.css</code>. Go to metadata tab and change <code>content-type</code> to <code>text/css</code>. This has to be repeated every time <code>screen.css</code> is updated (unless I can find how to do this with <code>S3cmd</code>). Usually this is not the case, when I generate my blog again I can see the following indicating that <code>screen.css</code> is not changed (unless you change the theme?):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">root@kali:~/Desktop/octopress# rake generate
+</span><span class="line"><span class="c">## Generating Site with Jekyll</span>
+</span><span class="line">identical <span class="nb">source</span>/stylesheets/screen.css
+</span><span class="line">Configuration from /root/Desktop/octopress/_config.yml
+</span><span class="line">Building site: <span class="nb">source</span> -&gt; public
+</span><span class="line">Successfully generated site: <span class="nb">source</span> -&gt; public
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -417,6 +486,10 @@ as they were not visible in the side-bar and I had to scroll down to see them.</
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015-07-26-image-popup-and-octopress/">Image Popup and Octopress</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015-01-06-tales-from-the-crypt-o-leaking-aes-keys/">Tales From the Crypt(o) - Leaking AES Keys</a>
       </li>
     
@@ -450,10 +523,6 @@ as they were not visible in the side-bar and I had to scroll down to see them.</
     
       <li class="post">
         <a href="/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/">Pasting Shellcode in GDB Using Python</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014-04-22-amazon-s3-and-css/">Amazon S3 and CSS</a>
       </li>
     
   </ul>

@@ -11,6 +11,7 @@ GEM
       fssm (>= 0.2.7)
       sass (~> 3.1)
     directory_watcher (1.4.1)
+    erubis (2.7.0)
     fast-stemmer (1.0.1)
     fssm (0.2.9)
     haml (3.1.7)
@@ -25,6 +26,7 @@ GEM
     liquid (2.3.0)
     maruku (0.6.1)
       syntax (>= 1.0.0)
+    mini_magick (4.2.7)
     posix-spawn (0.3.6)
     pygments.rb (0.3.4)
       posix-spawn (~> 0.3.6)
@@ -55,10 +57,12 @@ DEPENDENCIES
   coderay
   compass (~> 0.12.2)
   directory_watcher (= 1.4.1)
+  erubis
   haml (~> 3.1.7)
   jekyll (~> 0.12)
   kramdown
   liquid (~> 2.3.0)
+  mini_magick
   pygments.rb (~> 0.3.4)
   rake (~> 0.9)
   rb-fsevent (~> 0.9)
