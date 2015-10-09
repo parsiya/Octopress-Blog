@@ -89,7 +89,7 @@ This is where things start to become interesting. Let’s re-use our old tricks.
     Pinging s3-website-us-east-1.amazonaws.com [54.231.81.2] with 32 bytes of data:
     ...
 
-It seems like the second endpoint is hosted on an AWS S3 buckjet. S3 buckets are mainly storage containers but they can also host static websites like this website. But we won't find anything if we go to that address. `s3-website-us-east-1.amazonaws.com` is the east coast AWS data center which is located in Northern Virginia. You will get a different endpoint based on where you are located.
+It seems like the second endpoint is hosted on an AWS S3 bucket. S3 buckets are mainly storage containers but they can also host static websites like this website. But we won't find anything if we go to that address. `s3-website-us-east-1.amazonaws.com` is the east coast AWS data center which is located in Northern Virginia. You will get a different endpoint based on where you are located.
 
 Let's look at the conversation in Netmon. This is similar to `Follow TCP/UDP Stream` in Wireshark but unfortunately not as good.
 

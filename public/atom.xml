@@ -4,7 +4,7 @@
   <title><![CDATA[Parsiya's Den]]></title>
   <link href="http://parsiya.net/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-09T00:36:23-04:00</updated>
+  <updated>2015-10-09T10:11:14-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -139,7 +139,7 @@ Pinging s3-website-us-east-1.amazonaws.com [54.231.81.2] with 32 bytes of data:
 ...
 </code></pre>
 
-<p>It seems like the second endpoint is hosted on an AWS S3 buckjet. S3 buckets are mainly storage containers but they can also host static websites like this website. But we won’t find anything if we go to that address. <code>s3-website-us-east-1.amazonaws.com</code> is the east coast AWS data center which is located in Northern Virginia. You will get a different endpoint based on where you are located.</p>
+<p>It seems like the second endpoint is hosted on an AWS S3 bucket. S3 buckets are mainly storage containers but they can also host static websites like this website. But we won’t find anything if we go to that address. <code>s3-website-us-east-1.amazonaws.com</code> is the east coast AWS data center which is located in Northern Virginia. You will get a different endpoint based on where you are located.</p>
 
 <p>Let’s look at the conversation in Netmon. This is similar to <code>Follow TCP/UDP Stream</code> in Wireshark but unfortunately not as good.</p>
 
