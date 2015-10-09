@@ -128,6 +128,8 @@ module Jekyll
       end
 
       safe_wrap(@template.result(vars))
+      # @template.result(vars)
+      
     end
   end
 end

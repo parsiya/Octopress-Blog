@@ -75,9 +75,11 @@ vars = {
 {% endcodeblock %}
 
 We can see `title` saved in `vars['title']`. So we can just add a space to the end of it using the following line:  
-`vars['title'] += ""`
+`vars['title'] += " "`
 
 And that's it, it works as you can see in this post. Modified code is at: [https://bitbucket.org/parsiya/octopress-image-popup-forked][modified_code]. I hope I did not mess up the licensing and such :).
+
+Update August 1, 2015: The tag adds this annoying extra line(s) before the image on the page. I have not had time to look into removing it. To be honest I do not like it that much. I will be using the image caption tag if the image is big enough to not need a pop-up.
 
 [original repo]: https://github.com/ctdk/octopress-image-popup
 [img_popup.html.erb]: https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.html.erb

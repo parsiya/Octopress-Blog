@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-07-26T23:45:46-04:00</updated>
+  <updated>2015-10-09T00:36:23-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -24,15 +24,13 @@
 
 <!-- more -->
 
-<p><div class='bogus-wrapper'><notextile><!-- -*- html -*- -->
-
-<div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-3">
+<p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-16">
     <img src="/images/2015/popup1/pew1.jpg"
          width="225" height="311"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-3" style="display:none">
+  <div id="image-dialog-16" style="display:none">
     <img src="/images/2015/popup1/pew1.jpg"
          width="449" height="621"/>
     <br clear="all"/>
@@ -40,8 +38,8 @@
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-3").hide();
-    jQuery("#image-dialog-3").dialog({
+    jQuery("#image-dialog-16").hide();
+    jQuery("#image-dialog-16").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -52,8 +50,8 @@
       hide:      'scale'
     });
 
-    jQuery("#image-3").click(function() {
-      jQuery("#image-dialog-3").dialog('open');
+    jQuery("#image-16").click(function() {
+      jQuery("#image-dialog-16").dialog('open');
     });
 
   });
@@ -128,15 +126,13 @@ I am not quite sure what this `erb` file does but it looks like to be a blueprin
 
 Another problem is after we click on the image. There is no space between image title and the "close" link.
 
-<div class='bogus-wrapper'><notextile><!-- -*- html -*- -->
-
-<div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-4">
+<div class='bogus-wrapper'><notextile><div class="imgpopup screen">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-17">
     <img src="/images/2015/popup1/pew2.jpg"
          width="280" height="284"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-4" style="display:none">
+  <div id="image-dialog-17" style="display:none">
     <img src="/images/2015/popup1/pew2.jpg"
          width="560" height="568"/>
     <br clear="all"/>
@@ -144,8 +140,8 @@ Another problem is after we click on the image. There is no space between image 
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-4").hide();
-    jQuery("#image-dialog-4").dialog({
+    jQuery("#image-dialog-17").hide();
+    jQuery("#image-dialog-17").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -156,8 +152,8 @@ Another problem is after we click on the image. There is no space between image 
       hide:      'scale'
     });
 
-    jQuery("#image-4").click(function() {
-      jQuery("#image-dialog-4").dialog('open');
+    jQuery("#image-17").click(function() {
+      jQuery("#image-dialog-17").dialog('open');
     });
 
   });
@@ -186,9 +182,11 @@ To fix this we need to modify `img_popup.rb` (original at [https://github.com/ct
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 We can see `title` saved in `vars['title']`. So we can just add a space to the end of it using the following line:  
-`vars['title'] += ""`
+`vars['title'] += " "`
 
 And that's it, it works as you can see in this post. Modified code is at: [https://bitbucket.org/parsiya/octopress-image-popup-forked][modified_code]. I hope I did not mess up the licensing and such :).
+
+Update August 1, 2015: The tag adds this annoying extra line(s) before the image on the page. I have not had time to look into removing it. To be honest I do not like it that much. I will be using the image caption tag if the image is big enough to not need a pop-up.
 
 [original repo]: https://github.com/ctdk/octopress-image-popup
 [img_popup.html.erb]: https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.html.erb

@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Proxying Hipchat Part 1: Where Did the Traffic Go? - Parsiya's Den</title>
+  <meta name="author" content="Parsiya">
+
+  
+  <meta name="description" content="This is a slightly different version of a series of blog post that I wrote on our internal blog about proxying. I see that proxying traffic is a time &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://parsiya.net/blog/2015-10-08-hipchat-part-1-where-did-the-traffic-go">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Parsiya's Den" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- start image popup stuff -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+
+<!-- end image popup stuff -->
+
+<!-- Look at me, I am looking at source!!11! -->
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-55491306-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Parsiya's Den</a></h1>
+  
+    <h2>Because no one wants to be the other guy in Wham!</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:parsiya.net" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <!-- <li><a href="/about.html">About Me</a></li> -->
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Proxying Hipchat Part 1: Where Did the Traffic Go?</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-08T23:05:24-04:00" pubdate data-updated="true">Oct 8<span>th</span>, 2015</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://parsiya.net">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This is a slightly different version of a series of blog post that I wrote on our internal blog about proxying. I see that proxying traffic is a time consuming step in testing thick client applications so I thought I would share what I know. I tackled Hipchat. Why Hipchat? Because it uses a known protocol (XMPP) and I thought it’s an interesting application.</p>
+
+<p>I used Hipchat Windows client version 2. At the time of writing version 4 is in beta. In this part we will see how we can identify endpoints from traffic captures even when they are behind a load balancer/shared hosting etc. In next parts we will start proxying.</p>
+
+<!-- more -->
+
+<h3 id="setup-and-tools">0. Setup and Tools</h3>
+<p>I will be using the following tools in this part:</p>
+
+<ol>
+  <li>Microsoft Network Monitor (Netmon). You can also use Wireshark.</li>
+  <li>Powershell/Command Prompt/etc: I am using Windows but I am sure you can find the equivalent commands if you are fancy ;)</li>
+  <li>Procmon</li>
+</ol>
+
+<p>You can deploy your own Hipchat server by <a href="https://www.hipchat.com/server/get-it">downloading a VM</a>. </p>
+
+<p>Note: In these posts, the Hipchat server is named <code>hipchatserver.com</code> and its IP is <code>10.10.10.10</code> (these are just examples). Some of the screenshots are edited to hide the actual IPs and replace them with samples. My machine’s sample IP address for the network interface that hosts the Hipchat server is <code>10.10.10.9</code>.</p>
+
+<h3 id="traffic-attribution">1. Traffic Attribution</h3>
+<p>Run Netmon and Procmon as admin and run HipChat. We already know how to do <a href="../2015-08-01-network-traffic-attribution-on-windows">network traffic attribution</a>. I was not logged into any chatrooms, so Hipchat is not loading any extra content (e.g. images linked in rooms).</p>
+
+<p>In Netmon we also see the following endpoints:</p>
+
+<ol>
+  <li>10.10.10.10</li>
+  <li>54.231.81.2</li>
+  <li>54.231.96.96</li>
+  <li>54.231.47.194</li>
+  <li>54.225.209.74</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><div class="imgpopup screen">
+  <a href="javascript:void(0)" style="text-decoration: none" id="image-15">
+    <img src="/images/2015/hipchat1/01-Traffic-in-Netmon.png" width="1085" height="366" alt="Click me." />
+  </a>
+  <div id="image-dialog-15" style="display:none">
+    <img src="/images/2015/hipchat1/01-Traffic-in-Netmon.png" width="1356" height="457" />
+    <br clear="all" />
+  </div>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    jQuery("#image-dialog-15").hide();
+    jQuery("#image-dialog-15").dialog({
+      autoOpen:  false,
+      modal:     true,
+      draggable: false,
+      minWidth:  1396,
+      minHeight: 497,
+      title:     "Traffic in Netmon ",
+      show:      'scale',
+      hide:      'scale'
+    });
+
+    jQuery("#image-15").click(function() {
+      jQuery("#image-dialog-15").dialog('open');
+    });
+
+  });
+</script>
+</notextile></div>
+
+<p>Traffic in Netmon, click to view full-size image.</p>
+
+<p>You will notice that I have a slightly different layout in Netmon now. I have removed time related columns. Right click any column name and select <code>Choose Columns</code>. There are also different layouts like <code>HTTP Troubleshoot</code>.</p>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/hipchat1/02-Endpoints-in-Netmon.png" width="" height="" title="Endpoints in Netmon" /><span class="caption-text">Endpoints in Netmon</span></span></p>
+
+<p>In Procmon we can see five endpoints:</p>
+
+<ol>
+  <li>hipchatserver.com:5222</li>
+  <li>s3-website-us-east-1.amazonaws.com:http</li>
+  <li>s3-1.amazonaws.com:https</li>
+  <li>ec2-54-531-47-194.compute-1.amazonaws.com:https</li>
+  <li>ec2-54-225-209-74.compute-1.amazonaws.com:https</li>
+</ol>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/hipchat1/03-Endpoints-in-Procmon.png" width="" height="" title="Endpoints in Procmon" /><span class="caption-text">Endpoints in Procmon</span></span></p>
+
+<p>Procmon filters are:</p>
+
+<ul>
+  <li>ProcessName is Hipchat.exe</li>
+  <li>Operation is TCP Connect</li>
+</ul>
+
+<h3 id="where-does-the-traffic-go">2. Where does the traffic go?</h3>
+<p>Now we need to find out more about these endpoints (e.g. their actual address/URL etc). Based on their temporal sequence in Procmon and Netmon we have some insights.</p>
+
+<h4 id="hipchatservercom">2.1 – 10.10.10.10 – hipchatserver.com</h4>
+<p>This is easy. It’s the Hipchat server at <code>hipchatserver.com</code>.</p>
+
+<pre><code>PS C:\&gt; nslookup 10.10.10.10
+Server:  zzzz.com
+Address:  10.10.10.2
+
+Name:    hipchatserver.com
+Address:  10.10.10.10
+
+PS C:\&gt; ping -a 10.10.10.10
+Pinging hipchatserver.com [10.10.10.10] with 32 bytes of data:
+...
+</code></pre>
+
+<h4 id="s3-website-us-east-1amazonawscom">2.2 – 54.231.81.2 – s3-website-us-east-1.amazonaws.com</h4>
+<p>This is where things start to become interesting. Let’s re-use our old tricks.</p>
+
+<pre><code>PS C:\&gt; nslookup 54.231.81.2
+Server:  zzzz.com
+Address:  10.10.10.2
+
+Name:    s3-website-us-east-1.amazonaws.com
+Address:  54.231.81.2
+
+PS C:\&gt; ping -a 54.231.81.2
+Pinging s3-website-us-east-1.amazonaws.com [54.231.81.2] with 32 bytes of data:
+...
+</code></pre>
+
+<p>It seems like the second endpoint is hosted on an AWS S3 buckjet. S3 buckets are mainly storage containers but they can also host static websites like this website. But we won’t find anything if we go to that address. <code>s3-website-us-east-1.amazonaws.com</code> is the east coast AWS data center which is located in Northern Virginia. You will get a different endpoint based on where you are located.</p>
+
+<p>Let’s look at the conversation in Netmon. This is similar to <code>Follow TCP/UDP Stream</code> in Wireshark but unfortunately not as good.</p>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/hipchat1/04-bloginfo-fetch.png" width="" height="" title="Fetching blog_info.html" /><span class="caption-text">Fetching blog_info.html</span></span></p>
+
+<p>We are in luck, we can see a <code>GET</code> request over HTTP. Let’s look at it’s payload:</p>
+
+<pre><code>GET /blog_info.html HTTP/1.1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) HipChat/2.2.1388 Safari/538.1
+Connection: Keep-Alive
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,*
+Host: downloads.hipchat.com
+</code></pre>
+
+<p>Note the User-Agent. Hipchat is fetching <a href="http://downloads.hipchat.com/blog_info.html">http://downloads.hipchat.com/blog_info.html</a>. This is the <code>Latest News</code> at the bottom of the Hipchat client. Notice that it is being loaded over HTTP and surprisingly it is not available over TLS (try accessing <a href="https://downloads.hipchat.com/blog_info.html">https://downloads.hipchat.com/blog_info.html</a>) does not work. In fact you cannot access <a href="https://downloads.hipchat.com/">https://downloads.hipchat.com</a>.</p>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/hipchat1/05-Latest-news-in-hipchat.png" width="" height="" title="&quot;Latest News&quot; fetched over HTTP ;)" /><span class="caption-text">“Latest News” fetched over HTTP ;)</span></span></p>
+
+<h5 id="but-what-if-this-request-was-over-tls">2.2.1 But what if this request was over TLS?</h5>
+<p>Then we would have seen the TLS handshake and then encrypted data. Even by looking at the Common Name (CN) field in server’s certificate in 2nd part of the TLS handshake (<code>Server Hello</code>) we wouldn’t have been able to discover the endpoint.
+Traffic in Netmon, click to view full-size image.
+We are going to have to look at DNS requests. We know the endpoint’s IP address so we will try to find the DNS request that had this IP in its answer. The endpoint’s IP address is <code>54.231.81.2</code> which is <code>36E75102</code> in Hex. In Netmon, select <code>All Traffic</code> (In Netmon DNS traffic is not included in process traffic) and enter the following filter:</p>
+
+<pre><code>  DNS &amp;&amp; ContainsBin(FrameData, HEX, "36E75102")
+</code></pre>
+
+<p>This filter searches for the IP address in DNS traffic. It will find the DNS query that returned this IP address.</p>
+
+<p><span class="caption-wrapper"><img class="caption" src="/images/2015/hipchat1/06-Downloads.png" width="" height="" title="downloads.hipchat.com" /><span class="caption-text">downloads.hipchat.com</span></span></p>
+
+<p>As we can see, it is <code>downloads.hipchat.com</code>.</p>
+
+<p>IP to Hex conversion can be done online, by hand or using Python:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>IP to Hex </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">PS</span> <span class="n">C</span><span class="p">:</span>\<span class="o">&gt;</span> <span class="n">python</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">socket</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">hexlify</span> <span class="p">(</span> <span class="n">socket</span><span class="o">.</span><span class="n">inet_aton</span><span class="p">(</span><span class="s">&quot;54.231.81.2&quot;</span><span class="p">)</span> <span class="p">)</span>
+</span><span class="line"><span class="mf">36e75102</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="s3-1amazonawscom">2.3 – 54.231.96.96 – s3-1.amazonaws.com</h4>
+
+<p>Same trick. <code>54.231.96.96</code> in Hex is <code>36E76060</code> so filter is:</p>
+
+<pre><code>  DNS &amp;&amp; ContainsBin(FrameData, HEX, "36E76060")
+</code></pre>
+
+<p>which points to <code>s3.amazonaws.com</code>. As we will see in part two, this is the request to load the emoticon shown with latest news, in this case it is the <code>success kid</code> image macro.</p>
+
+<pre><code>- Dns: QueryId = 0xC28D, QUERY (Standard query), Response - Success, 53, 0 ... 
+    QueryIdentifier: 49805 (0xC28D)
+  + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
+    QuestionCount: 1 (0x1)
+    AnswerCount: 3 (0x3)
+    NameServerCount: 0 (0x0)
+    AdditionalCount: 0 (0x0)
+  - QRecord: s3.amazonaws.com of type Host Addr on class Internet  PS C:\&gt; python
+     QuestionName: s3.amazonaws.com
+     QuestionType: A, IPv4 address, 1(0x1)
+     QuestionClass: Internet, 1(0x1)
+  - ARecord: s3.amazonaws.com of type CNAME on class Internet: s3.a-geo.amazonaws.com
+     ResourceName: s3.amazonaws.com
+     ResourceType: CNAME, Canonical name for an alias, 5(0x5)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 2554 (0x9FA)
+     ResourceDataLength: 11 (0xB)
+     CName: s3.a-geo.amazonaws.com
+  - ARecord: s3.a-geo.amazonaws.com of type CNAME on class Internet: s3-1.amazonaws.com
+     ResourceName: s3.a-geo.amazonaws.com
+     ResourceType: CNAME, Canonical name for an alias, 5(0x5)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 1555 (0x613)
+     ResourceDataLength: 7 (0x7)
+     CName: s3-1.amazonaws.com
+  - ARecord: s3-1.amazonaws.com of type Host Addr on class Internet: 54.231.96.96
+     ResourceName: s3-1.amazonaws.com
+     ResourceType: A, IPv4 address, 1(0x1)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 4 (0x4)
+     ResourceDataLength: 4 (0x4)
+     IPAddress: 54.231.96.96
+</code></pre>
+
+<h4 id="ec2-54-243-47-194compute-1amazonawscom">2.4 – 54.243.47.194 – ec2-54-243-47-194.compute-1.amazonaws.com</h4>
+<p>This is easy, we can just go to <a href="http://ec2-54-243-47-194.compute-1.amazonaws.com">http://ec2-54-243-47-194.compute-1.amazonaws.com</a> and observe that it is <a href="http://www.hipchat.com">http://www.hipchat.com</a>. Interesting thing, if you go to <a href="http://www.hipchat.com">http://www.hipchat.com</a> in your browser, it will redirect to the HTTPs version of the website. Going to the Amazon EC2 address is the only way to access hipchat.com over HTTP.</p>
+
+<p>We can also use this filter in Netmon:</p>
+
+<pre><code>  DNS &amp;&amp; ContainsBin(FrameData, HEX, "36F32FC2")
+</code></pre>
+
+<p>Which results in:</p>
+
+<pre><code>- Dns: QueryId = 0x1D07, QUERY (Standard query), Response - Success, 54.243.47.194 
+    QueryIdentifier: 7431 (0x1D07)
+  + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
+    QuestionCount: 1 (0x1)
+    AnswerCount: 1 (0x1)
+    NameServerCount: 0 (0x0)
+    AdditionalCount: 0 (0x0)
+  - QRecord: www.hipchat.com of type Host Addr on class Internet
+     QuestionName: www.hipchat.com
+     QuestionType: A, IPv4 address, 1(0x1)
+     QuestionClass: Internet, 1(0x1)
+  - ARecord: www.hipchat.com of type Host Addr on class Internet: 54.243.47.194
+     ResourceName: www.hipchat.com
+     ResourceType: A, IPv4 address, 1(0x1)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 60 (0x3C)
+     ResourceDataLength: 4 (0x4)
+     IPAddress: 54.243.47.194
+</code></pre>
+
+<h4 id="ec2-54-225-209-74compute-1amazonawscom">2.5 – 54.225.209.74 – ec2-54-225-209-74.compute-1.amazonaws.com</h4>
+<p>This is the same as above with one small difference. Using this filter:</p>
+
+<pre><code>DNS &amp;&amp; ContainsBin(FrameData, HEX, "36E1D14A")
+</code></pre>
+
+<p>We can see that is points to hipchat.com (last IP was <code>www.hipchat.com</code>).</p>
+
+<pre><code>- Dns: QueryId = 0x280E, QUERY (Standard query), Response - Success, 54.225.209.74 
+    QueryIdentifier: 10254 (0x280E)
+  + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
+    QuestionCount: 1 (0x1)
+    AnswerCount: 1 (0x1)
+    NameServerCount: 0 (0x0)
+    AdditionalCount: 0 (0x0)
+  - QRecord: hipchat.com of type Host Addr on class Internet
+     QuestionName: hipchat.com
+     QuestionType: A, IPv4 address, 1(0x1)
+     QuestionClass: Internet, 1(0x1)
+  - ARecord: hipchat.com of type Host Addr on class Internet: 54.225.209.74
+     ResourceName: hipchat.com
+     ResourceType: A, IPv4 address, 1(0x1)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 59 (0x3B)
+     ResourceDataLength: 4 (0x4)
+     IPAddress: 54.225.209.74
+</code></pre>
+
+<p>So the application is communicating with both <code>www.hipchat.com</code> and <code>hipchat.com</code>. Probably because of a redirect as we can see later.</p>
+
+<p>That’s enough for now. In part two we will talk about proxying.</p>
+
+<!-- links -->
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Parsiya</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-08T23:05:24-04:00" pubdate data-updated="true">Oct 8<span>th</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015-08-01-network-traffic-attribution-on-windows/" title="Previous Post: Network Traffic Attribution on Windows">&laquo; Network Traffic Attribution on Windows</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Who am I?</h1>
+  <p>I am Parsia Hakimian, ex-dev and current (mostly) software security consultant at <a href="http://www.cigital.com/" target="_blank">Cigital</a> .</p>
+  <p>I am interested in Reverse Engineering, Crypto, Assembly, C, Python, EvE Online and other things (not necessarily in that order).</p>
+  <p>bitbucket: <a href="https://bitbucket.org/parsiya/" target="_blank">https://bitbucket.org/parsiya/</a></p>
+  <p>email: parsiya [at] google's email [dot]com</p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015-10-08-hipchat-part-1-where-did-the-traffic-go/">Proxying Hipchat Part 1: Where Did the Traffic Go?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015-08-01-network-traffic-attribution-on-windows/">Network Traffic Attribution on Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015-07-26-image-popup-and-octopress/">Image Popup and Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015-01-06-tales-from-the-crypt-o-leaking-aes-keys/">Tales From the Crypt(o) - Leaking AES Keys</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/">Pin Adventures - Chapter 1 - PinSolver Mk1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-11-18-building-memfetch-on-kali/">Building Memfetch on Kali + Comments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/">My Adventure With Fireeye FLARE Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-09-21-malware-adventure/">Malware Adventure</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-09-02-fireeyes-flare-challenge/">Fireeye's FLARE Challenge</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/">Apple's Common Crypto Library Defaults to a Zero IV if One Is Not Provided</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline"  href="https://twitter.com/CryptoGangsta"  data-widget-id="458841047112482817">Tweets by @CryptoGangsta</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Parsiya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'parsiya';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://parsiya.net/blog/2015-10-08-hipchat-part-1-where-did-the-traffic-go/';
+        var disqus_url = 'http://parsiya.net/blog/2015-10-08-hipchat-part-1-where-did-the-traffic-go/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
