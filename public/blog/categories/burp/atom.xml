@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Burp | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/burp/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-09T10:11:14-04:00</updated>
+  <updated>2015-10-10T00:01:41-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -12,6 +12,225 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Proxying Hipchat Part 2: So You Think You Can Use Burp?]]></title>
+    <link href="http://parsiya.net/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/"/>
+    <updated>2015-10-09T22:34:37-04:00</updated>
+    <id>http://parsiya.net/blog/proxying-hipchat-part-2-so-you-think-you-can-use-burp</id>
+    <content type="html"><![CDATA[<p>In <a href="../2015-10-08-hipchat-part-1-where-did-the-traffic-go"><strong>part 1</strong></a> I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy <em>some</em> of Hipchat’s traffic using Burp.</p>
+
+<p>This is specific to Hipchat client for Windows. The current version at the time of writing was is <strong>2.2.1361</strong>. Atlassian is skipping version 3 and version 4 still in beta.</p>
+
+<!-- more -->
+
+<h3 id="ez-mode-proxy-settings">1. EZ-Mode Proxy Settings</h3>
+<p>To see the proxy settings, log off and select Configure Connection. Note that in the most recent version (2.2.1395) this added to the settings menu inside the application and there is no need to logoff.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/01-Hipchat-login-screen.png' width='' height='' title='Hipchat login screen'><span class='caption-text'>Hipchat login screen</span></span></p>
+
+<p>Yay for proxy settings. So you think you can use Burp? It’s not going to be that easy, otherwise why would I been writing this?</p>
+
+<p>My Burp proxy is listening on <code>127.0.0.1:8080</code> so I will add it as proxy.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/02-Hipchat-proxy-settings.png' width='' height='' title='Hipchat proxy settings'><span class='caption-text'>Hipchat proxy settings</span></span></p>
+
+<p>You can also enable proxy settings by modifying the <code>%appdata%\Atlassian\Hipchat.ini</code> file (on Windows). We need to modify these settings:</p>
+
+<pre><code>httpHostname=localhost
+httpPort=8080
+proxyType=Http
+</code></pre>
+
+<p>Now login. We will see some requests in Burp. We have seen them before, first one is the <code>Latest News</code> and the second one is the emoticon associated with it. The emoticon is loaded over HTTPs while latest news is loaded over HTTP. We will play with it later.</p>
+
+<pre><code>1. http://downloads.hipchat.com/blog_info.html
+# section 2.2 in part 1
+
+2. https://s3.amazonaws.com/uploads.hipchat.com/10804/368466/FM3tGM05hUCySVj/freddie.png 
+# emoticon in this case it is Freddie Mercury
+# note that this changes because last time I saw success kid
+# section 2.3 in part 1.
+
+3.&lt;?xml version='1.0'?&gt;&lt;stream:stream to='chat.hipchat.com'
+# looks like the start of an XMPP handshake.
+</code></pre>
+
+<p>Note: <code>hipchatserver.com</code>, our imaginary Hipchat server’s IP is <code>10.11.1.25</code> in this post.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/03-Initial-requests-in-Burp.png' width='' height='' title='Initial requests in Burp'><span class='caption-text'>Initial requests in Burp</span></span></p>
+
+<p>The third request looks like the start of an XMPP handshake which has been cut off by Burp. It should be something like this:</p>
+
+<pre><code>&lt;?xml version='1.0'?&gt;&lt;stream:stream to='chat.hipchat.com' xmlns='jabber:client' 
+xmlns:stream='http://etherx.jabber.org/streams' version='1.0'&gt;
+</code></pre>
+
+<h3 id="why-did-burp-burp">2. Why did Burp, Burp?</h3>
+
+<p>To diagnose the problem, we must look at the traffic capture. Run Netmon and login to Hipchat again. Remember that you cannot capture Hipchat’s traffic to Burp with Netmon or Wireshark as it is local (from <code>127.0.0.1:49xxx</code> to <code>127.0.0.1:8080</code>) so you need to sniff local traffic with something like <a href="http://www.netresec.com/?page=RawCap">RawCap</a>. But we can look at Burp’s outbound traffic in Netmon. Look for traffic belonging to the <code>javaw.exe</code> process (for Burp).</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/04-Traffic-to-hipchat.png' width='' height='' title='Burp &lt;–&gt; hipchatserver.com traffic in Netmon'><span class='caption-text'>Burp &lt;–&gt; hipchatserver.com traffic in Netmon</span></span></p>
+
+<p>Or using sequence diagram created on <a href="https://www.websequencediagrams.com">https://www.websequencediagrams.com</a>. We have a bunch of internal licenses for this at Cigital so I have started adding sequence diagrams to all of my blog posts and reports :D.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/05-Failed-XMPP-Handshake.png' width='' height='' title='What happen?'><span class='caption-text'>What happen?</span></span></p>
+
+<p>As we see the XMPP handshake is incomplete. In short, Burp somehow messes up the first part of the XMPP handshake and drops the packet just after it sees <code>to='chat.hipchat.com'</code> and sends an incomplete payload which causes the server to reject it and reset the connection.</p>
+
+<h3 id="burps-ssl-pass-through">3. Burp’s SSL Pass Through</h3>
+<p>It’s time to talk about another one of Burp’s capabilities. This one is named <code>SSL Pass Through</code> and is very useful for exactly the situation we are in. We can specify endpoints (domain/IP and port) and tell Burp not to mess with the to/from those points and just pass it through as it is. This means that Burp will not Man-in-the-Middle (MitM) the connection and just ignore the traffic. It is located at <code>Proxy &gt; Option &gt; SSL Pass Through</code> (scroll all the way to the bottom). Let’s tell Burp not to proxy anything to/from the <code>hipchatserver.com</code> at <code>10.11.1.25:5222</code>.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/06-SSL-Pass-Through.png' width='' height='' title='SSL Pass Through settings'><span class='caption-text'>SSL Pass Through settings</span></span></p>
+
+<p>And yay!</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/07-Hipchat-logged-in-with-Burp-as-proxy.png' width='' height='' title='Logged in with Burp'><span class='caption-text'>Logged in with Burp</span></span></p>
+
+<p>Now let’s take a look at these requests. We have already seen the first two before.</p>
+
+<pre><code>1. GET: http://downloads.hipchat.com/blog_info.html
+2. GET: https://s3.amazonaws.com/uploads.hipchat.com/10804/368466/FM3tGM05hUCySVj/freddie.png
+3. GET: https://www.hipchat.com/img/silhouette_125.png
+4. GET: https://hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC
+5. GET: https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC
+</code></pre>
+
+<p><strong>Request number 3</strong> is retrieving an image. It is the placeholder image for profile pictures in Hipchat.</p>
+
+<pre><code>GET /img/silhouette_125.png HTTP/1.1
+Connection: Keep-Alive
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,*
+User-Agent: Mozilla/5.0
+Host: www.hipchat.com
+</code></pre>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/08-Profile-pic-placeholder.png' width='' height='' title='Do not track me bro'><span class='caption-text'>Do not track me bro</span></span></p>
+
+<p>Why are we retrieving this image from hipchat.com every time when it can be stored in the application and conserve bandwidth? I don’t know but Paranoid Parsia tells me that it is an Atlassian tracking request. This way they will know where and when an instance has been executed. There is no identifying data sent with the request.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/09-I-am-not-saying-it-was-Atlassian-but-it-was-Atlassian.jpg' width='' height='' title='I am not saying it was Atlassian, but it was Atlassian'><span class='caption-text'>I am not saying it was Atlassian, but it was Atlassian</span></span></p>
+
+<p><strong>Request 4</strong> is another GET request.</p>
+
+<pre><code>GET /release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC HTTP/1.1
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: Keep-Alive
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,*
+User-Agent: Mozilla/5.0
+Host: hipchat.com
+</code></pre>
+
+<p>But it gets redirected to <a href="https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC">https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC</a>. Remember when we saw the application communicating with both <code>hipchat.com</code> and <code>www.hipchat.com</code> (sections 2.4 and 2.5 of <a href="hipchat-part1">part 1</a>)? This is it.</p>
+
+<pre><code>HTTP/1.1 301 Moved Permanently
+Cache-control: no-cache="set-cookie"
+Content-Type: text/html
+Date: Mon, 07 Sep 2015 22:41:37 GMT
+Location: https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC
+Server: nginx
+Set-Cookie: AWSELB=05C1D11310299FE142D714774ABD93C5B09ED1734381C4F7DC691A8BCC5031E618740E2045508C8D72C034DD48A74BD4A2E439469DEA3BD63B536161358959E4151A965466;PATH=/
+Strict-Transport-Security: max-age=31536000
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Length: 178
+Connection: keep-alive
+
+Response:
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;301 Moved Permanently&lt;/title&gt;&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;center&gt;&lt;h1&gt;301 Moved Permanently&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>Which results in <strong>request 5</strong>.</p>
+
+<pre><code>GET /release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC HTTP/1.1
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: Keep-Alive
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,*
+User-Agent: Mozilla/5.0
+Host: www.hipchat.com
+</code></pre>
+
+<p>Response to request 5 is an RSS feed containing release versions of the Hipchat client for Windows. Click this link if you want to see it in action <a href="https://www.hipchat.com/release_notes/appcast/qtwindows">https://www.hipchat.com/release_notes/appcast/qtwindows</a>.</p>
+
+<pre><code>HTTP/1.1 200 OK
+Cache-control: no-cache="set-cookie"
+Content-Type: application/xml
+Date: Mon, 07 Sep 2015 22:41:38 GMT
+Server: nginx
+Set-Cookie: AWSELB=05C1D11310299FE142D714774ABD93C5B09ED1734381C4F7DC691A8BCC5031E618740E204546FF579CEC855051CA268C2FEED4240DD3110178C6BD0BB2D00F1E409F9F4DA6;PATH=/
+Strict-Transport-Security: max-age=31536000
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Length: 21562
+Connection: keep-alive
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;rss version="2.0"
+xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:hipchat="http://hipchat.com"&gt;
+&lt;channel&gt;
+&lt;title&gt;HipChat Windows App Changelog&lt;/title&gt;
+&lt;link&gt;https://www.hipchat.com/release_notes/appcast/qtwindows&lt;/link&gt;
+&lt;description&gt;Appcast of updates.&lt;/description&gt;
+&lt;language&gt;en&lt;/language&gt;
+
+&lt;item&gt;
+&lt;title&gt;Version 2.2.1388 (1388)&lt;/title&gt;
+&lt;pubDate&gt;Tue, 23 Jun 2015 00:00:00 +0000&lt;/pubDate&gt;
+&lt;sparkle:releaseNotesLink&gt;https://www.hipchat.com/release_notes/client_embed/qtwindows?version_num=1373&amp;amp;auth-token=JHAgpsxHVva3SMC&amp;amp;auth-uid=351&lt;/sparkle:releaseNotesLink&gt;
+&lt;sparkle:minimumSystemVersion&gt;10.8&lt;/sparkle:minimumSystemVersion&gt;
+&lt;enclosure url="https://s3.amazonaws.com/downloads.hipchat.com/windows/HipChat-2.2.1388-win32.msi"
+sparkle:version="1388"
+sparkle:shortVersionString="2.2.1388"
+length="43982848"
+type="application/octet-stream" /&gt;
+&lt;hipchat:required&gt;0&lt;/hipchat:required&gt;
+&lt;/item&gt;
+...
+
+&lt;/channel&gt;
+&lt;/rss&gt;
+</code></pre>
+
+<p>I think this RSS feed is used to check for updates.</p>
+
+<h3 id="get-request-over-http">5. GET request over HTTP</h3>
+<p>Now let’s take a look at request one. It is loading an HTML page and displays it in the app. directly We can intercept the response in Burp and modify it. The request is to <a href="http://downloads.hipchat.com/blog_info.html">http://downloads.hipchat.com/blog_info.html</a> and that page is not available over TLS.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/10-Changing-latest-news.png' width='' height='' title='It has crashed again!'><span class='caption-text'>It has crashed again!</span></span></p>
+
+<p>That was easy. Now let’s see if we can modify it to display something else.</p>
+
+<p>Seems like it does not have JavaScript enabled so we cannot do a fancy looking alert box. We can inject buttons and forms but the submit action does not work. We can also inject images.</p>
+
+<p><span class='caption-wrapper'><img class='caption' src='/images/2015/hipchat2/11-image-tag.png' width='' height='' title='Pepe is watching you load links over HTTP'><span class='caption-text'>Pepe is watching you load links over HTTP</span></span></p>
+
+<p>This is not a serious vulnerability. The attacker needs to be on the same network or in the path and MitM the HTTP connection. But because it is HTTP, there are no certificate warnings. A number of Internet Service Providers also inject ads and other stuff in HTTP traffic. If injected they will appear here. I still do not know why even the emoticon is loaded over https but this latest news is not (<code>downloads.hipchat.com</code> is not even available over HTTPs).</p>
+
+<p>In my opinion the best strategy for an attacker is to inject links to phishing sites. Something along the lines of <code>Click to download the new version</code> and serve infected files or <code>Click to verify your account</code> and point to a phishing login screen. Doubly so because this is <em>the Hipchat link box</em> and users are expected to click these links. We should also remember that Hipchat is also used in non-corporate environments so the next person at Starbucks may be messing with your traffic.</p>
+
+<h4 id="the-container">5.1 The Container</h4>
+<p>The container looks like to be QtWebKit (remember the User-Agent?). It does not have JavaScript enabled so injected JS will not be executed. We can inject forms, but the actions will not work (e.g. I injected a simple form with one input field to pass its contents to do a Google search but nothing happens when the button is clicked). This part needs more investigation and I will probably get back to it. If you know about this container (whatever that is) please let me know.</p>
+
+<p>In part three, we will talk about proxying Hipchat client’s traffic with the Hipchat server that we skipped using Burp’s SSL Pass Through and do more exciting stuff.</p>
+
+<p>As usual if you have any questions/feedback/complaints or just want life advice from ancient Persian spirits, you know where to find me.</p>
+
+<!--links-->
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Piping SSL/TLS Traffic From SoapUI to Burp]]></title>

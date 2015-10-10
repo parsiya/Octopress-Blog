@@ -3,7 +3,7 @@ layout: post
 title: "Network Traffic Attribution on Windows"
 date: 2015-08-01 19:37:42 -0400
 comments: true
-categories: 
+categories: ['Netmon','Network Traffic']
 ---
 
 Thick client assessments come in different flavors. Most of our work is on `consumer applications` where `consumer` means either the customer or an employee of our client. But these applications usually have network communications.

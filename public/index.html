@@ -9,7 +9,7 @@
   <meta name="author" content="Parsiya">
 
   
-  <meta name="description" content="This is a slightly different version of a series of blog post that I wrote on our internal blog about proxying. I see that proxying traffic is a time &hellip;">
+  <meta name="description" content="In part 1 I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy some &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -87,6 +87,52 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/">Proxying Hipchat Part 2: So You Think You Can Use Burp?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-09T22:34:37-04:00" pubdate data-updated="true">Oct 9<span>th</span>, 2015</time>
+        
+           | <a href="/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/#disqus_thread"
+             data-disqus-identifier="http://parsiya.net/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In <a href="../2015-10-08-hipchat-part-1-where-did-the-traffic-go"><strong>part 1</strong></a> I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy <em>some</em> of Hipchat’s traffic using Burp.</p>
+
+<p>This is specific to Hipchat client for Windows. The current version at the time of writing was is <strong>2.2.1361</strong>. Atlassian is skipping version 3 and version 4 still in beta.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/">Would you like to know more? &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -527,84 +573,6 @@ Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/">Apple&#8217;s Common Crypto Library Defaults to a Zero IV if One Is Not Provided</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-07-03T01:30:18-04:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2014</time>
-        
-           | <a href="/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/#disqus_thread"
-             data-disqus-identifier="http://parsiya.net/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Today I was writing some guidelines about generating keys for mobile applications at work. While providing code examples in Java and Obj-C for AES encryption I happened to look at Apple’s <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/">Common Crypto</a> library . While going through the source code for <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c">CommonCryptor.c</a>, I noticed that IV is commented as <code>/* optional initialization vector */</code>. This makes sense because not all ciphers use IV and not all AES modes of operation (e.g. ECB mode). However; if an IV is not provided, the library will default to a zero IV.</p>
-
-<p>You can see the code here inside the function <code>ccInitCryptor</code> (search for defaultIV) <a href="http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c">source</a>. <code>CC_XZEROMEM</code> resets all bytes of IV to zero (that is 0x00):</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="k">static</span> <span class="kr">inline</span> <span class="n">CCCryptorStatus</span> <span class="nf">ccInitCryptor</span>
-</span><span class="line"><span class="p">(</span><span class="n">CCCryptor</span> <span class="o">*</span><span class="n">ref</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">key_len</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">tweak_key</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">iv</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">
-</span><span class="line">    <span class="kt">size_t</span> <span class="n">blocksize</span> <span class="o">=</span> <span class="n">ccGetCipherBlockSize</span><span class="p">(</span><span class="n">ref</span><span class="p">);</span>
-</span><span class="line">    <span class="kt">uint8_t</span> <span class="n">defaultIV</span><span class="p">[</span><span class="n">blocksize</span><span class="p">];</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line">    <span class="k">if</span><span class="p">(</span><span class="n">iv</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="n">CC_XZEROMEM</span><span class="p">(</span><span class="n">defaultIV</span><span class="p">,</span> <span class="n">blocksize</span><span class="p">);</span>
-</span><span class="line">        <span class="n">iv</span> <span class="o">=</span> <span class="n">defaultIV</span><span class="p">;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">    <span class="p">...</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">return</span> <span class="n">kCCSuccess</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>While I am told this is probably common behavior in crypto libraries, I think it’s dangerous. I ended up putting a comment in code examples warning developers about this behavior. So, heads up ;)</p>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -625,6 +593,10 @@ Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was 
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/">Proxying Hipchat Part 2: So You Think You Can Use Burp?</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2015-10-08-hipchat-part-1-where-did-the-traffic-go/">Proxying Hipchat Part 1: Where Did the Traffic Go?</a>
@@ -660,10 +632,6 @@ Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was 
     
       <li class="post">
         <a href="/blog/2014-09-02-fireeyes-flare-challenge/">Fireeye&#8217;s FLARE Challenge</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014-07-03-apples-common-crypto-library-defaults-to-a-zero-iv-if-one-is-not-provided/">Apple&#8217;s Common Crypto Library Defaults to a Zero IV if One Is Not Provided</a>
       </li>
     
   </ul>

@@ -3,7 +3,7 @@ layout: post
 title: "Proxying Hipchat Part 1: Where did the Traffic Go?"
 date: 2015-10-08 23:05:24 -0400
 comments: true
-categories: 
+categories: ['Hipchat','Proxying','Netmon','Network Traffic']
 ---
 
 This is a slightly different version of a series of blog post that I wrote on our internal blog about proxying. I see that proxying traffic is a time consuming step in testing thick client applications so I thought I would share what I know. I tackled Hipchat. Why Hipchat? Because it uses a known protocol (XMPP) and I thought it's an interesting application.
