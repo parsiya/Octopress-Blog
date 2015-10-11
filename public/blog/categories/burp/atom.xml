@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Burp | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/burp/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-10T00:01:41-04:00</updated>
+  <updated>2015-10-10T23:35:47-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -18,7 +18,7 @@
     <link href="http://parsiya.net/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/"/>
     <updated>2015-10-09T22:34:37-04:00</updated>
     <id>http://parsiya.net/blog/proxying-hipchat-part-2-so-you-think-you-can-use-burp</id>
-    <content type="html"><![CDATA[<p>In <a href="../2015-10-08-hipchat-part-1-where-did-the-traffic-go"><strong>part 1</strong></a> I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy <em>some</em> of Hipchat’s traffic using Burp.</p>
+    <content type="html"><![CDATA[<p>In <a href="/blog/2015-10-08-hipchat-part-1-where-did-the-traffic-go/" title="Proxying Hipchat Part 1: Where did the Traffic Go?"><strong>part1</strong></a> I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy <em>some</em> of Hipchat’s traffic using Burp.</p>
 
 <p>This is specific to Hipchat client for Windows. The current version at the time of writing was is <strong>2.2.1361</strong>. Atlassian is skipping version 3 and version 4 still in beta.</p>
 

@@ -6,7 +6,7 @@ comments: true
 categories: ['Hipchat','Proxying','Burp']
 ---
 
-In [**part 1**][hipchat-part1] I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy *some* of Hipchat’s traffic using Burp.
+In [**part1**]({% post_url 2015-10-08-hipchat-part-1-where-did-the-traffic-go %} "Proxying Hipchat Part 1: Where did the Traffic Go?") I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy *some* of Hipchat’s traffic using Burp.
 
 This is specific to Hipchat client for Windows. The current version at the time of writing was is **2.2.1361**. Atlassian is skipping version 3 and version 4 still in beta.
 
@@ -207,6 +207,5 @@ In part three, we will talk about proxying Hipchat client’s traffic with the H
 As usual if you have any questions/feedback/complaints or just want life advice from ancient Persian spirits, you know where to find me.
 
 <!--links-->
-[hipchat-part1]: ../2015-10-08-hipchat-part-1-where-did-the-traffic-go
 [rawcap-download]: http://www.netresec.com/?page=RawCap
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Netmon | Parsiya's Den]]></title>
   <link href="http://parsiya.net/blog/categories/netmon/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-10T00:01:41-04:00</updated>
+  <updated>2015-10-10T23:35:47-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -38,7 +38,7 @@
 <p>Note: In these posts, the Hipchat server is named <code>hipchatserver.com</code> and its IP is <code>10.10.10.10</code> (these are just examples). Some of the screenshots are edited to hide the actual IPs and replace them with samples. My machine’s sample IP address for the network interface that hosts the Hipchat server is <code>10.10.10.9</code>.</p>
 
 <h3 id="traffic-attribution">1. Traffic Attribution</h3>
-<p>Run Netmon and Procmon as admin and run HipChat. We already know how to do <a href="../2015-08-01-network-traffic-attribution-on-windows">network traffic attribution</a>. I was not logged into any chatrooms, so Hipchat is not loading any extra content (e.g. images linked in rooms).</p>
+<p>Run Netmon and Procmon as admin and run HipChat. We already know how to do <a href="/blog/2015-08-01-network-traffic-attribution-on-windows/" title="Network Traffic Attribution on Windows">traffic attribution</a>. I was not logged into any chatrooms, so Hipchat is not loading any extra content (e.g. images linked in rooms).</p>
 
 <p>In Netmon we also see the following endpoints:</p>
 
