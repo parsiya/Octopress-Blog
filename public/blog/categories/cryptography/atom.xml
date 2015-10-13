@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Cryptography | Parsiya's Den]]></title>
+  <title><![CDATA[Category: Cryptography | Parsia's Den]]></title>
   <link href="http://parsiya.net/blog/categories/cryptography/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-10T23:35:47-04:00</updated>
+  <updated>2015-10-12T22:05:22-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
