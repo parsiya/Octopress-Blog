@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | Parsia's Den]]></title>
   <link href="http://parsiya.net/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-12T22:05:22-04:00</updated>
+  <updated>2015-10-19T23:25:29-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -25,12 +25,12 @@
 <!-- more -->
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-16">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-18">
     <img src="/images/2015/popup1/pew1.jpg"
          width="225" height="311"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-16" style="display:none">
+  <div id="image-dialog-18" style="display:none">
     <img src="/images/2015/popup1/pew1.jpg"
          width="449" height="621"/>
     <br clear="all"/>
@@ -38,8 +38,8 @@
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-16").hide();
-    jQuery("#image-dialog-16").dialog({
+    jQuery("#image-dialog-18").hide();
+    jQuery("#image-dialog-18").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -50,8 +50,8 @@
       hide:      'scale'
     });
 
-    jQuery("#image-16").click(function() {
-      jQuery("#image-dialog-16").dialog('open');
+    jQuery("#image-18").click(function() {
+      jQuery("#image-dialog-18").dialog('open');
     });
 
   });
@@ -127,12 +127,12 @@ I am not quite sure what this `erb` file does but it looks like to be a blueprin
 Another problem is after we click on the image. There is no space between image title and the "close" link.
 
 <div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-17">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-19">
     <img src="/images/2015/popup1/pew2.jpg"
          width="280" height="284"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-17" style="display:none">
+  <div id="image-dialog-19" style="display:none">
     <img src="/images/2015/popup1/pew2.jpg"
          width="560" height="568"/>
     <br clear="all"/>
@@ -140,8 +140,8 @@ Another problem is after we click on the image. There is no space between image 
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-17").hide();
-    jQuery("#image-dialog-17").dialog({
+    jQuery("#image-dialog-19").hide();
+    jQuery("#image-dialog-19").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -152,8 +152,8 @@ Another problem is after we click on the image. There is no space between image 
       hide:      'scale'
     });
 
-    jQuery("#image-17").click(function() {
-      jQuery("#image-dialog-17").dialog('open');
+    jQuery("#image-19").click(function() {
+      jQuery("#image-dialog-19").dialog('open');
     });
 
   });

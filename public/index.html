@@ -9,13 +9,14 @@
   <meta name="author" content="Parsiya">
 
   
-  <meta name="description" content="In part1 I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy some of &hellip;">
+  <meta name="description" content="Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In part1 we identified the endpoints. In part2 we answered the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="date" content="">
 
   
   <link rel="canonical" href="http://parsiya.net">
@@ -88,6 +89,56 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/">Proxying Hipchat Part 3: SSL Added and Removed Here :^)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-19T21:42:10-04:00" pubdate data-updated="true">Oct 19<span>th</span>, 2015</time>
+        
+           | <a href="/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/#disqus_thread"
+             data-disqus-identifier="http://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In <a href="/blog/2015-10-08-hipchat-part-1-where-did-the-traffic-go/" title="Proxying Hipchat Part 1: Where did the Traffic Go?"><strong>part1</strong></a> we identified the endpoints. In <a href="/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/" title="Proxying Hipchat Part 2: So You Think You Can Use Burp?"><strong>part2</strong></a> we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat’s traffic with Burp.</p>
+
+<p>In this part we will talk about developing our own proxy in Python to view Hipchat’s traffic to/form <code>hipchatserver.com</code> (which our example Hipchat server). First we are going to discuss how proxies work and we will get over Burp breaking our heart by creating our own proxy in Python to observe and dump the traffic in plaintext.</p>
+
+<p>Related (crappy) code is at: <a href="https://bitbucket.org/parsiya/hipchat-proxy/src/">https://bitbucket.org/parsiya/hipchat-proxy/src/</a>.</p>
+
+<p>For a similar effort (although with a much more complex proxy in <code>erlang</code>) look at this post: <a href="http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/">http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/</a>. </p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/">Would you like to know more? &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -532,48 +583,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014-09-02-fireeyes-flare-challenge/">Fireeye&#8217;s FLARE Challenge</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-09-02T00:34:00-04:00" pubdate data-updated="true">Sep 2<span>nd</span>, 2014</time>
-        
-           | <a href="/blog/2014-09-02-fireeyes-flare-challenge/#disqus_thread"
-             data-disqus-identifier="http://parsiya.net/blog/2014-09-02-fireeyes-flare-challenge/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>It’s been a while. I know I should have updated more frequently but lazyness prevails.<br />
-Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was depressing to see people finish in 10 hours :). You can find the challenges at <a href="http://flare-on.com">http://flare-on.com</a>. I learned a lot doing them. They will release solutions in 2 weeks. I am also working on a writeup which I will release then. I think it will be interesting as it will be a n00b’s perspective.</p>
-
-<p>And finally. “Good news everyone!” I am transitioning a more reverse engineering oriented role at my day job. YAY :)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -595,6 +604,10 @@ Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was 
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/">Proxying Hipchat Part 3: SSL Added and Removed Here :^)</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/">Proxying Hipchat Part 2: So You Think You Can Use Burp?</a>
@@ -630,10 +643,6 @@ Anyway, I was busy doing Fireeye’s FlARE challenges for a month or so (it was 
     
       <li class="post">
         <a href="/blog/2014-09-21-malware-adventure/">Malware Adventure</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014-09-02-fireeyes-flare-challenge/">Fireeye&#8217;s FLARE Challenge</a>
       </li>
     
   </ul>

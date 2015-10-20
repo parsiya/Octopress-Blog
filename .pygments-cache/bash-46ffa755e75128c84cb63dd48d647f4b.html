@@ -1,0 +1,12 @@
+<div class="highlight"><pre><span class="c"># Generate a 2048 bit RSA key pair</span>
+openssl genrsa -out rootCA.key 2048&lt;/p&gt;
+
+&lt;h1 <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;create-a-rootca-valid-for-a-year&quot;</span>&gt;Create a rootCA <span class="o">(</span>valid <span class="k">for </span>a year<span class="o">)</span>&lt;/h1&gt;
+&lt;p&gt;openssl req -x509 -new -nodes -key rootCA.key -days 365 -out rootCA.crt&lt;/p&gt;
+
+&lt;h1 <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;generate-a-2048-bit-rsa-key-pair&quot;</span>&gt;Generate a 2048 bit RSA key pair&lt;/h1&gt;
+&lt;p&gt;openssl genrsa -out rootCA.key 2048&lt;/p&gt;
+
+&lt;h1 <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;create-a-rootca-valid-for-a-year-1&quot;</span>&gt;Create a rootCA <span class="o">(</span>valid <span class="k">for </span>a year<span class="o">)</span>&lt;/h1&gt;
+&lt;p&gt;openssl req -x509 -new -nodes -key rootCA.key -days 365 -out rootCA.crt
+</pre></div>

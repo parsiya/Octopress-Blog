@@ -1,0 +1,10 @@
+<div class="highlight"><pre><span class="c"># First we need to create a key pair for the new certificate</span>
+openssl genrsa -out host.key 2048
+
+<span class="c"># Then we will use the key pair to generate a Certificate Signing Request or CSR</span>
+<span class="c"># This is what you send to valid certificate authorities to ask them to create &amp; sign a valid certificate for you</span>
+openssl req -new -key host.key -out host.csr
+
+<span class="c"># Now we can create a valid certificate and sign it with our rootCA</span>
+openssl x509 -req -in host.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out host.crt -days 365
+</pre></div>

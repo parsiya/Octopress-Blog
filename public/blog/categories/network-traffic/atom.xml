@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Network Traffic | Parsia's Den]]></title>
   <link href="http://parsiya.net/blog/categories/network-traffic/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-12T22:05:22-04:00</updated>
+  <updated>2015-10-19T23:25:29-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -51,12 +51,12 @@
 </ol>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-33">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-43">
     <img src="/images/2015/hipchat1/01-Traffic-in-Netmon.png"
          width="1085" height="366"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-33" style="display:none">
+  <div id="image-dialog-43" style="display:none">
     <img src="/images/2015/hipchat1/01-Traffic-in-Netmon.png"
          width="1356" height="457"/>
     <br clear="all"/>
@@ -64,8 +64,8 @@
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-33").hide();
-    jQuery("#image-dialog-33").dialog({
+    jQuery("#image-dialog-43").hide();
+    jQuery("#image-dialog-43").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -76,8 +76,8 @@
       hide:      'scale'
     });
 
-    jQuery("#image-33").click(function() {
-      jQuery("#image-dialog-33").dialog('open');
+    jQuery("#image-43").click(function() {
+      jQuery("#image-dialog-43").dialog('open');
     });
 
   });
@@ -353,12 +353,12 @@ We are going to have to look at DNS requests. We know the endpoint’s IP addres
 <p>Click on <code>notepad++.exe</code> in the tree view to view all of its traffic. We can see that it is communicating with <code>superb-dca2.dl.sourceforge.net</code> and <code>downloads.sourceforge.net</code> over HTTP <em>gasp</em>. You may observe a different endpoint depending on your location (because Source forge).</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-34">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-44">
     <img src="/images/2015/TrafficAttribution1/01.PNG"
          width="997" height="366"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-34" style="display:none">
+  <div id="image-dialog-44" style="display:none">
     <img src="/images/2015/TrafficAttribution1/01.PNG"
          width="1246" height="458"/>
     <br clear="all"/>
@@ -366,8 +366,8 @@ We are going to have to look at DNS requests. We know the endpoint’s IP addres
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-34").hide();
-    jQuery("#image-dialog-34").dialog({
+    jQuery("#image-dialog-44").hide();
+    jQuery("#image-dialog-44").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -378,8 +378,8 @@ We are going to have to look at DNS requests. We know the endpoint’s IP addres
       hide:      'scale'
     });
 
-    jQuery("#image-34").click(function() {
-      jQuery("#image-dialog-34").dialog('open');
+    jQuery("#image-44").click(function() {
+      jQuery("#image-dialog-44").dialog('open');
     });
 
   });
@@ -389,12 +389,12 @@ We are going to have to look at DNS requests. We know the endpoint’s IP addres
 <p>There’s another <code>suspicious process</code> up there. Select <code>gup.exe</code> and we can see it is also related to <code>Notepad++</code> as it’s creating a TLS connection to <code>notepad-plus-plus.org</code>.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-35">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-45">
     <img src="/images/2015/TrafficAttribution1/02.PNG"
          width="922" height="399"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-35" style="display:none">
+  <div id="image-dialog-45" style="display:none">
     <img src="/images/2015/TrafficAttribution1/02.PNG"
          width="1153" height="499"/>
     <br clear="all"/>
@@ -402,8 +402,8 @@ We are going to have to look at DNS requests. We know the endpoint’s IP addres
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-35").hide();
-    jQuery("#image-dialog-35").dialog({
+    jQuery("#image-dialog-45").hide();
+    jQuery("#image-dialog-45").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -414,8 +414,8 @@ We are going to have to look at DNS requests. We know the endpoint’s IP addres
       hide:      'scale'
     });
 
-    jQuery("#image-35").click(function() {
-      jQuery("#image-dialog-35").dialog('open');
+    jQuery("#image-45").click(function() {
+      jQuery("#image-dialog-45").dialog('open');
     });
 
   });
@@ -436,12 +436,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 <p>Be sure to select <code>All Traffic</code> in the tree-view when applying filters search in all traffic.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-36">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-46">
     <img src="/images/2015/TrafficAttribution1/03.PNG"
          width="986" height="390"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-36" style="display:none">
+  <div id="image-dialog-46" style="display:none">
     <img src="/images/2015/TrafficAttribution1/03.PNG"
          width="1232" height="487"/>
     <br clear="all"/>
@@ -449,8 +449,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-36").hide();
-    jQuery("#image-dialog-36").dialog({
+    jQuery("#image-dialog-46").hide();
+    jQuery("#image-dialog-46").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -461,8 +461,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-36").click(function() {
-      jQuery("#image-dialog-36").dialog('open');
+    jQuery("#image-46").click(function() {
+      jQuery("#image-dialog-46").dialog('open');
     });
 
   });
@@ -477,12 +477,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </ul>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-37">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-47">
     <img src="/images/2015/TrafficAttribution1/04.PNG"
          width="1179" height="346"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-37" style="display:none">
+  <div id="image-dialog-47" style="display:none">
     <img src="/images/2015/TrafficAttribution1/04.PNG"
          width="1474" height="432"/>
     <br clear="all"/>
@@ -490,8 +490,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-37").hide();
-    jQuery("#image-dialog-37").dialog({
+    jQuery("#image-dialog-47").hide();
+    jQuery("#image-dialog-47").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -502,8 +502,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-37").click(function() {
-      jQuery("#image-dialog-37").dialog('open');
+    jQuery("#image-47").click(function() {
+      jQuery("#image-dialog-47").dialog('open');
     });
 
   });
@@ -519,12 +519,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </ul>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-38">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-48">
     <img src="/images/2015/TrafficAttribution1/05.PNG"
          width="980" height="334"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-38" style="display:none">
+  <div id="image-dialog-48" style="display:none">
     <img src="/images/2015/TrafficAttribution1/05.PNG"
          width="1225" height="418"/>
     <br clear="all"/>
@@ -532,8 +532,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-38").hide();
-    jQuery("#image-dialog-38").dialog({
+    jQuery("#image-dialog-48").hide();
+    jQuery("#image-dialog-48").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -544,8 +544,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-38").click(function() {
-      jQuery("#image-dialog-38").dialog('open');
+    jQuery("#image-48").click(function() {
+      jQuery("#image-dialog-48").dialog('open');
     });
 
   });
@@ -566,12 +566,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 <p>Procmon has a lot of filters but we will be using only a few of them. The first filter is <code>ProcessName</code>. Using this filter we can see only events belonging to specific process(es). Select Filter from the Filter menu or press Ctrl+L. Now create this filter <code>ProcessName is Notepad++.exe</code>. Note that Procmon will show you all processes with events in the drop down menu.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-39">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-49">
     <img src="/images/2015/TrafficAttribution1/06.PNG"
          width="426" height="368"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-39" style="display:none">
+  <div id="image-dialog-49" style="display:none">
     <img src="/images/2015/TrafficAttribution1/06.PNG"
          width="532" height="460"/>
     <br clear="all"/>
@@ -579,8 +579,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-39").hide();
-    jQuery("#image-dialog-39").dialog({
+    jQuery("#image-dialog-49").hide();
+    jQuery("#image-dialog-49").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -591,8 +591,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-39").click(function() {
-      jQuery("#image-dialog-39").dialog('open');
+    jQuery("#image-49").click(function() {
+      jQuery("#image-dialog-49").dialog('open');
     });
 
   });
@@ -602,12 +602,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 <p>And we can see all events for <code>notepad++.exe</code> in Procmon. Take a note of ProcessID (PID) for <code>notepad++.exe</code>. In this case PID is <code>3964</code>.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-40">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-50">
     <img src="/images/2015/TrafficAttribution1/07.PNG"
          width="724" height="357"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-40" style="display:none">
+  <div id="image-dialog-50" style="display:none">
     <img src="/images/2015/TrafficAttribution1/07.PNG"
          width="905" height="446"/>
     <br clear="all"/>
@@ -615,8 +615,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-40").hide();
-    jQuery("#image-dialog-40").dialog({
+    jQuery("#image-dialog-50").hide();
+    jQuery("#image-dialog-50").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -627,8 +627,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-40").click(function() {
-      jQuery("#image-dialog-40").dialog('open');
+    jQuery("#image-50").click(function() {
+      jQuery("#image-dialog-50").dialog('open');
     });
 
   });
@@ -638,12 +638,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 <p>But we want to look at spawned processes too. Let’s remove this filter and find all child processes for <code>notepad++.exe</code> using another filter. The new filter is <code>Parent PID is 3964</code>and it will show captured events for <code>gup.exe</code>.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-41">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-51">
     <img src="/images/2015/TrafficAttribution1/08.PNG"
          width="747" height="437"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-41" style="display:none">
+  <div id="image-dialog-51" style="display:none">
     <img src="/images/2015/TrafficAttribution1/08.PNG"
          width="934" height="546"/>
     <br clear="all"/>
@@ -651,8 +651,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-41").hide();
-    jQuery("#image-dialog-41").dialog({
+    jQuery("#image-dialog-51").hide();
+    jQuery("#image-dialog-51").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -663,8 +663,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-41").click(function() {
-      jQuery("#image-dialog-41").dialog('open');
+    jQuery("#image-51").click(function() {
+      jQuery("#image-dialog-51").dialog('open');
     });
 
   });
@@ -674,12 +674,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 <p>Doubleclick on the first line (<code>Process Start</code>) to view command line parameters and other details for <code>gup.exe</code>. Note that the <code>gup.exe</code> application was ran with parameter <code>-v6.792</code> (version of Notepad++). So theoretically we can pretend that we are any version. It would be nice to look at this request and play with it.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-42">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-52">
     <img src="/images/2015/TrafficAttribution1/09.PNG"
          width="508" height="609"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-42" style="display:none">
+  <div id="image-dialog-52" style="display:none">
     <img src="/images/2015/TrafficAttribution1/09.PNG"
          width="635" height="761"/>
     <br clear="all"/>
@@ -687,8 +687,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-42").hide();
-    jQuery("#image-dialog-42").dialog({
+    jQuery("#image-dialog-52").hide();
+    jQuery("#image-dialog-52").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -699,8 +699,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-42").click(function() {
-      jQuery("#image-dialog-42").dialog('open');
+    jQuery("#image-52").click(function() {
+      jQuery("#image-dialog-52").dialog('open');
     });
 
   });
@@ -739,12 +739,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </ol>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-43">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-53">
     <img src="/images/2015/TrafficAttribution1/10.PNG"
          width="737" height="211"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-43" style="display:none">
+  <div id="image-dialog-53" style="display:none">
     <img src="/images/2015/TrafficAttribution1/10.PNG"
          width="921" height="264"/>
     <br clear="all"/>
@@ -752,8 +752,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-43").hide();
-    jQuery("#image-dialog-43").dialog({
+    jQuery("#image-dialog-53").hide();
+    jQuery("#image-dialog-53").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -764,8 +764,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-43").click(function() {
-      jQuery("#image-dialog-43").dialog('open');
+    jQuery("#image-53").click(function() {
+      jQuery("#image-dialog-53").dialog('open');
     });
 
   });
@@ -777,12 +777,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 <p>If we ping it, we can see that the corresponding IP address is <code>91.121.64.34</code>. We can filter the results in Netmon by using this filter <code>IPv4.Address == 91.121.64.34</code> to view traffic related to his IP address.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-44">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-54">
     <img src="/images/2015/TrafficAttribution1/11.PNG"
          width="918" height="341"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-44" style="display:none">
+  <div id="image-dialog-54" style="display:none">
     <img src="/images/2015/TrafficAttribution1/11.PNG"
          width="1147" height="426"/>
     <br clear="all"/>
@@ -790,8 +790,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-44").hide();
-    jQuery("#image-dialog-44").dialog({
+    jQuery("#image-dialog-54").hide();
+    jQuery("#image-dialog-54").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -802,8 +802,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-44").click(function() {
-      jQuery("#image-dialog-44").dialog('open');
+    jQuery("#image-54").click(function() {
+      jQuery("#image-dialog-54").dialog('open');
     });
 
   });
@@ -833,12 +833,12 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 <p>Select all traffic and use the filter <code>DNS</code>. Due to the way Netmon associates traffic with processes, DNS requests may be in Unknown or System.</p>
 
 <p><div class='bogus-wrapper'><notextile><div class="imgpopup screen">
-  <a href='javascript:void(0)' style="text-decoration: none" id="image-45">
+  <a href='javascript:void(0)' style="text-decoration: none" id="image-55">
     <img src="/images/2015/TrafficAttribution1/12.PNG"
          width="1031" height="310"
          alt="Click me."/>
   </a>
-  <div id="image-dialog-45" style="display:none">
+  <div id="image-dialog-55" style="display:none">
     <img src="/images/2015/TrafficAttribution1/12.PNG"
          width="1289" height="388"/>
     <br clear="all"/>
@@ -846,8 +846,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#image-dialog-45").hide();
-    jQuery("#image-dialog-45").dialog({
+    jQuery("#image-dialog-55").hide();
+    jQuery("#image-dialog-55").dialog({
       autoOpen:  false,
       modal:     true,
       draggable: false,
@@ -858,8 +858,8 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
       hide:      'scale'
     });
 
-    jQuery("#image-45").click(function() {
-      jQuery("#image-dialog-45").dialog('open');
+    jQuery("#image-55").click(function() {
+      jQuery("#image-dialog-55").dialog('open');
     });
 
   });
