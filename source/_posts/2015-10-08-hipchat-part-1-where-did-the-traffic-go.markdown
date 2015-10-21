@@ -19,7 +19,7 @@ I will be using the following tools in this part:
 2. Powershell/Command Prompt/etc: I am using Windows but I am sure you can find the equivalent commands if you are fancy ;)
 3. Procmon
 
-You can deploy your own Hipchat server by [downloading a VM][hipchatova]. 
+You can deploy your own Hipchat server by [downloading a VM][hipchatova]. You will need a license (or an evaluation version) or you can buy a 10 license server for [10 bucks](https://www.atlassian.com/purchase/product/com.atlassian.hipchat.server).
 
 Note: In these posts, the Hipchat server is named `hipchatserver.com` and its IP is `10.10.10.10` (these are just examples). Some of the screenshots are edited to hide the actual IPs and replace them with samples. My machine's sample IP address for the network interface that hosts the Hipchat server is `10.10.10.9`.
 

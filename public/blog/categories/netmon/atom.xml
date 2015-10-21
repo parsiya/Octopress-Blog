@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Netmon | Parsia's Den]]></title>
   <link href="http://parsiya.net/blog/categories/netmon/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-10-19T23:25:29-04:00</updated>
+  <updated>2015-10-21T00:53:04-04:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -33,7 +33,7 @@
   <li>Procmon</li>
 </ol>
 
-<p>You can deploy your own Hipchat server by <a href="https://www.hipchat.com/server/get-it">downloading a VM</a>. </p>
+<p>You can deploy your own Hipchat server by <a href="https://www.hipchat.com/server/get-it">downloading a VM</a>. You will need a license (or an evaluation version) or you can buy a 10 license server for <a href="https://www.atlassian.com/purchase/product/com.atlassian.hipchat.server">10 bucks</a>.</p>
 
 <p>Note: In these posts, the Hipchat server is named <code>hipchatserver.com</code> and its IP is <code>10.10.10.10</code> (these are just examples). Some of the screenshots are edited to hide the actual IPs and replace them with samples. My machine’s sample IP address for the network interface that hosts the Hipchat server is <code>10.10.10.9</code>.</p>
 
