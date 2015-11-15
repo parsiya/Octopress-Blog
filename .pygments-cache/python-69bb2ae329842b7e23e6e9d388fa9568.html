@@ -1,0 +1,42 @@
+<div class="highlight"><pre><span class="n">using</span> <span class="n">System</span><span class="p">;</span>
+<span class="n">using</span> <span class="n">System</span><span class="o">.</span><span class="n">Collections</span><span class="o">.</span><span class="n">Generic</span><span class="p">;</span>
+<span class="n">using</span> <span class="n">System</span><span class="o">.</span><span class="n">Linq</span><span class="p">;</span>
+<span class="n">using</span> <span class="n">System</span><span class="o">.</span><span class="n">Text</span><span class="p">;</span>
+<span class="n">using</span> <span class="n">System</span><span class="o">.</span><span class="n">Threading</span><span class="o">.</span><span class="n">Tasks</span><span class="p">;</span>
+<span class="n">using</span> <span class="n">System</span><span class="o">.</span><span class="n">Runtime</span><span class="o">.</span><span class="n">Remoting</span><span class="p">;</span>
+<span class="n">using</span> <span class="n">System</span><span class="o">.</span><span class="n">Runtime</span><span class="o">.</span><span class="n">Remoting</span><span class="o">.</span><span class="n">Channels</span><span class="p">;</span>
+<span class="n">using</span> <span class="n">System</span><span class="o">.</span><span class="n">Runtime</span><span class="o">.</span><span class="n">Remoting</span><span class="o">.</span><span class="n">Channels</span><span class="o">.</span><span class="n">Tcp</span><span class="p">;</span>
+
+
+<span class="n">namespace</span> <span class="n">RemotingSample</span>
+<span class="p">{</span>
+  <span class="k">class</span> <span class="nc">Client</span>
+  <span class="p">{</span>
+    <span class="n">static</span> <span class="n">void</span> <span class="n">Main</span><span class="p">(</span><span class="n">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="o">//</span> <span class="n">create</span> <span class="ow">and</span> <span class="n">register</span> <span class="n">the</span> <span class="n">TCP</span> <span class="n">channel</span>
+      <span class="o">//</span> <span class="n">please</span> <span class="n">note</span> <span class="n">that</span> <span class="n">I</span> <span class="n">have</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">security</span> <span class="n">of</span> <span class="n">the</span> <span class="n">channel</span> <span class="n">to</span> <span class="n">false</span>
+      <span class="n">TcpChannel</span> <span class="n">clientRemotingChannel</span> <span class="o">=</span> <span class="n">new</span> <span class="n">TcpChannel</span><span class="p">();</span>
+      <span class="n">ChannelServices</span><span class="o">.</span><span class="n">RegisterChannel</span><span class="p">(</span><span class="n">clientRemotingChannel</span><span class="p">,</span> <span class="n">false</span><span class="p">);</span>
+
+      <span class="o">//</span> <span class="n">create</span> <span class="n">an</span> <span class="nb">object</span> <span class="n">of</span> <span class="nb">type</span> <span class="n">RemothMath</span>
+      <span class="o">//</span> <span class="n">we</span> <span class="n">have</span> <span class="n">to</span> <span class="n">do</span> <span class="n">a</span> <span class="n">cast</span> <span class="n">because</span> <span class="n">Activator</span><span class="o">.</span><span class="n">GetObject</span> <span class="n">returns</span> <span class="n">an</span> <span class="nb">object</span> <span class="p">(</span><span class="n">doh</span><span class="p">)</span>
+      <span class="o">//</span> <span class="nb">type</span> <span class="ow">is</span> <span class="n">RemoteMath</span> <span class="ow">and</span> <span class="n">server</span> <span class="n">address</span> <span class="ow">is</span> <span class="n">what</span> <span class="n">we</span> <span class="n">created</span> <span class="ow">in</span> <span class="n">Server</span><span class="o">.</span><span class="n">cs</span> <span class="p">(</span><span class="n">port</span><span class="p">:</span><span class="mi">8888</span> <span class="ow">and</span> <span class="n">rMath</span><span class="p">)</span>
+
+      <span class="o">//</span> <span class="n">Server</span><span class="o">.</span><span class="n">cs</span> <span class="n">code</span><span class="p">:</span>
+      <span class="o">//</span> <span class="n">TcpChannel</span> <span class="n">remotingChannel</span> <span class="o">=</span> <span class="n">new</span> <span class="n">TcpChannel</span><span class="p">(</span><span class="mi">8888</span><span class="p">);</span>
+      <span class="o">//</span> <span class="n">ChannelServices</span><span class="o">.</span><span class="n">RegisterChannel</span><span class="p">(</span><span class="n">remotingChannel</span><span class="p">,</span> <span class="n">false</span><span class="p">);</span>
+      <span class="o">//</span> <span class="n">WellKnownServiceTypeEntry</span> <span class="n">remoteObject</span> <span class="o">=</span> <span class="n">new</span> <span class="n">WellKnownServiceTypeEntry</span><span class="p">(</span><span class="n">typeof</span><span class="p">(</span><span class="n">RemoteMath</span><span class="p">),</span> <span class="s">&quot;rMath&quot;</span><span class="p">,</span> <span class="n">WellKnownObjectMode</span><span class="o">.</span><span class="n">SingleCall</span><span class="p">);</span>
+
+      <span class="n">RemoteMath</span> <span class="n">remoteMathObject</span> <span class="o">=</span> <span class="p">(</span><span class="n">RemoteMath</span><span class="p">)</span><span class="n">Activator</span><span class="o">.</span><span class="n">GetObject</span><span class="p">(</span><span class="n">typeof</span><span class="p">(</span><span class="n">RemoteMath</span><span class="p">),</span> <span class="s">&quot;tcp://localhost:8888/rMath&quot;</span><span class="p">);</span>
+
+      <span class="o">//</span> <span class="n">now</span> <span class="n">we</span> <span class="n">can</span> <span class="n">call</span> <span class="n">Add</span> <span class="ow">and</span> <span class="n">Sub</span> <span class="n">functions</span>
+      <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Result of Add(1, 2): {0}&quot;</span><span class="p">,</span> <span class="n">remoteMathObject</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+      <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Result of Sub(10, 3): {0}&quot;</span><span class="p">,</span> <span class="n">remoteMathObject</span><span class="o">.</span><span class="n">Sub</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+
+      <span class="n">Console</span><span class="o">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Press any key to exit&quot;</span><span class="p">);</span>
+      <span class="n">Console</span><span class="o">.</span><span class="n">ReadLine</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>

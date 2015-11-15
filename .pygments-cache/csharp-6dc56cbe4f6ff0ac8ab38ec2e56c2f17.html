@@ -1,0 +1,24 @@
+<div class="highlight"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Linq</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Text</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Threading.Tasks</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">RemotingSample</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">class</span> <span class="nc">RemoteMath</span> <span class="p">:</span> <span class="n">MarshalByRefObject</span>
+  <span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="nf">Add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>    <span class="c1">// add</span>
+    <span class="p">{</span>
+      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Add({0},{1}) called&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+      <span class="k">return</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">int</span> <span class="nf">Sub</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>    <span class="c1">// subtract</span>
+    <span class="p">{</span>
+      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Sub({0},{1}) called&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+      <span class="k">return</span> <span class="n">a</span> <span class="p">-</span> <span class="n">b</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>

@@ -1,0 +1,14 @@
+<div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="m">1</span> <span class="p">==</span> <span class="n">type</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Message</span> <span class="n">expr_14</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Message</span><span class="p">();</span>
+  
+  <span class="c1">// msgData is one of the function parameters (along with type) and contains the message info</span>
+  <span class="c1">// we can see that it is used to populate expr_14 which looks like a temp Message</span>
+  <span class="n">expr_14</span><span class="p">.</span><span class="n">InitFields</span><span class="p">(</span><span class="n">msgData</span><span class="p">);</span>
+  
+  <span class="c1">// expr_14 is copied to message</span>
+  <span class="n">message</span> <span class="p">=</span> <span class="n">expr_14</span><span class="p">;</span>			<span class="c1">// put a breakpoint here</span>
+  
+  <span class="n">num</span> <span class="p">=</span> <span class="n">expr_14</span><span class="p">.</span><span class="n">GetCallType</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
