@@ -4,7 +4,7 @@
   <title><![CDATA[Category: .NET Remoting | Parsia's Den]]></title>
   <link href="http://parsiya.net/blog/categories/dot-net-remoting/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-11-14T23:16:06-05:00</updated>
+  <updated>2015-11-15T01:32:54-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -77,6 +77,8 @@
   <li>Server</li>
   <li>Client</li>
 </ul>
+
+<p>If you want to play along, Visual Studio solutions are at <a href="https://bitbucket.org/parsiya/net-remoting/src/.">https://bitbucket.org/parsiya/net-remoting/src/</a>. With compiled executables being in the <code>Executables</code> directory (keep in mind that these are executables from a stranger on the internet so treat them accordingly).</p>
 
 <p>First the DLL. Create a solution and a new project. Choose <code>Class Library</code> as type of the project. According to <a href="https://msdn.microsoft.com/en-us/library/vstudio/h8f0y3fc%28v=vs.100%29.aspx">this MSDN article</a>, in order for an object to be remotable it should either be <code>Serializable</code> or inherit <a href="https://msdn.microsoft.com/en-us/library/system.marshalbyrefobject%28v=vs.110%29.aspx"><code>MarshalByRefObject</code></a> class. I am take the <code>MarshalByRefObject</code> route. For more information please refer to <a href="https://msdn.microsoft.com/library/wcf3swha%28v=vs.100%29.aspx">Making Objects Remotable</a>.</p>
 

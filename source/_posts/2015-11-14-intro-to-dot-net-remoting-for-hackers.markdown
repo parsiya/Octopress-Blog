@@ -58,6 +58,8 @@ I am going to be using [Visual Studio Community 2015][vs2015] which is free. We 
 * Server
 * Client
 
+If you want to play along, Visual Studio solutions are at [https://bitbucket.org/parsiya/net-remoting/src/](https://bitbucket.org/parsiya/net-remoting/src/.). With compiled executables being in the `Executables` directory (keep in mind that these are executables from a stranger on the internet so treat them accordingly).
+
 First the DLL. Create a solution and a new project. Choose `Class Library` as type of the project. According to [this MSDN article][remotableobjects], in order for an object to be remotable it should either be `Serializable` or inherit [`MarshalByRefObject`][marshalbyref] class. I am take the `MarshalByRefObject` route. For more information please refer to [Making Objects Remotable][makingobjectsremotable].
 
 Here's how the Remoting Library (the DLL) looks like:
