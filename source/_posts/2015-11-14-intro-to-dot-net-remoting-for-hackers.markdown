@@ -290,7 +290,7 @@ Run `Server.exe` and then run dnSpy (for x86 application use `dnSpy-x86.exe`). D
 
 {% imgcap /images/2015/remoting1/06.png Opening Client.exe in dnSpy %}
 
-Now we can run the client in dnSpy. Click on the green button named `Start` and it will open a dialog to start an executable in dnSpy. In version 1.4 it is pre-populated with `Client.exe` that we just dragged and dropped into dnSpy. As you can see, what can also specify arugments and also order the debugger to break on certain events. Let's keep the original selection and run `Client.exe`. dnSpy will break on `Main`.
+Now we can run the client in dnSpy. Click on the green button named `Start` and it will open a dialog to start an executable in dnSpy. In version 1.4 it is pre-populated with `Client.exe` that we just dragged and dropped into dnSpy. As you can see, what can also specify arguments and also order the debugger to break on certain events. Let's keep the original selection and run `Client.exe`. dnSpy will break on `Main`.
 
 {% imgcap /images/2015/remoting1/07.png Start options %}
 
@@ -448,7 +448,7 @@ The method call is changed but `Add` had two Int32 parameters while `StartProces
 
 {% imgcap /images/2015/remoting1/18.png You ruined everything!!1! %}
 
-But that's fine, we can edit the IL instructions and fix it. But how do we know what to do? At this point we can just learn IL coding but based on the instructions that we have seen, we should have a general idea of what to do. We also need to remove the `Console.WriteLine` becaue `StartProcess` has no return value (well `void()` but you know what I mean) and we should be calling `remoteMathObject.StartProcess("c:\\windows\\system32\\calc.exe");` individually.
+But that's fine, we can edit the IL instructions and fix it. But how do we know what to do? At this point we can just learn IL coding but based on the instructions that we have seen, we should have a general idea of what to do. We also need to remove the `Console.WriteLine` because `StartProcess` has no return value (well `void()` but you know what I mean) and we should be calling `remoteMathObject.StartProcess("c:\\windows\\system32\\calc.exe");` individually.
 
 The following IL code does the trick:
 
@@ -500,7 +500,7 @@ Remediation is an important part of my day job. I am not an `infosec thoughtlead
 
 It should be noted that channel properties and registration could also be done in executables' config files. Please refer to [Format for .NET Remoting Configuration Files][channelconfig] for more information.
 
-I also have to reiterate that **this is decprecated technology** and it should not be used for new applications. But if you are stuck with legacy code and want to fix it, please read on.
+I also have to reiterate that **this is deprecated technology** and it should not be used for new applications. But if you are stuck with legacy code and want to fix it, please read on.
 
 Start here for MSDN articles on this topic: [Security in Remoting][security-in-remoting].
 
@@ -555,7 +555,7 @@ TcpChannel remotingChannel = new TcpChannel(tcpChannelProperties, null, null);
 
 Let's only set the server channel to secure and see what happens:
 
-{% imgcap /images/2015/remoting1/26.png Unsecure client channel and secure server channel %}
+{% imgcap /images/2015/remoting1/26.png Insecure client channel and secure server channel %}
 
 The client establishes the TCP connection and starts sending message in plaintext, but server never responds.
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Parsia's Den]]></title>
   <link href="http://parsiya.net/atom.xml" rel="self"/>
   <link href="http://parsiya.net/"/>
-  <updated>2015-11-15T01:32:54-05:00</updated>
+  <updated>2015-11-15T20:32:03-05:00</updated>
   <id>http://parsiya.net/</id>
   <author>
     <name><![CDATA[Parsiya]]></name>
@@ -418,7 +418,7 @@ OperationType: 0x0002 or Response
 
 <p><span class="caption-wrapper"><img class="caption" src="http://parsiya.net/images/2015/remoting1/06.png" width="" height="" title="Opening Client.exe in dnSpy" /><span class="caption-text">Opening Client.exe in dnSpy</span></span></p>
 
-<p>Now we can run the client in dnSpy. Click on the green button named <code>Start</code> and it will open a dialog to start an executable in dnSpy. In version 1.4 it is pre-populated with <code>Client.exe</code> that we just dragged and dropped into dnSpy. As you can see, what can also specify arugments and also order the debugger to break on certain events. Let’s keep the original selection and run <code>Client.exe</code>. dnSpy will break on <code>Main</code>.</p>
+<p>Now we can run the client in dnSpy. Click on the green button named <code>Start</code> and it will open a dialog to start an executable in dnSpy. In version 1.4 it is pre-populated with <code>Client.exe</code> that we just dragged and dropped into dnSpy. As you can see, what can also specify arguments and also order the debugger to break on certain events. Let’s keep the original selection and run <code>Client.exe</code>. dnSpy will break on <code>Main</code>.</p>
 
 <p><span class="caption-wrapper"><img class="caption" src="http://parsiya.net/images/2015/remoting1/07.png" width="" height="" title="Start options" /><span class="caption-text">Start options</span></span></p>
 
@@ -632,7 +632,7 @@ OperationType: 0x0002 or Response
 
 <p><span class="caption-wrapper"><img class="caption" src="http://parsiya.net/images/2015/remoting1/18.png" width="" height="" title="You ruined everything!!1!" /><span class="caption-text">You ruined everything!!1!</span></span></p>
 
-<p>But that’s fine, we can edit the IL instructions and fix it. But how do we know what to do? At this point we can just learn IL coding but based on the instructions that we have seen, we should have a general idea of what to do. We also need to remove the <code>Console.WriteLine</code> becaue <code>StartProcess</code> has no return value (well <code>void()</code> but you know what I mean) and we should be calling <code>remoteMathObject.StartProcess("c:\\windows\\system32\\calc.exe");</code> individually.</p>
+<p>But that’s fine, we can edit the IL instructions and fix it. But how do we know what to do? At this point we can just learn IL coding but based on the instructions that we have seen, we should have a general idea of what to do. We also need to remove the <code>Console.WriteLine</code> because <code>StartProcess</code> has no return value (well <code>void()</code> but you know what I mean) and we should be calling <code>remoteMathObject.StartProcess("c:\\windows\\system32\\calc.exe");</code> individually.</p>
 
 <p>The following IL code does the trick:</p>
 
@@ -689,7 +689,7 @@ As we saw at the start of this post, server is listening on <code>0.0.0.0</code>
 
 <p>It should be noted that channel properties and registration could also be done in executables’ config files. Please refer to <a href="https://msdn.microsoft.com/en-us/library/ms973907.aspx">Format for .NET Remoting Configuration Files</a> for more information.</p>
 
-<p>I also have to reiterate that <strong>this is decprecated technology</strong> and it should not be used for new applications. But if you are stuck with legacy code and want to fix it, please read on.</p>
+<p>I also have to reiterate that <strong>this is deprecated technology</strong> and it should not be used for new applications. But if you are stuck with legacy code and want to fix it, please read on.</p>
 
 <p>Start here for MSDN articles on this topic: <a href="https://msdn.microsoft.com/en-us/library/9hwst9th%28v=vs.85%29.aspx">Security in Remoting</a>.</p>
 
@@ -767,7 +767,7 @@ As we saw at the start of this post, server is listening on <code>0.0.0.0</code>
 
 <p>Let’s only set the server channel to secure and see what happens:</p>
 
-<p><span class="caption-wrapper"><img class="caption" src="http://parsiya.net/images/2015/remoting1/26.png" width="" height="" title="Unsecure client channel and secure server channel" /><span class="caption-text">Unsecure client channel and secure server channel</span></span></p>
+<p><span class="caption-wrapper"><img class="caption" src="http://parsiya.net/images/2015/remoting1/26.png" width="" height="" title="Insecure client channel and secure server channel" /><span class="caption-text">Insecure client channel and secure server channel</span></span></p>
 
 <p>The client establishes the TCP connection and starts sending message in plaintext, but server never responds.</p>
 
