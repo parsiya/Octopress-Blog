@@ -60,7 +60,7 @@ I am going to be using [Visual Studio Community 2015][vs2015] which is free. We 
 
 If you want to play along, Visual Studio solutions are at [https://bitbucket.org/parsiya/net-remoting/src/](https://bitbucket.org/parsiya/net-remoting/src/.). With compiled executables being in the `Executables` directory (keep in mind that these are executables from a stranger on the internet so treat them accordingly).
 
-First the DLL. Create a solution and a new project. Choose `Class Library` as type of the project. According to [this MSDN article][remotableobjects], in order for an object to be remotable it should either be `Serializable` or inherit [`MarshalByRefObject`][marshalbyref] class. I am take the `MarshalByRefObject` route. For more information please refer to [Making Objects Remotable][makingobjectsremotable].
+First the DLL. Create a solution and a new project. Choose `Class Library` as type of the project. According to [this MSDN article][remotableobjects], in order for an object to be remotable it should either be `Serializable` or inherit [`MarshalByRefObject`][marshalbyref] class. I am taking the `MarshalByRefObject` route. For more information please refer to [Making Objects Remotable][makingobjectsremotable].
 
 Here's how the Remoting Library (the DLL) looks like:
 
@@ -527,7 +527,7 @@ TcpChannel remotingChannel = new TcpChannel(tcpChannelProperties, null, null);
 
 And now we can see the server listening only on localhost.
 
-{% imgcap /images/2015/remoting1/25.png Pew Pew %}
+{% imgcap /images/2015/remoting1/25.png Server listening on localhost %}
 
 We can also [authenticate the client](https://msdn.microsoft.com/en-us/library/bb187429%28v=vs.85%29.aspx).
 
